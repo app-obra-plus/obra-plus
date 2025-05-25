@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
 import { Pressable } from 'react-native';
@@ -8,7 +8,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
+export function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
@@ -17,6 +17,10 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
+  const imprimiTelaAtual = () => {
+    console.log('Tela atual:', window.location.pathname);
+  }
 
   return (
     <Tabs
@@ -27,31 +31,32 @@ export default function TabLayout() {
         headerShown: useClientOnlyValue(false, true),
       }}>
       <Tabs.Screen
-        name="index"
+        name="chat"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          title: 'Chat',
+          tabBarIcon: ({ color }) => <TabBarIcon name="comments-o" color={color} />
         }}
       />
-      <Tabs.Screen
-        name="two"
+      <Tabs.Screen 
+        name='map'
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: "Mapa",
+          tabBarIcon: ({ color }) => <TabBarIcon name="map-o" color={color} />,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen 
+        name='search'
+        options={{
+          title: "Pesquisar",
+          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />
+        }}
+      />
+      <Tabs.Screen 
+        name='user'
+        options={{
+          title: "Usuário",
+          tabBarIcon: ({ color }) => <TabBarIcon name="user-o" color={color} />,
         }}
       />
     </Tabs>
