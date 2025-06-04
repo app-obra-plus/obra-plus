@@ -1,10 +1,7 @@
-import { EntradaDTO } from "../../types/dist/types";
-import { Teste } from "../../types/dist/Teste";
 
-const entrada: EntradaDTO = {
-  name: "Teste"
-}
+const express = require('express');
+const  app = express();
+app.use(express.json());
 
-const teste = new Teste("1", entrada.name);
 
-console.log(teste.getName())
+app.listen(3000, () =>console.log("Servidor rodando"));
