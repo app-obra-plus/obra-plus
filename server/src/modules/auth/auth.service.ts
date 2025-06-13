@@ -3,12 +3,14 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 
 import { InvalidCredentialsError } from "../../exception/InvalidCredentialsError";
+import { LoginResponseDto } from './dto/LoginResponseDto';
+import { LoginDto } from './dto/LoginDto';
 
-const EXPIRE_TOKEN = '1m'; // 1 min
+const EXPIRE_TOKEN = '10m'; 
 
 export class AuthService {
 
-    async login(userInfo:any) {
+    async login(userInfo:LoginDto) {
         const user = await prisma.user.findUnique({ where: { email: userInfo.email } });
 
         if (!user) {
@@ -26,7 +28,9 @@ export class AuthService {
             throw new Error('JWT_SECRET não foi definida no .env');
         }
 
-        const token = jwt.sign({id: user.id, email:user.email}, JWT_SECRET, {expiresIn:EXPIRE_TOKEN})
+        const token:LoginResponseDto = {
+            token:jwt.sign({sub: user.id, email:user.email}, JWT_SECRET, {expiresIn:EXPIRE_TOKEN})
+        } 
 
         return token;
     }
