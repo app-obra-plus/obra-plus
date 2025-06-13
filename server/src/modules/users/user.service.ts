@@ -2,8 +2,9 @@ import { CreateUserDto } from "./dto/CreateUserDto";
 import {prisma} from '../../database/client'
 import { UserResponseDto } from "./dto/UserResponseDto";
 import bcrypt from 'bcrypt';
-import { BadRequestError } from "../../exception/BadRequestError";
+
 import { EntityNotFoundError } from "../../exception/EntityNotFoundError";
+import { UpdateUserDto } from "./dto/UpdateUserDto";
 
 export class UserService {
 
@@ -39,4 +40,24 @@ export class UserService {
         }
         return userDb;
     } 
+
+    async updateUser(id: string, userUpdate: UpdateUserDto){
+
+        await this.getUserById(id);
+
+        const updatedUser = await prisma.user.update({
+            where: { id },
+            data: userUpdate,
+        });
+
+        const userResponse: UserResponseDto = {
+            email: updatedUser.email,
+            first_name: updatedUser.first_name,
+            last_name: updatedUser.last_name,
+            profile_picture: updatedUser.profile_picture ?? undefined,
+            active: updatedUser.active,
+        };
+
+        return userResponse;
+    }
 }
