@@ -11,7 +11,7 @@ const EXPIRE_TOKEN = '10m';
 export class AuthService {
 
     async login(userInfo:LoginDto) {
-        const user = await prisma.user.findUnique({ where: { email: userInfo.email } });
+        const user = await prisma.user.findUnique({ where: { email: userInfo.email, active:true} });
 
         if (!user) {
             throw new InvalidCredentialsError();

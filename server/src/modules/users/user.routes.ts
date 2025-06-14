@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import { createUser, getUserById, updateUser} from './user.controller';
+import { createUser, deleteUser, getUserById, updateUser} from './user.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
 
 
@@ -16,4 +16,8 @@ router.get('/:id', authMiddleware,async (req: Request, res: Response) => {
 router.put('/:id',authMiddleware, async (req: Request, res: Response) => {
     await updateUser(req, res);
 } )
+
+router.delete('/:id',authMiddleware, async (req: Request, res: Response) => {
+    await deleteUser(req, res);
+})
 export default router; 

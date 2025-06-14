@@ -27,3 +27,9 @@ export async function updateUser(req:Request, res: Response){
     const userUpdated = await userService.updateUser(id, userData);
     return res.status(200).json(userUpdated);
 }
+
+export async function deleteUser(req: Request, res:Response){
+    const {id} = req.params;
+    await userService.deleteUser(id);
+    return res.status(204).send();
+}
