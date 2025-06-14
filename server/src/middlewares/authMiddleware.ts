@@ -5,6 +5,7 @@ import { UnauthorizedError } from '../exception/UnauthorizedError';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
@@ -20,7 +21,13 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   }
 
     try{
-        jwt.verify(token, JWT_SECRET);
+        const decoded = jwt.verify(token, JWT_SECRET )as jwt.JwtPayload;
+
+        if (!decoded || typeof decoded !== 'object' || !decoded.userId) {
+          throw new UnauthorizedError('Token inválido');
+        }
+
+        (req as any).auth = { userId: decoded.userId };
         next();
     }catch {
         throw new UnauthorizedError('Token inválido ou expirado');

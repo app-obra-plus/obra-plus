@@ -29,7 +29,7 @@ export class AuthService {
         }
 
         const token:LoginResponseDto = {
-            token:jwt.sign({sub: user.id, email:user.email}, JWT_SECRET, {expiresIn:EXPIRE_TOKEN})
+            token:jwt.sign({userId: user.id, email:user.email}, JWT_SECRET, {expiresIn:EXPIRE_TOKEN})
         } 
 
         return token;

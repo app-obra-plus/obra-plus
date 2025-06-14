@@ -6,6 +6,9 @@
   "badRequest": {
     "validation": "VALIDATION_ERROR"
   },
-  "unauthorized": "UNAUTHORIZED_ACCESS",
+  "auth":{
+    "unauthorized": "UNAUTHORIZED_ACCESS",
+    "forbidden": "FORBIDDEN_ACCESS"
+  },
   "internal": "INTERNAL_SERVER_ERROR"
 }
