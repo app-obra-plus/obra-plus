@@ -22,7 +22,8 @@ export class UserService {
 
         const userDb = await prisma.user.findUnique({
             where: {
-                id:id
+                id:id,
+                active:true
             }
         })
 
@@ -39,12 +40,21 @@ export class UserService {
         await this.getUserById(id);
 
         const updatedUser = await prisma.user.update({
-            where: { id },
+            where: { id:id },
             data: userUpdate,
         });
 
         const userResponse: UserResponseDto = UserMapper.toResponseDto(updatedUser);
 
         return userResponse;
+    }
+
+    async deleteUser(id: string){
+        await this.getUserById(id);
+        await prisma.user.delete({
+            where: {
+                id: id,
+            },
+        });
     }
 }
