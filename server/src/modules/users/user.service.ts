@@ -2,29 +2,20 @@ import { CreateUserDto } from "./dto/CreateUserDto";
 import {prisma} from '../../database/client'
 import { UserResponseDto } from "./dto/UserResponseDto";
 import bcrypt from 'bcrypt';
-
 import { EntityNotFoundError } from "../../exception/EntityNotFoundError";
 import { UpdateUserDto } from "./dto/UpdateUserDto";
+import { UserMapper } from "./dto/mapper/UserMapper";
 
 export class UserService {
 
     async createUser(data: CreateUserDto){
 
         const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(data.password, salt);
+        const hashPassword = await bcrypt.hash(data.password, salt);      
         data.password = hashPassword;
-
         const user = await prisma.user.create({data,});
-        const userResponse: UserResponseDto = {
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
-            profile_picture: user.profile_picture ?? undefined,
-            active: user.active,
-        };
-
+        const userResponse: UserResponseDto = UserMapper.toResponseDto(user);
         return userResponse;
-       
     }
 
     async getUserById(id: string){
@@ -34,11 +25,13 @@ export class UserService {
                 id:id
             }
         })
-        
+
         if(!userDb){
             throw new EntityNotFoundError("Usuário", id);
         }
-        return userDb;
+
+        const userResponse: UserResponseDto =  UserMapper.toResponseDto(userDb);
+        return userResponse;
     } 
 
     async updateUser(id: string, userUpdate: UpdateUserDto){
@@ -50,13 +43,7 @@ export class UserService {
             data: userUpdate,
         });
 
-        const userResponse: UserResponseDto = {
-            email: updatedUser.email,
-            first_name: updatedUser.first_name,
-            last_name: updatedUser.last_name,
-            profile_picture: updatedUser.profile_picture ?? undefined,
-            active: updatedUser.active,
-        };
+        const userResponse: UserResponseDto = UserMapper.toResponseDto(updatedUser);
 
         return userResponse;
     }
