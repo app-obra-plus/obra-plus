@@ -1,15 +1,15 @@
 import { Request, Response} from "express";
 import { UserService } from './user.service';
-import { CreateUserDto } from "./dto/CreateUserDto";
-
-
+import { CreateUserSchema} from "./dto/CreateUserDto";
+import { validateOrThrow } from "../../utils/validateRequest";
+import { UpdateUserSchema } from "./dto/UpdateUserDto";
 
 const userService = new UserService;
 
 export async function createUser(req: Request, res: Response) {
 
-    const user: CreateUserDto = req.body;
-    const userDb = await userService.createUser(user);
+    const userData = validateOrThrow(CreateUserSchema, req.body);
+    const userDb = await userService.createUser(userData);
     return res.status(201).json(userDb);
 }
 
@@ -21,9 +21,9 @@ export async function getUserById(req: Request, res: Response){
 }
 
 export async function updateUser(req:Request, res: Response){
-
+    
     const {id} = req.params;
-    const user = req.body;
-    const userUpdated = await userService.updateUser(id, user);
+    const userData = validateOrThrow(UpdateUserSchema, req.body);
+    const userUpdated = await userService.updateUser(id, userData);
     return res.status(200).json(userUpdated);
 }
