@@ -18,10 +18,6 @@ export function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const imprimiTelaAtual = () => {
-    console.log('Tela atual:', window.location.pathname);
-  }
-
   return (
     <Tabs
       screenOptions={{
