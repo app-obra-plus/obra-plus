@@ -3,6 +3,8 @@
     "lib": ["ES2023"],
     "module": "node16",
     "target": "ES2022",
+    "rootDir": "./src",
+    "outDir": "./dist",
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Projects */
