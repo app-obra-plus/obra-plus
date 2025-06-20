@@ -3,7 +3,7 @@ import authRouter from './modules/auth/auth.routes'
 import errorHandler from './middlewares/errorHandler';
 import corsOptions from './config/corsConfig'
 import cors from 'cors';
-import { setupSwagger } from './config/swaggerConfig';
+import { setupSwagger } from './docs/swaggerConfig';
 
 
 const express = require('express');
