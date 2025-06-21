@@ -165,25 +165,25 @@ router.put('/:id',authMiddleware, async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       401:
  *         description: Não autorizado - token inválido ou expirado
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       403:
  *         description: Sem permissão para acessar esse recurso
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: Usuário não encontrado
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.delete('/:id',authMiddleware, async (req: Request, res: Response) => {
     await deleteUser(req, res);
