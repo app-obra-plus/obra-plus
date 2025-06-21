@@ -1,0 +1,14 @@
+{
+  "notFound": {
+    "user": "CODIGO_DE_USER_NOT_FOUND",
+    "entity": "CODIGO_DE_ENTITY_NOT_FOUND"
+  },
+  "badRequest": {
+    "validation": "VALIDATION_ERROR"
+  },
+  "auth":{
+    "unauthorized": "UNAUTHORIZED_ACCESS",
+    "forbidden": "FORBIDDEN_ACCESS"
+  },
+  "internal": "INTERNAL_SERVER_ERROR"
+}
