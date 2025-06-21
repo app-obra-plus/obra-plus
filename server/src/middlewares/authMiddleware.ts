@@ -19,7 +19,9 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   if (scheme !== 'Bearer' || !token) {
     throw new BadRequestError('Token malformado'); 
   }
-
+    if (!JWT_SECRET) {
+      throw new Error('JWT_SECRET não está definido nas variáveis de ambiente');
+    }
     try{
         const decoded = jwt.verify(token, JWT_SECRET )as jwt.JwtPayload;
 
