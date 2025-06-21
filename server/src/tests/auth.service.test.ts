@@ -70,5 +70,18 @@ describe('AuthService', () => {
 
     await expect(authService.login(loginDto)).rejects.toBeInstanceOf(InvalidCredentialsError);
   });
+  it('deve lançar erro se JWT_SECRET não estiver definido', async () => {
+    (prisma.user.findUnique as jest.Mock).mockResolvedValue(validUser);
+    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+    const originalJwtSecret = process.env.JWT_SECRET;
+    delete process.env.JWT_SECRET;
+
+    await expect(authService.login(loginDto))
+      .rejects
+      .toThrow('JWT_SECRET não foi definida no .env');
+
+    process.env.JWT_SECRET = originalJwtSecret;
+  });
 
 });
