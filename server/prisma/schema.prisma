@@ -15,7 +15,7 @@ datasource db {
 }
 
 model User {
-  id                String   @id @default(uuid())
+  id                String   @id @default(uuid())@db.Uuid
   email             String    @unique
   password          String
   first_name        String
@@ -26,5 +26,26 @@ model User {
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
+  addresses       Address[]
+
   @@map("tb_user")
+}
+
+model Address {
+  id           String   @id @default(uuid())@db.Uuid 
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  postal_code  String
+  country      String
+  latitude     Float
+  longitude    Float
+  user_id      String  @db.Uuid  
+
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("tb_addresses")
 }
