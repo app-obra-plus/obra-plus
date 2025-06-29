@@ -4,6 +4,6 @@ export default function useWebNavigation() {
   const {navigate} = useNavigation() 
 
   function navigate(path: string) {
-
+    navigate(path)
   }
 }

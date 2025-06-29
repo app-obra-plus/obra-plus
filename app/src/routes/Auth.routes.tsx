@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import App from "../screens/App"
 import SignIn from "../screens/SignIn"
-import SignUp from "../screens/SignUp"
+import SignUp from "../screens/auth/SignUp/SignUp"
 
 const Stack = createNativeStackNavigator()
 
@@ -15,6 +15,9 @@ export default function AuthRouter() {
       <Stack.Screen 
         name="signup"
         component={SignUp}
+        options={{
+          headerShown: false
+        }}
       />
     </Stack.Navigator>
   )
