@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, StyleSheet, View } from "react-native";
-import colors from "../../../styles/style";
+import colors from "../../styles/style";
 
 interface WizzardProgressProps {
   ratio: number

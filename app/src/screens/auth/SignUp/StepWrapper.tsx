@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import WizzardProgress from "./WizzardProgress";
+import WizzardProgress from "../../../components/AuthFormComponents/WizzardProgress";
 import colors from "../../../styles/style";
 import { steps } from "./SignUpNavigationWrapper";
 import Button from "../../../components/AuthFormComponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { useSignUpStore } from "./store/useSignUpStore";
+import { useAuth } from "../../../hooks/useAuth";
 
 interface StepWrapperProps {
   children?: React.ReactNode;
@@ -15,6 +16,7 @@ interface StepWrapperProps {
 }
 
 export default function StepWrapper({ children, title, isValid }: StepWrapperProps) {
+  const { register } = useAuth();
   const navigation = useNavigation();
   const { currentStep, setCurrentStep, registerForm } = useSignUpStore();
   const [ratio, setRatio] = React.useState<number | undefined>(undefined);
@@ -31,7 +33,17 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
     if (nextStep) {
       setCurrentStep(currentStep + 1);
     } else {
-      console.log(registerForm)
+      register(registerForm)
+        .then(() => {
+          console.log("Registration successful, navigating to signin");
+          navigation.navigate("auth", {
+            screen: "signin"
+          });
+        })
+        .catch((error) => {
+          console.error("Error during registration:", );
+          console.error(error);
+        });
     }
     
   };
