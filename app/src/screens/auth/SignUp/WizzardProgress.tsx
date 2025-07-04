@@ -1,39 +1,48 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Animated, StyleSheet, View } from "react-native";
+import colors from "../../../styles/style";
 
 interface WizzardProgressProps {
-  currentStep: number;
-  totalSteps: number;
+  ratio: number
 }
 
-export default function WizzardProgress({ currentStep, totalSteps }: WizzardProgressProps) {
+export default function WizzardProgress({ ratio }: WizzardProgressProps) {
+  const animatedWidth = useRef(new Animated.Value(ratio)).current
+
+  useEffect(() => {
+    Animated.timing(animatedWidth, {
+      toValue: ratio,
+      duration: 300,
+      useNativeDriver: false
+    }).start();
+  }, [ratio])
+
+  const widthInterpolated = animatedWidth.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0%", "100%"],
+  });
+
   return (
     <View style={styles.progressContainer}>
-      {
-        Array.from({ length: totalSteps }, (_, index) => (
-          <View
-            key={index}
-            style={{
-              backgroundColor: index < currentStep ? "blue" : "gray",
-              ...styles.stepIndicator,
-            }}
-          />
-        ))
-      }
+      <Animated.View
+        style={[
+          styles.stepIndicator,
+          { width: widthInterpolated }
+        ]}
+      />
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   progressContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 20,
+    width: "100%",
+    backgroundColor: colors.BORDER,
+    borderRadius: 4,
   },
   stepIndicator: {
-    width: 20,
-    height: 20,
-    borderRadius: 500,
-    marginHorizontal: 5,
+    backgroundColor: colors.PRIMARY,
+    height: 4,
+    borderRadius: 4,
   },
 });
