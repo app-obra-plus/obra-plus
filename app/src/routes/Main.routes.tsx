@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
-import App from "../screens/App"
-import SignIn from "../screens/SignIn"
+import App from "../screens/App/App"
+import SignIn from "../screens/auth/SignIn/SignIn"
 import AuthRouter from "./Auth.routes"
 
 const Stack = createNativeStackNavigator()

@@ -9,7 +9,7 @@ import { UserMapper } from "./dto/mapper/UserMapper";
 export class UserService {
 
     async createUser(data: CreateUserDto){
-
+        console.log("Creating user with data:", data);  
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(data.password, salt);      
         data.password = hashPassword;
