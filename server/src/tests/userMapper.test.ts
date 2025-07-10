@@ -10,7 +10,7 @@ describe('UserMapper', () => {
         email: 'teste@email.com',
         first_name: 'João',
         last_name: 'Silva',
-        phone_number: '+5511999999999',
+        phone_number: '11999999999',
         profile_picture: 'https://cdn.img.com/avatar.png',
         active: true,
         password: 'hash', 
@@ -23,7 +23,7 @@ describe('UserMapper', () => {
       email: 'teste@email.com',
       first_name: 'João',
       last_name: 'Silva',
-      phone_number: '+5511999999999',
+      phone_number: '11999999999',
       profile_picture: 'https://cdn.img.com/avatar.png',
       active: true
     };
@@ -38,7 +38,7 @@ describe('UserMapper', () => {
       email: 'teste@email.com',
       first_name: 'João',
       last_name: 'Silva',
-      phone_number: '+5511999999999',
+      phone_number: '11999999999',
       profile_picture: null,
       active: true,
       password: 'hash',
