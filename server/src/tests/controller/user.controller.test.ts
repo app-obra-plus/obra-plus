@@ -1,12 +1,12 @@
-import { createUser, getUserById, updateUser, deleteUser } from '../modules/users/user.controller';
-import { validateSchema, validateId } from '../utils/validateRequest';
-import { UserService } from '../modules/users/user.service';
+import { createUser, getUserById, updateUser, deleteUser } from '../../modules/users/user.controller';
+import { validateSchema, validateId } from '../../utils/validateRequest';
+import { UserService } from '../../modules/users/user.service';
 import { Request, Response } from 'express';
-import { EntityNotFoundError } from '../exception/EntityNotFoundError';
-import { ForbiddenAccessError } from '../exception/ForbiddenAccessError';
+import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
+import { ForbiddenAccessError } from '../../exception/ForbiddenAccessError';
 
-jest.mock('../utils/validateRequest');
-jest.mock('../modules/users/user.service');
+jest.mock('../../utils/validateRequest');
+jest.mock('../../modules/users/user.service');
 
 describe('createUser', () => {
   const mockReq = {

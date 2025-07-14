@@ -1,12 +1,12 @@
-import { AuthService } from '../modules/auth/auth.service';
-import { InvalidCredentialsError } from '../exception/InvalidCredentialsError';
+import { AuthService } from '../../modules/auth/auth.service';
+import { InvalidCredentialsError } from '../../exception/InvalidCredentialsError';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../database/client';
+import { prisma } from '../../database/client';
 
 jest.mock('bcrypt');
 jest.mock('jsonwebtoken');
-jest.mock('../database/client', () => ({
+jest.mock('../../database/client', () => ({
   prisma: {
     user: {
       findUnique: jest.fn(),

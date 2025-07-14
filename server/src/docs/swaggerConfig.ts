@@ -4,7 +4,10 @@ import { Express } from 'express';
 import { UserResponse } from './schemas/userResponse.schema';
 import { CreateUserRequest } from './schemas/createUserRequest.schema';
 import { UpdateUserRequest } from './schemas/updateUserRequest.schema';
+import { CreateAddressRequest } from './schemas/createAddressRequest.schema';
 import { ErrorResponse} from './schemas/errorResponse.schema';
+import { AddressResponse } from './schemas/addressResponse.schema';
+import { UpdateAddressRequest } from './schemas/updatedAddress.schema';
 
 // Documentação disponível em http://localhost:3000/api-docs
 const options: swaggerJSDoc.Options = {
@@ -23,6 +26,9 @@ const options: swaggerJSDoc.Options = {
         CreateUserRequest,
         UpdateUserRequest,
         ErrorResponse,
+        CreateAddressRequest,
+        AddressResponse,
+        UpdateAddressRequest
       }
     },
     info: {

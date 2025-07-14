@@ -1,16 +1,15 @@
-import { UserService } from '../modules/users/user.service';
+import { UserService } from '../../modules/users/user.service';
 import bcrypt from 'bcrypt';
-import { prisma } from '../database/client';// ajuste o caminho conforme seu projeto
-import { UserMapper } from '../modules/users/dto/mapper/UserMapper';
-import { CreateUserDto } from '../modules/users/dto/CreateUserDto';
-import { EntityNotFoundError } from '../exception/EntityNotFoundError';
-import { UserResponseDto } from '../modules/users/dto/UserResponseDto';
-import { UpdateUserDto } from '../modules/users/dto/UpdateUserDto';
+import { prisma } from '../../database/client';
+import { UserMapper } from '../../modules/users/dto/mapper/UserMapper';
+import { CreateUserDto } from '../../modules/users/dto/CreateUserDto';
+import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
+import { UserResponseDto } from '../../modules/users/dto/UserResponseDto';
+import { UpdateUserDto } from '../../modules/users/dto/UpdateUserDto';
 
 jest.mock('bcrypt');
-jest.mock('../database/client');
-jest.mock('../modules/users/dto/mapper/UserMapper');
-jest.mock('../database/client', () => ({
+jest.mock('../../modules/users/dto/mapper/UserMapper');
+jest.mock('../../database/client', () => ({
   prisma: {
     user: {
         create: jest.fn(),
@@ -30,7 +29,7 @@ describe('UserService.createUser', () => {
     password: 'senha123',
     first_name: 'Teste',
     last_name: 'Usuario',
-    phone_number: '+5511999999999'
+    phone_number: '11999999999'
   };
 
   const hashedPassword = 'hashed_password';
@@ -91,7 +90,7 @@ describe('UserService.getUserById', () => {
     password: 'hashedpassword',
     first_name: 'Teste',
     last_name: 'Usuário',
-    phone_number: '+5511999999999',
+    phone_number: '11999999999',
     profile_picture: null,
     active: true,
   };
@@ -101,7 +100,7 @@ describe('UserService.getUserById', () => {
     email: 'teste@email.com',
     first_name: 'Teste',
     last_name: 'Usuário',
-    phone_number: '+5511999999999',
+    phone_number: '11999999999',
     profile_picture: undefined,
     active: true,
   };
@@ -143,7 +142,7 @@ describe('UserService.updateUser', () => {
   const userUpdate: UpdateUserDto = {
     first_name: 'NovoNome',
     last_name: 'NovoSobrenome',
-    phone_number: '+5511988888888',
+    phone_number: '11988888888',
   };
 
   const updatedUserDb = {
@@ -151,7 +150,7 @@ describe('UserService.updateUser', () => {
     email: 'teste@email.com',
     first_name: 'NovoNome',
     last_name: 'NovoSobrenome',
-    phone_number: '+5511988888888',
+    phone_number: '11988888888',
     profile_picture: null,
     active: true,
   };
@@ -161,7 +160,7 @@ describe('UserService.updateUser', () => {
     email: 'teste@email.com',
     first_name: 'NovoNome',
     last_name: 'NovoSobrenome',
-    phone_number: '+5511988888888',
+    phone_number: '11988888888',
     profile_picture: undefined,
     active: true,
   };
@@ -199,7 +198,7 @@ describe('UserService.deleteUser', () => {
         email: 'user@email.com',
         first_name: 'João',
         last_name: 'Silva',
-        phone_number: '+5511999999999',
+        phone_number: '11999999999',
         profile_picture: undefined,
         active: true
         } as UserResponseDto);

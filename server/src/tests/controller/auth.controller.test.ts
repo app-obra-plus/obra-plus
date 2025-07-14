@@ -1,9 +1,9 @@
-import { login } from '../modules/auth/auth.controller';
-import { AuthService } from '../modules/auth/auth.service';
+import { login } from '../../modules/auth/auth.controller';
+import { AuthService } from '../../modules/auth/auth.service';
 import { Request, Response } from 'express';
-import { InvalidCredentialsError } from '../exception/InvalidCredentialsError';
+import { InvalidCredentialsError } from '../../exception/InvalidCredentialsError';
 
-jest.mock('../modules/auth/auth.service');
+jest.mock('../../modules/auth/auth.service');
 
 describe('login controller', () => {
   const mockReq = {
