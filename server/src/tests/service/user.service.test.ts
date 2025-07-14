@@ -1,16 +1,15 @@
-import { UserService } from '../modules/users/user.service';
+import { UserService } from '../../modules/users/user.service';
 import bcrypt from 'bcrypt';
-import { prisma } from '../database/client';
-import { UserMapper } from '../modules/users/dto/mapper/UserMapper';
-import { CreateUserDto } from '../modules/users/dto/CreateUserDto';
-import { EntityNotFoundError } from '../exception/EntityNotFoundError';
-import { UserResponseDto } from '../modules/users/dto/UserResponseDto';
-import { UpdateUserDto } from '../modules/users/dto/UpdateUserDto';
+import { prisma } from '../../database/client';
+import { UserMapper } from '../../modules/users/dto/mapper/UserMapper';
+import { CreateUserDto } from '../../modules/users/dto/CreateUserDto';
+import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
+import { UserResponseDto } from '../../modules/users/dto/UserResponseDto';
+import { UpdateUserDto } from '../../modules/users/dto/UpdateUserDto';
 
 jest.mock('bcrypt');
-jest.mock('../database/client');
-jest.mock('../modules/users/dto/mapper/UserMapper');
-jest.mock('../database/client', () => ({
+jest.mock('../../modules/users/dto/mapper/UserMapper');
+jest.mock('../../database/client', () => ({
   prisma: {
     user: {
         create: jest.fn(),

@@ -9,4 +9,10 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/generated/',
+    '/prisma/',
+    'index.js'
+  ]
 };

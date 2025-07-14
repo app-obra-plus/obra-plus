@@ -56,7 +56,7 @@ export class AddressService {
 
     async deleteAddress(addresId: string){
         await this.getAddressById(addresId);
-        await prisma.user.delete({
+        await prisma.address.delete({
             where: {
                 id: addresId,
             },
