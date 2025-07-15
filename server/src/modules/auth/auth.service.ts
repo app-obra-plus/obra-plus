@@ -1,7 +1,5 @@
 import {prisma} from '../../database/client'
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'
-
 import { InvalidCredentialsError } from "../../exception/InvalidCredentialsError";
 import { LoginResponseDto } from './dto/LoginResponseDto';
 import { LoginDto } from './dto/LoginDto';
@@ -11,7 +9,7 @@ import { generateLoginResponse } from './utils/authUtils';
 export class AuthService {
 
     userService = new UserService();
-    
+
     async login(userInfo:LoginDto):Promise<LoginResponseDto> {
         const user = await prisma.user.findUnique({ where: { email: userInfo.email, active:true} });
 
