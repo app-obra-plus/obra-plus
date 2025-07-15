@@ -6,6 +6,7 @@ import { CreateUserDto } from '../../modules/users/dto/CreateUserDto';
 import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
 import { UserResponseDto } from '../../modules/users/dto/UserResponseDto';
 import { UpdateUserDto } from '../../modules/users/dto/UpdateUserDto';
+import * as AuthUtils from '../../modules/auth/utils/authUtils';
 
 jest.mock('bcrypt');
 jest.mock('../../modules/users/dto/mapper/UserMapper');
@@ -19,6 +20,7 @@ jest.mock('../../database/client', () => ({
     }
   }
 }));
+jest.mock('../../modules/auth/utils/authUtils');
 
 
 describe('UserService.createUser', () => {
@@ -44,19 +46,23 @@ describe('UserService.createUser', () => {
     profile_picture: null,
     active: true
   };
-
-  const userResponseMock = {
-    id: 'user-id',
-    email: mockUserData.email,
-    first_name: mockUserData.first_name,
-    last_name: mockUserData.last_name,
-    phone_number: mockUserData.phone_number,
-    profile_picture: null,
-    active: true
-  };
+const jwtToken = 'jwt.token.aqui';
+const userResponseMock = {
+  id: 'user-id',
+  email: mockUserData.email,
+  first_name: mockUserData.first_name,
+  last_name: mockUserData.last_name,
+  phone_number: mockUserData.phone_number,
+  profile_picture: null,
+  active: true
+};
 
   beforeEach(() => {
     jest.clearAllMocks();
+    (AuthUtils.generateLoginResponse as jest.Mock).mockReturnValue({
+      token: 'jwt.token.aqui',
+      user: userResponseMock,
+    });
     (bcrypt.genSalt as jest.Mock).mockResolvedValue('salt');
     (bcrypt.hash as jest.Mock).mockResolvedValue(hashedPassword);
     (prisma.user.create as jest.Mock).mockResolvedValue(prismaUserMock);
@@ -64,20 +70,25 @@ describe('UserService.createUser', () => {
    
   });
 
-  it('deve criar usuário com senha hashed e retornar o DTO', async () => {
-    const result = await userService.createUser({ ...mockUserData });
 
-    expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
-    expect(bcrypt.hash).toHaveBeenCalledWith(mockUserData.password, 'salt');
-    expect(prisma.user.create).toHaveBeenCalledWith({
-      data: {
-        ...mockUserData,
-        password: hashedPassword,
-      }
-    });
-    expect(UserMapper.toResponseDto).toHaveBeenCalledWith(prismaUserMock);
-    expect(result).toEqual(userResponseMock);
+it('deve criar usuário com senha hashed e retornar token e DTO', async () => {
+  const result = await userService.createUser({ ...mockUserData });
+
+  expect(bcrypt.genSalt).toHaveBeenCalledWith(10);
+  expect(bcrypt.hash).toHaveBeenCalledWith(mockUserData.password, 'salt');
+  expect(prisma.user.create).toHaveBeenCalledWith({
+    data: {
+      ...mockUserData,
+      password: hashedPassword,
+    }
   });
+  expect(AuthUtils.generateLoginResponse).toHaveBeenCalledWith(prismaUserMock);
+
+  expect(result).toEqual({
+    token: jwtToken,
+    user: userResponseMock
+  });
+});
 });
 
 
