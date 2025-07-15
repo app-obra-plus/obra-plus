@@ -25,7 +25,7 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/LoginResponse'
  */
 
 router.post('/', async (req: Request, res: Response) => {
@@ -52,7 +52,7 @@ router.post('/', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/LoginResponse'
+ *               $ref: '#/components/schemas/UserResponse'
  *       400:
  *         description: Token mal formatado ou não fornecido
  *         content:
