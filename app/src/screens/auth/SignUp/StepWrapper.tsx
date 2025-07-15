@@ -7,7 +7,7 @@ import { steps } from "./SignUpNavigationWrapper";
 import Button from "../../../components/AuthFormComponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { useSignUpStore } from "./store/useSignUpStore";
-import { useAuth } from "../../../hooks/useAuth";
+import { useAuthStore } from "../../../stores/useAuthStore";
 
 interface StepWrapperProps {
   children?: React.ReactNode;
@@ -16,7 +16,7 @@ interface StepWrapperProps {
 }
 
 export default function StepWrapper({ children, title, isValid }: StepWrapperProps) {
-  const { register } = useAuth();
+  const { register } = useAuthStore();
   const navigation = useNavigation();
   const { currentStep, setCurrentStep, registerForm } = useSignUpStore();
   const [ratio, setRatio] = React.useState<number | undefined>(undefined);
@@ -24,7 +24,6 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
   const nextStep = steps[currentStep + 1]?.name || null;
 
   useEffect(() => {
-    console.log(currentStep)
     const numberOfSteps = steps.length
     setRatio(numberOfSteps > 0 ? (currentStep + 1) / numberOfSteps : undefined);
   }, [currentStep]);
@@ -35,7 +34,6 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
     } else {
       register(registerForm)
         .then(() => {
-          console.log("Registration successful, navigating to signin");
           navigation.navigate("auth", {
             screen: "signin"
           });

@@ -2,14 +2,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import App from "../screens/App/App"
 import SignIn from "../screens/auth/SignIn/SignIn"
 import AuthRouter from "./Auth.routes"
-import { useAuth } from "../hooks/useAuth"
 import { useEffect } from "react"
 import { useNavigation } from "@react-navigation/native"
+import { useAuthStore } from "../stores/useAuthStore"
 
 const Stack = createNativeStackNavigator()
 
 export default function MainRouter() {
-  const { user } = useAuth()
+  const { user } = useAuthStore()
   const { navigate } = useNavigation()
   
   useEffect(() => {

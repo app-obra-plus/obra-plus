@@ -6,7 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../../styles/style";
 import Button from "../../../components/AuthFormComponents/Button";
 import React, { useEffect } from "react";
-import { useAuth } from "../../../hooks/useAuth";
+import { useAuthStore } from "../../../stores/useAuthStore";
 
 interface SignInProps {
   children?: React.ReactNode;
@@ -15,8 +15,8 @@ interface SignInProps {
 }
 
 export default function SignIn({children}: SignInProps) {
-  const {login} = useAuth()
   const {navigate} = useNavigation()
+  const { login } = useAuthStore();
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [isValid, setIsValid] = React.useState<boolean>(!!email || !!password);

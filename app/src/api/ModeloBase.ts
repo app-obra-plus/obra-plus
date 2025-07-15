@@ -26,7 +26,6 @@ export class ModeloBase {
 
   async defaultPostRequest<T>(path: string, data?: Object): Promise<AxiosResponse<T>> {
     const headers = await this.getAuthHeaders();
-    console.log(this.apiURL + this.modulePath + path)
     const response = await axios.post<T>(
       this.apiURL + this.modulePath + path,
       data,

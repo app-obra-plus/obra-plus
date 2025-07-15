@@ -6,15 +6,16 @@ interface ButtonNavMenuProps {
   title: string;
   icon?: React.ComponentProps<typeof Feather>["name"];
   type?: "primary" | "danger";
+  onPress?: () => void;
 }
 
-export default function ButtonNavMenu({ title, icon, type = "primary" }: ButtonNavMenuProps) {
+export default function ButtonNavMenu({ title, icon, type = "primary", onPress }: ButtonNavMenuProps) {
   const backgroundColor = type === "primary" ? "bg-white" : "bg-red-300";
 
   return (
     <TouchableOpacity
       className={`flex-row items-center p-4 ${backgroundColor} rounded-lg shadow justify-between mb-4`}
-      onPress={() => console.log(`${title} button pressed`)}
+      onPress={onPress}
     >
       <Text className="text-xl">{title}</Text>
       {icon && <Feather name={icon} size={24} className="mr-2" />}

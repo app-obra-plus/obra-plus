@@ -20,14 +20,27 @@ const stylesEmpty = StyleSheet.create({
   }
 });
 
-const tabsList = [
+const ChatScreen = () => (
+  <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
+    <Text style={stylesEmpty.text}>Chat Screen</Text>
+  </SafeAreaView>
+);
+
+const SearchScreen = () => (
+  <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
+    <Text style={stylesEmpty.text}>Search Screen</Text>
+  </SafeAreaView>
+);
+
+const tabsList: {
+  name: string;
+  component: React.ComponentType<any>;
+  icon: React.ComponentProps<typeof Feather>['name'];
+  label: string;
+}[] = [
   {
     name: "chat",
-    component: () => (
-      <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
-        <Text style={stylesEmpty.text}>Chat Screen</Text>
-      </SafeAreaView>
-    ),
+    component: ChatScreen,
     icon: "message-circle",
     label: "Chat"
   },
@@ -39,11 +52,7 @@ const tabsList = [
   },
   {
     name: "search",
-    component: () => (
-      <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
-        <Text style={stylesEmpty.text} className="bg-slate-400">Search Screen</Text>
-      </SafeAreaView>
-    ),
+    component: SearchScreen,
     icon: "search",
     label: "Search"
   },
@@ -56,8 +65,6 @@ const tabsList = [
 ]
 
 export default function SignIn() {
-  const { navigate } = useNavigation()
-
   return (
     <Tabs.Navigator>
       {

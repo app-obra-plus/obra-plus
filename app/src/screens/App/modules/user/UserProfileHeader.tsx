@@ -1,11 +1,10 @@
 import { Button, Image, Text, View } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
-import { useAuth } from "../../../../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useAuthStore } from "../../../../stores/useAuthStore";
 
 export function UserProfileHeader() {
-  const { user, signOut } = useAuth();
-  
+  const { user, signOut } = useAuthStore();
+
   return (
     <View className="flex items-center py-16">
       <View className="relative">
@@ -22,7 +21,7 @@ export function UserProfileHeader() {
       </View>
       <Text
         className="text-2xl font-bold mt-4"
-      >Fulano de Tal</Text>
+      >{user?.first_name}</Text>
     </View>
   );
 }
