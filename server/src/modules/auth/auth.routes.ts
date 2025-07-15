@@ -36,12 +36,7 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 token:
- *                   type: string
- *                   description: Token JWT para autenticação
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *               $ref: '#/components/schemas/LoginResponse'
  *       400:
  *         description: Dados inválidos no corpo da requisição
  *         content:

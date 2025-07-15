@@ -52,7 +52,7 @@ router.post('/', async (req: Request, res: Response) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/LoginResponse'
  *       400:
  *         description: Token mal formatado ou não fornecido
  *         content:
