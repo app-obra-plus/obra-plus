@@ -1,4 +1,5 @@
 import { SignUpForm } from "../schemas/signUpSchema";
+import { IAuthResponse } from "../types/IAuthResponse";
 import { ModeloBase } from "./ModeloBase";
 
 class UserMdl extends ModeloBase {
@@ -7,7 +8,7 @@ class UserMdl extends ModeloBase {
   }
 
   async create(data: SignUpForm) {
-    return this.defaultPostRequest("", data);
+    return this.defaultPostRequest<IAuthResponse>("", data);
   }
 }
 

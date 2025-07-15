@@ -4,18 +4,8 @@ import { useAuth } from "../../../../hooks/useAuth";
 import { useEffect, useState } from "react";
 
 export function UserProfileHeader() {
-  const { getUser, signOut } = useAuth();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await getUser();
-      console.log("User data fetched:", userData);
-      setUser(userData);
-    };
-    fetchUser();
-  }, []);
-
+  const { user, signOut } = useAuth();
+  
   return (
     <View className="flex items-center py-16">
       <View className="relative">

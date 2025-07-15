@@ -9,18 +9,16 @@ import { useNavigation } from "@react-navigation/native"
 const Stack = createNativeStackNavigator()
 
 export default function MainRouter() {
-  const { getUser } = useAuth()
+  const { user } = useAuth()
   const { navigate } = useNavigation()
   
   useEffect(() => {
-    getUser().then((user) => {
-      if (!user) {
-        navigate("auth")  
-      } else {
-        navigate("app")
-      }
-    })
-  }, [getUser])
+    if (!user) {
+      navigate("auth")  
+    } else {
+      navigate("app")
+    }
+  }, [user])
 
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
