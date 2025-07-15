@@ -41,7 +41,7 @@ const tabsList = [
     name: "search",
     component: () => (
       <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
-        <Text style={stylesEmpty.text}>Search Screen</Text>
+        <Text style={stylesEmpty.text} className="bg-slate-400">Search Screen</Text>
       </SafeAreaView>
     ),
     icon: "search",
