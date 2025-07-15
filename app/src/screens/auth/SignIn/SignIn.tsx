@@ -83,7 +83,7 @@ export default function SignIn({children}: SignInProps) {
                   })
                 }}
               >
-                Entrar.
+                Criar conta.
               </Text>
             </Text>
         </View>

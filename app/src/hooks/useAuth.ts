@@ -2,11 +2,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { userMdl } from "../api/usersMdl";
 import { SignUpForm } from "../schemas/signUpSchema";
 import { authMdl } from "../api/authMdl";
+import { useNavigation } from "@react-navigation/native";
 
 export const useAuth = () => {
+  const { navigate } = useNavigation();
+
   const getUser = async () => {
     const user = await AsyncStorage.getItem('user');
     return user ? JSON.parse(user) : null;
+  };
+
+  const signOut = async () => {
+    await AsyncStorage.removeItem('user');
+    await AsyncStorage.removeItem('token');
+
+    navigate('auth', {
+      screen: 'signIn'
+    })
   };
 
   const register = async (params: SignUpForm) => {
@@ -25,5 +37,5 @@ export const useAuth = () => {
     return response;
   };
 
-  return { register, login, getUser };
+  return { register, login, getUser, signOut };
 };

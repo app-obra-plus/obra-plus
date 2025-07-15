@@ -3,13 +3,31 @@ import { Button, StatusBar, StyleSheet, Text, View } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from "@expo/vector-icons/Feather";
 import Map from "./modules/map/Map";
+import { SafeAreaView } from "react-native-safe-area-context";
+import UserHome from "./modules/user/UserHome";
 
 const Tabs = createBottomTabNavigator();
+
+const stylesEmpty = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    textAlign: 'center',
+    fontSize: 20,
+  }
+});
 
 const tabsList = [
   {
     name: "chat",
-    component: () => <Text>Chat Screen</Text>,
+    component: () => (
+      <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
+        <Text style={stylesEmpty.text}>Chat Screen</Text>
+      </SafeAreaView>
+    ),
     icon: "message-circle",
     label: "Chat"
   },
@@ -21,13 +39,17 @@ const tabsList = [
   },
   {
     name: "search",
-    component: () => <Text>Search Screen</Text>,
+    component: () => (
+      <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
+        <Text style={stylesEmpty.text}>Search Screen</Text>
+      </SafeAreaView>
+    ),
     icon: "search",
     label: "Search"
   },
   {
     name: "settings",
-    component: () => <Text>Settings Screen</Text>,
+    component: UserHome,
     icon: "settings",
     label: "Usuário"
   }
