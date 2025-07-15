@@ -1,5 +1,6 @@
 import { AuthService } from '../../modules/auth/auth.service';
 import { InvalidCredentialsError } from '../../exception/InvalidCredentialsError';
+import { UserMapper } from '../../modules/users/dto/mapper/UserMapper';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../../database/client';
@@ -14,6 +15,12 @@ jest.mock('../../database/client', () => ({
   },
 }));
 
+jest.mock('../../modules/users/dto/mapper/UserMapper', () => ({
+  UserMapper: {
+    toResponseDto: jest.fn()
+  }
+}));
+
 describe('AuthService', () => {
   const authService = new AuthService();
 
@@ -24,6 +31,9 @@ describe('AuthService', () => {
     first_name: 'João',
     last_name: 'Silva',
     profile_picture: null,
+    phone_number: '11999999999', 
+    created_at: new Date('2023-01-01T00:00:00Z'),
+    updated_at: new Date('2023-01-01T00:00:00Z'),
     active: true,
   };
 
@@ -43,6 +53,7 @@ describe('AuthService', () => {
     (prisma.user.findUnique as jest.Mock).mockResolvedValue(validUser);
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
     (jwt.sign as jest.Mock).mockReturnValue(jwtToken);
+    (UserMapper.toResponseDto as jest.Mock).mockReturnValue({ id: validUser.id, email: validUser.email });
 
     const result = await authService.login(loginDto);
 
@@ -55,7 +66,10 @@ describe('AuthService', () => {
       'minha_chave_teste',
       { expiresIn: '10m' }
     );
-    expect(result).toEqual({ token: jwtToken });
+    expect(result).toEqual({
+    token: jwtToken,
+    user: UserMapper.toResponseDto(validUser)
+  });
   });
 
   it('deve lançar InvalidCredentialsError se o usuário não for encontrado', async () => {

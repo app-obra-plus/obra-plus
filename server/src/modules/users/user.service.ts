@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { EntityNotFoundError } from "../../exception/EntityNotFoundError";
 import { UpdateUserDto } from "./dto/UpdateUserDto";
 import { UserMapper } from "./dto/mapper/UserMapper";
+import { generateLoginResponse } from "../auth/utils/authUtils";
 
 export class UserService {
 
@@ -14,8 +15,8 @@ export class UserService {
         const hashPassword = await bcrypt.hash(data.password, salt);      
         data.password = hashPassword;
         const user = await prisma.user.create({data,});
-        const userResponse: UserResponseDto = UserMapper.toResponseDto(user);
-        return userResponse;
+        const response = generateLoginResponse(user)
+        return response;
     }
 
     async getUserById(id: string){

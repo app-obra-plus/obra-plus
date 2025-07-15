@@ -1,16 +1,16 @@
 import {prisma} from '../../database/client'
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken'
-
 import { InvalidCredentialsError } from "../../exception/InvalidCredentialsError";
 import { LoginResponseDto } from './dto/LoginResponseDto';
 import { LoginDto } from './dto/LoginDto';
-
-const EXPIRE_TOKEN = '10m'; 
+import { UserService } from '../users/user.service';
+import { generateLoginResponse } from './utils/authUtils';
 
 export class AuthService {
 
-    async login(userInfo:LoginDto) {
+    userService = new UserService();
+
+    async login(userInfo:LoginDto):Promise<LoginResponseDto> {
         const user = await prisma.user.findUnique({ where: { email: userInfo.email, active:true} });
 
         if (!user) {
@@ -23,15 +23,6 @@ export class AuthService {
             throw new InvalidCredentialsError();
         }
 
-        const JWT_SECRET = process.env.JWT_SECRET;
-        if (!JWT_SECRET) {
-            throw new Error('JWT_SECRET não foi definida no .env');
-        }
-
-        const token:LoginResponseDto = {
-            token:jwt.sign({userId: user.id, email:user.email}, JWT_SECRET, {expiresIn:EXPIRE_TOKEN})
-        } 
-
-        return token;
+        return generateLoginResponse(user);
     }
 }
