@@ -25,7 +25,7 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/UserResponse'
+ *               $ref: '#/components/schemas/LoginResponse'
  */
 
 router.post('/', async (req: Request, res: Response) => {

@@ -8,6 +8,7 @@ import { CreateAddressRequest } from './schemas/createAddressRequest.schema';
 import { ErrorResponse} from './schemas/errorResponse.schema';
 import { AddressResponse } from './schemas/addressResponse.schema';
 import { UpdateAddressRequest } from './schemas/updatedAddress.schema';
+import { LoginResponse } from './schemas/loginReasponse.schema';
 
 // Documentação disponível em http://localhost:3000/api-docs
 const options: swaggerJSDoc.Options = {
@@ -28,7 +29,8 @@ const options: swaggerJSDoc.Options = {
         ErrorResponse,
         CreateAddressRequest,
         AddressResponse,
-        UpdateAddressRequest
+        UpdateAddressRequest,
+        LoginResponse
       }
     },
     info: {
