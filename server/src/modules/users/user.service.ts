@@ -9,8 +9,7 @@ import { generateLoginResponse } from "../auth/utils/authUtils";
 
 export class UserService {
 
-    async createUser(data: CreateUserDto){
-
+    async createUser(data: CreateUserDto){ 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(data.password, salt);      
         data.password = hashPassword;
