@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -26,6 +21,7 @@ model User {
   updated_at        DateTime @updatedAt
 
   addresses       Address[]
+  advertisements    Advertisement[]
 
   @@map("tb_user")
 }
@@ -47,4 +43,67 @@ model Address {
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("tb_addresses")
+}
+
+model AdvertisementAddress {
+  id           String   @id @default(uuid()) @db.Uuid
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  postal_code  String
+  country      String
+  latitude     Float
+  longitude    Float
+
+  advertisement Advertisement[]
+
+  
+  @@map("tb_advertisement_addresses")
+}
+
+model Advertisement {
+  id             String   @id @default(uuid()) @db.Uuid
+  title          String
+  description    String
+  is_active      Boolean  @default(true)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  user_id        String   @db.Uuid
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  category_id    String      @db.Uuid
+  category       Category    @relation(fields: [category_id], references: [id])
+
+  advertisementAddressId String      @db.Uuid
+  advertisementAddress  AdvertisementAddress @relation(fields: [advertisementAddressId], references: [id])
+  
+  images         Image[]
+
+  @@map("tb_advertisements")
+}
+
+model Image {
+  id                 String         @id @default(uuid()) @db.Uuid
+  url                String
+  created_at         DateTime       @default(now())
+
+  advertisement_id   String         @db.Uuid
+  advertisement      Advertisement  @relation(fields: [advertisement_id], references: [id], onDelete: Cascade)
+
+  @@map("tb_images")
+}
+
+model Category{
+  id                  String   @id @default(uuid()) @db.Uuid
+  name                String
+  description         String
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  advertisements Advertisement[]
+   @@map("tb_category")
 }
