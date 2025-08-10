@@ -39,7 +39,7 @@ const router = Router();
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
  */
-router.get('/',authMiddleware,async (req: Request, res: Response) => {
+router.post('/',authMiddleware,async (req: Request, res: Response) => {
     await createAddress(req, res);
 });
 
