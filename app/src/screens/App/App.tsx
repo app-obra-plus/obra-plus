@@ -5,6 +5,7 @@ import Feather from "@expo/vector-icons/Feather";
 import Map from "./modules/map/Map";
 import { SafeAreaView } from "react-native-safe-area-context";
 import UserHome from "./modules/user/UserHome";
+import UserConfigRouter from "./modules/user/User.routes";
 
 const Tabs = createBottomTabNavigator();
 
@@ -58,7 +59,7 @@ const tabsList: {
   },
   {
     name: "settings",
-    component: UserHome,
+    component: UserConfigRouter,
     icon: "settings",
     label: "Usuário"
   }
