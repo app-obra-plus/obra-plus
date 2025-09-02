@@ -12,7 +12,7 @@ export async function createCategory(req: Request, res:Response){
     return res.status(200).json(category);
 }
 
-export async function getAllCategories(res:Response){
+export async function getAllCategories(req: Request, res:Response){
 
     const categories = await categoryService.getAllCategories();
     return res.status(200).json(categories);
@@ -27,13 +27,13 @@ export async function updateCategory(req: Request, res:Response){
 
 export async function deleteCategory(req: Request, res:Response){
     const {categoryId} = req.params;
-    categoryService.deleteCategory(categoryId);
+    await categoryService.deleteCategory(categoryId);
     return res.status(204).send();
 }
 
 export async function getCategoryById(req: Request, res:Response){
     const {categoryId} = req.params;
-    const category = categoryService.getCategoryById(categoryId);
+    const category = await categoryService.getCategoryById(categoryId);
     return res.status(200).json(category);
 }
 

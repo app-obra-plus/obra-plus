@@ -8,12 +8,12 @@ router.post('/',authMiddleware,async (req: Request, res: Response) => {
     await createCategory(req, res);
 });
 
-router.get('/:categoryId ',authMiddleware,async (req: Request, res: Response) => {
+router.get('/:categoryId',authMiddleware,async (req: Request, res: Response) => {
     await getCategoryById(req, res);
 });
 
-router.get('/',authMiddleware,async (res: Response) => {
-    await getAllCategories(res);
+router.get('/',authMiddleware,async (req: Request, res: Response) => {
+    await getAllCategories(req, res);
 });
 
 router.put('/:categoryId',authMiddleware,async (req: Request, res: Response) => {
@@ -23,3 +23,5 @@ router.put('/:categoryId',authMiddleware,async (req: Request, res: Response) => 
 router.delete('/:categoryId', authMiddleware, async (req: Request, res: Response) => {
   await deleteCategory(req, res);
 });
+
+export default router; 
