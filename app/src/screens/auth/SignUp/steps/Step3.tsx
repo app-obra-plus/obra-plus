@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../../../../components/AuthFormComponents/Input";
 import { useSignUpStore } from "../store/useSignUpStore";
 import { firstNameSchema, lastNameSchema } from "../../../../schemas/signUpSchema";
+import InputText from "../../../../components/Input";
 
 export default function Step3() {
   const { registerForm, setRegisterForm } = useSignUpStore();
@@ -25,19 +26,21 @@ export default function Step3() {
 
   return (
     <>
-      <Input
-        placeholder="Nome"
-        icon="user"
+      <InputText
+        placeholder="José"
+        label="Nome"
         value={registerForm.first_name}
-        onChangeText={handleChangeFirstName}
-        error={firstNameError}
+        onChange={handleChangeFirstName}
+        autoCapitalize="words"
+        // error={firstNameError}
       />
-      <Input
-        placeholder="Sobrenome"
-        icon="user"
+      <InputText
+        placeholder="da Silva"
+        label="Sobrenome"
         value={registerForm.last_name}
-        onChangeText={handleChangeLastName}
-        error={lastNameError}
+        onChange={handleChangeLastName}
+        autoCapitalize="words"
+        // error={lastNameError}
       />
     </>
   );

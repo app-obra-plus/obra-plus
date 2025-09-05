@@ -23,10 +23,10 @@ export default function WizzardProgress({ ratio }: WizzardProgressProps) {
   });
 
   return (
-    <View style={styles.progressContainer}>
+    <View className="w-full h-1 bg-border rounded" style={styles.progressContainer}>
       <Animated.View
+        className={"bg-support h-1 rounded"}
         style={[
-          styles.stepIndicator,
           { width: widthInterpolated }
         ]}
       />

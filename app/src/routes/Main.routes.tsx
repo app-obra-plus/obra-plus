@@ -14,9 +14,9 @@ export default function MainRouter() {
   
   useEffect(() => {
     if (!user) {
-      navigate("auth")  
+      navigate("auth" as never)  
     } else {
-      navigate("app")
+      navigate("app" as never)
     }
   }, [user])
 

@@ -9,6 +9,7 @@ interface InputProps {
   onChange?: (text: string) => void;
   secure?: boolean;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
 }
 
 export default function InputText(props: InputProps) {
@@ -29,6 +30,7 @@ export default function InputText(props: InputProps) {
           onChangeText={props.onChange}
           secureTextEntry={hidePassword}
           autoCapitalize={props.autoCapitalize || "none"}
+          keyboardType={props.keyboardType || "default"}
         />
         {props.secure && (
           <TouchableOpacity

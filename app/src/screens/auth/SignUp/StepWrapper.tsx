@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import WizzardProgress from "../../../components/AuthFormComponents/WizzardProgress";
 import colors from "../../../styles/style";
 import { steps } from "./SignUpNavigationWrapper";
-import Button from "../../../components/AuthFormComponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { useSignUpStore } from "./store/useSignUpStore";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import Button from "../../../components/Button";
+const Logo = require("../../../../assets/logo/branca.png")
+
 
 interface StepWrapperProps {
   children?: React.ReactNode;
@@ -51,90 +53,57 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
   }
 
   return (
-    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
+    <SafeAreaView edges={[]} style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.wrapper}
+        // style={styles.wrapper}
+        className="flex-1 justify-between h-screen bg-background"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
-        <View style={styles.inputWrapper}>
-          <View style={styles.header}>
-            {ratio !== undefined && <WizzardProgress ratio={ratio} />}
-            <Text style={styles.headerTitle}>{title}</Text>
+        <View className="flex-1">
+          
+          <View className="bg-support items-center py-12 pt-16 rounded-b">
+            <Image source={Logo} className="scale-[0.6]"/>
           </View>
 
-          <View style={styles.inputsContainer}>
-            {children}
-            <Button
-              title={ratio === 1 ? "Finalizar" : "Próximo"}
-              onPress={handleNextStep}
-              rightIcon="chevron-right"
-              disabled={!isValid}
-            />
-            {
-              currentStep !== 0 && (
-                <Button
-                  title="Voltar"
-                  onPress={handleGoBack}
-                  variant="secondary"
-                  leftIcon="chevron-left"
-                />
-              )
-            }
+          <View className="gap-4 p-4 pb-8">
+            <Text className="text-center text-2xl mb-4 text-support" >Crie sua conta</Text>
+            {/* <Text className="text-2xl text-support text-center ">{title}</Text> */}
+            {ratio !== undefined && <WizzardProgress ratio={ratio} />}
           </View>
-            <Text style={styles.signInText}>
-            Já tenho uma conta.{" "}
-              <Text
-                style={styles.signInLink}
-                onPress={() => {
-                  navigation.navigate("auth", {
-                    screen: "signin"
-                  })
-                }}
-              >
-                Entrar.
+
+          <View className="gap-4 flex-1 px-4 ">
+            <View className="flex-1">
+              {children}
+            </View>
+            <View className="py-8 gap-6">
+              <Button
+                text={ratio === 1 ? "Finalizar" : "Próximo"}
+                onPress={handleNextStep}
+                // rightIcon="chevron-right"
+                disabled={!isValid}
+              />
+              <Button
+                text="Voltar"
+                onPress={handleGoBack}
+                type="outline"
+                disabled={currentStep === 0}
+                // leftIcon="chevron-left"
+              />
+              <Text className="text-center">
+              Já tenho uma conta.{" "}
+                <Text
+                  className="text-primary"
+                  onPress={() => navigation.navigate("signin" as never)}
+                >
+                  Entrar.
+                </Text>
               </Text>
-            </Text>
+
+            </View>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
-
-
-const styles = StyleSheet.create({
-  wrapper: {
-    height: "100%",
-    padding: colors.CONTAINER_PADDING,
-    // justifyContent: "center",
-    marginTop: 64,
-    gap: 20,
-  },
-  inputWrapper: {
-    gap: 24,
-  },
-  header: {
-    gap: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  inputsContainer: {
-    gap: 16,
-  },
-  error: {
-    color: colors.ERROR,
-    fontSize: 14,
-    marginTop: 8,
-  },
-  signInLink: {
-    color: colors.PRIMARY,
-    textDecorationLine: "underline",
-  },
-  signInText: {
-    fontSize: 18,
-    textAlign: "center",
-  }
-});
-

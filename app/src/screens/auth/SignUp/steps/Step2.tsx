@@ -4,6 +4,7 @@ import { useSignUpStore } from "../store/useSignUpStore";
 import { StepProps } from "./StepProps";
 import { passwordSchema } from "../../../../schemas/signUpSchema";
 import { confirmPasswordSchema } from "../../../../schemas/signUpSchema";
+import InputText from "../../../../components/Input";
 
 export default function Step2({setIsValid}: StepProps) {
   const { registerForm, setRegisterForm } = useSignUpStore();
@@ -39,21 +40,21 @@ export default function Step2({setIsValid}: StepProps) {
 
   return (
     <>
-      <Input
-        placeholder="Senha"
-        icon="lock"
+      <InputText
+        placeholder="**********"
+        label="Senha"
         value={registerForm.password}
-        onChangeText={handleChangePassword}
-        error={passwordError}
-        secureTextEntry
+        onChange={handleChangePassword}
+        // error={passwordError}
+        secure
       />
-      <Input
-        placeholder="Confirme sua senha"
-        icon="lock"
+      <InputText
+        placeholder="**********"
+        label="Confirme sua senha"
         value={registerForm.confirm_password}
-        onChangeText={handleChangeConfirmPassword}
-        error={confirmPasswordError}
-        secureTextEntry
+        onChange={handleChangeConfirmPassword}
+        // error={confirmPasswordError}
+        secure
       />
     </>
   );
