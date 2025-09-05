@@ -10,7 +10,7 @@ export default function AuthRouter() {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen
-        name="welcome-screen"
+        name="welcome"
         component={Welcome}
       />
       <Stack.Screen

@@ -11,7 +11,7 @@ const colors = {
   ERROR: "#C0392B",       // Vermelho ferrugem - erro
 
   // Fundo e superfícies
-  BACKGROUND: "#F2F2F2",  // Cinza claro - fundo geral
+  BACKGROUND: "#ffffff",  // Branco - fundo geral
   CARD: "#FFFFFF",        // Branco - cartões e blocos
   BORDER: "#D5D8DC",      // Cinza claro - contornos suaves
 

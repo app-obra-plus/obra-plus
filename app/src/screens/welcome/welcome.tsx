@@ -1,7 +1,7 @@
 import React from "react";
-import { Image, ImageBackground, Text, View } from "react-native";
+import { Image, ImageBackground, StatusBar, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+
 import { LinearGradient } from 'expo-linear-gradient';
 
 
@@ -9,11 +9,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 const welcome_background = require("../../../assets/backgrounds/welcome-background.png")
 const logo = require("../../../assets/logo/colorida.png")
 import Button from "../../components/Button";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Welcome() {
+  
+  const navigation = useNavigation()
+
+
   return (
     <SafeAreaView edges={['left', 'right', "bottom"]}>
-      <StatusBar backgroundColor="#ffffff"  style="dark" />
+      <StatusBar backgroundColor="#ffffff" barStyle="dark-content" />
       <ImageBackground
         source={welcome_background}
         className="w-screen h-screen justify-between"
@@ -26,7 +31,16 @@ export default function Welcome() {
           className="items-center py-16 gap-6"
         >
           <Image source={logo} className="scale-75" />
-          <Text className="text-3xl text-center text-white shadow-xl shadow-black elevation-5">Menos desperdício, mais economia na sua construção.</Text>
+          <Text 
+            className="text-3xl text-center text-white shadow-xl shadow-black elevation-5"
+            style={{
+              textShadowColor: 'rgba(0, 0, 0, 0.4)',
+              textShadowOffset: { width: -1, height: 4 },
+              textShadowRadius: 10
+            }}
+          >
+              Menos desperdício, mais economia na sua construção.
+          </Text>
         </LinearGradient>
         <LinearGradient 
           colors={['transparent', '#323642', '#323642']}
@@ -37,15 +51,19 @@ export default function Welcome() {
         >
           <Button
             text="Entrar"
-            variant="primary"
+            type="primary"
+            onPress={() => navigation.navigate("signin" as never)}
           />
           <Button
             text="Criar conta"
-            variant="outline"
+            type="outline"
+            color="light"
+            onPress={() => navigation.navigate("signup" as never)}
           />
           <Button
             text="Entrar como visitante"
-            variant="link"
+            type="link"
+            color="light"
           />
         </LinearGradient>
       </ImageBackground>
