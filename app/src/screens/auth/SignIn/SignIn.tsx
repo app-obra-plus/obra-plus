@@ -7,10 +7,12 @@ import React, { useEffect } from "react";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import InputText from "../../../components/Input";
 import Button from "../../../components/Button";
+import { useToast } from "../../../components/Toast/useToast";
 
 const Logo = require("../../../../assets/logo/branca.png")
 
 export default function SignIn() {
+  const { showToast } = useToast()
   const navigation = useNavigation()
   const { login } = useAuthStore();
   const [email, setEmail] = React.useState<string>("");
@@ -24,7 +26,8 @@ export default function SignIn() {
         navigation.navigate("app" as never);
       })
       .catch((error) => {
-        console.error("Login failed:", error);
+        showToast("Erro ao fazer login. Verifique os dados e tente novamente.", "error");
+        // console.error("Login failed:", error);
       });
   }
 

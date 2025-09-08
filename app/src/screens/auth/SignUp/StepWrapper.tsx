@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useSignUpStore } from "./store/useSignUpStore";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import Button from "../../../components/Button";
+import { useToast } from "../../../components/Toast/useToast";
 const Logo = require("../../../../assets/logo/branca.png")
 
 
@@ -18,6 +19,7 @@ interface StepWrapperProps {
 }
 
 export default function StepWrapper({ children, title, isValid }: StepWrapperProps) {
+  const { showToast } = useToast();
   const { register } = useAuthStore();
   const navigation = useNavigation();
   const { currentStep, setCurrentStep, registerForm } = useSignUpStore();
@@ -36,11 +38,10 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
     } else {
       register(registerForm)
         .then(() => {
-          navigation.navigate("auth", {
-            screen: "signin"
-          });
+          navigation.navigate("signin" as never);
         })
         .catch((error) => {
+          showToast("Erro ao registrar usuário. Verifique os dados e tente novamente.", "error");
           console.error("Error during registration:", );
           console.error(error);
         });
@@ -49,6 +50,10 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
   };
   
   const handleGoBack = () => {
+    if(currentStep == 0) {
+      navigation.goBack();
+      return;
+    }
     setCurrentStep(currentStep - 1);
   }
 
@@ -56,12 +61,10 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
     <SafeAreaView edges={[]} style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        // style={styles.wrapper}
         className="flex-1 justify-between h-screen bg-background"
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
       >
         <View className="flex-1">
-          
           <View className="bg-support items-center py-12 pt-16 rounded-b">
             <Image source={Logo} className="scale-[0.6]"/>
           </View>
@@ -87,8 +90,6 @@ export default function StepWrapper({ children, title, isValid }: StepWrapperPro
                 text="Voltar"
                 onPress={handleGoBack}
                 type="outline"
-                disabled={currentStep === 0}
-                // leftIcon="chevron-left"
               />
               <Text className="text-center">
               Já tenho uma conta.{" "}

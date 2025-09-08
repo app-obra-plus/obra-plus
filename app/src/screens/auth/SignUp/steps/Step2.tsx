@@ -46,7 +46,7 @@ export default function Step2({setIsValid}: StepProps) {
         value={registerForm.password}
         onChange={handleChangePassword}
         // error={passwordError}
-        secure
+        secure={true}
       />
       <InputText
         placeholder="**********"

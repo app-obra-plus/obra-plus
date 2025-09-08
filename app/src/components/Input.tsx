@@ -10,6 +10,7 @@ interface InputProps {
   secure?: boolean;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  error?: string;
 }
 
 export default function InputText(props: InputProps) {
