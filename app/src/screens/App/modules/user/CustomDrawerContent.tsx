@@ -1,6 +1,5 @@
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import { Image, View, Text } from 'react-native';
-import { colors } from '../../../../theme/colors';
 import Button from '../../../../components/Button';
 import { useAuthStore } from '../../../../stores/useAuthStore';
 

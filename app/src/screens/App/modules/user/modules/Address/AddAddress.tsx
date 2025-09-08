@@ -46,12 +46,12 @@ export default function AddAddress() {
   }
 
   const handleMapMove = (region: Region) => {
-    extAddressMdl.reverseGeocode(
-      region.latitude,
-      region.longitude
-    ).then((data) => {
-      console.log(data)
-    }).catch(e => console.error(e))
+    // extAddressMdl.reverseGeocode(
+    //   region.latitude,
+    //   region.longitude
+    // ).then((data) => {
+    //   console.log(data)
+    // }).catch(e => console.error(e))
   }
 
   return (
@@ -68,8 +68,9 @@ export default function AddAddress() {
         }}
       />
       <Feather name="map-pin" size={24} color="black" className="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[50%]" />
-      <View className="absolute bottom-0 w-full p-4">
-        <ButtonNavMenu title="Selecionar Localização" type="primary" icon="arrow-right"/>
+      <View className="absolute bottom-0 w-full p-4 gap-4 pb-10">
+        <Button text="Avançar"/>
+        <Button text="Voltar" type="outline" onPress={() => {}}/>
       </View>
     </View>
   );
