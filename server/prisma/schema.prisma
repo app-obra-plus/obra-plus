@@ -16,7 +16,7 @@ model User {
   last_name         String
   phone_number       String
   profile_picture   String?
-  active            Boolean  @default(true)
+  isDeleted      Boolean @default(false) @map("is_deleted")
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
@@ -39,7 +39,7 @@ model Address {
   latitude     Float
   longitude    Float
   user_id      String  @db.Uuid  
-
+  isDeleted      Boolean @default(false) @map("is_deleted")
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("tb_addresses")
@@ -57,28 +57,44 @@ model AdvertisementAddress {
   country      String
   latitude     Float
   longitude    Float
-
+  isDeleted    Boolean @default(false) @map("is_deleted")
   advertisement Advertisement[]
 
   
   @@map("tb_advertisement_addresses")
 }
 
+enum AdvertisementStatus {
+  ACTIVE
+  SOLD
+  PAUSED
+}
+
+enum UnitOfMeasure {
+  UNIT
+  KG 
+  LITER
+  METER
+}
+
 model Advertisement {
   id             String   @id @default(uuid()) @db.Uuid
   title          String
   description    String
-  is_active      Boolean  @default(true)
+  price          Float
+  status         AdvertisementStatus @default(ACTIVE)
+  isDonation     Boolean  @map("is_donation")
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
-
+  amount         Float
+  unitOfMeasure  UnitOfMeasure @map("unit_of_measure")
+  isDeleted      Boolean @default(false) @map("is_deleted")
   user_id        String   @db.Uuid
   user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
   category_id    String      @db.Uuid
   category       Category    @relation(fields: [category_id], references: [id])
 
-  advertisementAddressId String      @db.Uuid
+  advertisementAddressId String      @db.Uuid  @map("advertisement_address_id")
   advertisementAddress  AdvertisementAddress @relation(fields: [advertisementAddressId], references: [id])
   
   images         Image[]
