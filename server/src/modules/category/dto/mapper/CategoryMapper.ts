@@ -1,13 +1,13 @@
 import { Category } from "../../../../generated/prisma";
-import { CategoryResponseDto } from "../CategoryResponseDto";
+import { CategoryResponseDto } from "../ResponseCategoryDto";
 
-export class CategoryMapper{
-    static toResponseDto(category: Category): CategoryResponseDto {
-        const dto: CategoryResponseDto ={
-            id: category.id,
-            name: category.name,
-            description: category.description
-        }
-        return(dto);
-    }
+export class CategoryMapper {
+  static toResponseDto(category: Category): CategoryResponseDto {
+    const dto: CategoryResponseDto = {
+      id: category.id,
+      name: category.name,
+      description: category.description,
+    };
+    return dto;
+  }
 }
