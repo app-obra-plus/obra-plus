@@ -11,7 +11,7 @@ export class AuthService {
     userService = new UserService();
 
     async login(userInfo:LoginDto):Promise<LoginResponseDto> {
-        const user = await prisma.user.findUnique({ where: { email: userInfo.email, active:true} });
+        const user = await prisma.user.findUnique({ where: { email: userInfo.email, isDeleted:false} });
 
         if (!user) {
             throw new InvalidCredentialsError();
