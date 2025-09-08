@@ -1,90 +1,84 @@
-import { useNavigation } from "@react-navigation/native";
-import { Button, StatusBar, StyleSheet, Text, View } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Feather from "@expo/vector-icons/Feather";
-import Map from "./modules/map/Map";
-import { SafeAreaView } from "react-native-safe-area-context";
-import UserHome from "./modules/user/UserHome";
-import UserConfigRouter from "./modules/user/User.routes";
+import { colors } from "../../theme/colors";
+import tabsList from "./app.routes";
+import HeaderBackground from "../../components/HeaderBackground";
 
 const Tabs = createBottomTabNavigator();
 
-const stylesEmpty = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignContent: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    textAlign: 'center',
-    fontSize: 20,
-  }
-});
-
-const ChatScreen = () => (
-  <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
-    <Text style={stylesEmpty.text}>Chat Screen</Text>
-  </SafeAreaView>
-);
-
-const SearchScreen = () => (
-  <SafeAreaView edges={['top', 'left', 'right']} style={stylesEmpty.container}>
-    <Text style={stylesEmpty.text}>Search Screen</Text>
-  </SafeAreaView>
-);
-
-const tabsList: {
-  name: string;
-  component: React.ComponentType<any>;
-  icon: React.ComponentProps<typeof Feather>['name'];
-  label: string;
-}[] = [
-  {
-    name: "chat",
-    component: ChatScreen,
-    icon: "message-circle",
-    label: "Chat"
-  },
-  {
-    name: "map",
-    component: Map,
-    icon: "map",
-    label: "Mapa"
-  },
-  {
-    name: "search",
-    component: SearchScreen,
-    icon: "search",
-    label: "Search"
-  },
-  {
-    name: "settings",
-    component: UserConfigRouter,
-    icon: "settings",
-    label: "Usuário"
-  }
-]
-
 export default function SignIn() {
   return (
-    <Tabs.Navigator>
-      {
-        tabsList.map((tab, index) => (
+    <>
+    <StatusBar barStyle={"light-content"}/>
+    <Tabs.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.support,
+        tabBarStyle: {
+          backgroundColor: colors.background,
+          height: 70,
+        },
+        tabBarLabelStyle: {
+          fontSize: 13,
+          color: colors.white,
+        },
+        headerTintColor: colors.white,
+        headerTitleAlign: 'center',
+        headerBackground: () => <HeaderBackground />
+      }}
+    >
+      {tabsList.map((tab, index) => {
+        if (tab.name === "map") {
+          return (
+            <Tabs.Screen
+              name="map"
+              key={index}
+              component={tab.component}
+              options={{
+                headerTitle: tab.title,
+                tabBarLabel: "",
+                tabBarIcon: ({ focused }) => (
+                  <View
+                    style={{
+                      width: 70,
+                      height: 70,
+                      borderRadius: 40,
+                      backgroundColor: focused ? colors.primary : colors.support,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderWidth: 4,
+                      borderColor: colors.background,
+                    }}
+                  >
+                    <Feather name="map" size={30} color={colors.white} />
+                    <Text style={{ color: colors.white, fontSize: 10 }}>Mapa</Text>
+                  </View>
+                ),
+              }}
+            />
+          );
+        }
+
+        return (
           <Tabs.Screen
             key={index}
             name={tab.name}
+            
             component={tab.component}
             options={{
-              tabBarIcon: ({ color, size }) => (
-                <Feather name={tab.icon} size={size} color={color} />
+              ...tab.options,
+              tabBarIcon: ({ color }) => (
+                <Feather name={tab.icon} size={28} color={color} />
               ),
-              headerShown: false,
               tabBarLabel: tab.label,
-              tabBarLabelStyle: { fontSize: 14 },
+              tabBarLabelStyle: { fontSize: 10 },
+              headerTitle: tab.title,
             }}
           />
-        ))
-      }
+        );
+      })}
     </Tabs.Navigator>
-  )
+    </>
+  );
 }

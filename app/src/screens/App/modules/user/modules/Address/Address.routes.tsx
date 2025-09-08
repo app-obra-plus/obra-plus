@@ -6,20 +6,18 @@ const Stack = createNativeStackNavigator();
 
 export default function AddressRouter() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
-        name="home"
+        name="listAddress"
         component={AddressList}
-        options={{
-          title: "Meus endereços",
-        }}
       />
       <Stack.Screen
         name="addAddress"
         component={AddAddress}
-        options={{
-          headerShown: false,
-        }}
       />
     </Stack.Navigator>
   )

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_URL = 'http://10.0.0.190:3000';
+const API_URL = 'http://192.168.1.85:3000';
 
 export interface SpringResponseView<T> {
   data: T;
@@ -12,9 +12,9 @@ export class ModeloBase {
   apiURL: string;
   modulePath: string;
 
-  constructor(path: string) {
+  constructor(path: string, apiURL: string = API_URL) {
     this.modulePath = path;
-    this.apiURL = API_URL;
+    this.apiURL = apiURL;
   }
 
   private async getAuthHeaders() {
@@ -41,7 +41,7 @@ export class ModeloBase {
       {
         headers,
         params,
-      }
+      },
     );
     return response;
   }
