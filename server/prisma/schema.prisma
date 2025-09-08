@@ -38,6 +38,8 @@ model Address {
   country      String
   latitude     Float
   longitude    Float
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
   user_id      String  @db.Uuid  
   isDeleted      Boolean @default(false) @map("is_deleted")
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
