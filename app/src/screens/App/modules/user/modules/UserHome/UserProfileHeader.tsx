@@ -1,5 +1,5 @@
 import { Image, Text, View } from "react-native";
-import { useAuthStore } from "../../../../stores/useAuthStore";
+import { useAuthStore } from "../../../../../../stores/useAuthStore";
 
 export function UserProfileHeader() {
   const { user, signOut } = useAuthStore();

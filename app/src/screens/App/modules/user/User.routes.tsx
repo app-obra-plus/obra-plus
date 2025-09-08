@@ -6,7 +6,7 @@ const Drawer = createDrawerNavigator();
 
 import React from "react";
 import EditProfile from "./modules/EditProfile/EditProfile";
-import UserHome from "./UserHome";
+import UserHome from "./modules/UserHome/UserHome";
 import AddressRouter from "./modules/Address/Address.routes";
 import HeaderBackground from "../../../../components/HeaderBackground";
 import { colors } from "../../../../theme/colors";

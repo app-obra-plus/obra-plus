@@ -3,7 +3,7 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import TextInput from "../../../../../../components/Input";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuthStore } from "../../../../../../stores/useAuthStore";
-import { UserProfileHeader } from "../../UserProfileHeader";
+import { UserProfileHeader } from "../UserHome/UserProfileHeader";
 import Button from "../../../../../../components/Button";
 
 export default function EditProfile() {
