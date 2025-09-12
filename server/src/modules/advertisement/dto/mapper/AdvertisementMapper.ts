@@ -1,9 +1,9 @@
-import { Advertisement } from "../../../../generated/prisma";
+import { Advertisement} from "../../../../generated/prisma";
 import { ResponseAdvertisementDto } from "../ResponseAdvertisementDto";
 
 
 export class AdvertisementMapper{
-    static toResponseDto(ad: Advertisement): ResponseAdvertisementDto{
+    static toResponseDto(ad: Advertisement, images: string[]): ResponseAdvertisementDto{
         const dto: ResponseAdvertisementDto = {
             id: ad.id,
             title: ad.title,
@@ -14,6 +14,7 @@ export class AdvertisementMapper{
             user_id: ad.user_id,
             category_id: ad.category_id,
             advertisementAddressId: ad.advertisementAddressId,
+            images
         };
         return(dto)
     }

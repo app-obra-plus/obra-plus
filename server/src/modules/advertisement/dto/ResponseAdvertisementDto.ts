@@ -10,4 +10,5 @@ export interface ResponseAdvertisementDto {
     user_id: string;
     category_id: string;
     advertisementAddressId: string;
+    images:string[]
 }
