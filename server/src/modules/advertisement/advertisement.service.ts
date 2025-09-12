@@ -1,4 +1,4 @@
-import { prisma } from "../../database/client";
+import { prisma } from '../../database/client';
 import { CreateAdvertisementDto } from "./dto/CreateAdvertisementDto";
 import { AddressService } from '../address/address.service';
 import { AdvertisementMapper } from "./dto/mapper/AdvertisementMapper";
@@ -7,7 +7,9 @@ import { EntityNotFoundError } from "../../exception/EntityNotFoundError";
 import { CategoryService } from "../category/category.service";
 import { UpdateAdvertisementDto } from "./dto/UpdateAdvertisementDto";
 import { ResponseAdvertisementDto } from "./dto/ResponseAdvertisementDto";
-import { AdvertisementMapQueryDto, SubGrid } from "./dto/AdvertisementMapQueryDto";
+import { AdvertisementMapQueryDto, SubGrid, SubGridResponse} from "./dto/AdvertisementMapQueryDto";
+import { AdvertisementAddressMapper } from "./dto/mapper/AdvertisementAddressMapper";
+import { PaginatedResponse, PaginationParams } from "../../utils/pagination";
 
 export class AdvertisementService{
     private readonly addressService = new AddressService;
@@ -29,8 +31,9 @@ export class AdvertisementService{
             user_id: userId,
             advertisementAddressId: advertisementAddressDb.id, 
         };
-        const advertisementDb = await prisma.advertisement.create({data});     
-        const response = AdvertisementMapper.toResponseDto(advertisementDb);
+        const advertisementDb = await prisma.advertisement.create({data});    
+         
+        const response = AdvertisementMapper.toResponseDto(advertisementDb, []);
         return response;            
     }
 
@@ -46,8 +49,11 @@ export class AdvertisementService{
             throw new EntityNotFoundError("Anúncio", id);
         }
 
-        const response = AdvertisementMapper.toResponseDto(advertisementDb);
-        return response;
+        const images = await this.getImages(id);
+        const response = AdvertisementMapper.toResponseDto(advertisementDb, images);
+
+        return response
+        
     }
 
     async updateAdvertisement(id:string, dto: UpdateAdvertisementDto){
@@ -56,20 +62,77 @@ export class AdvertisementService{
             where: {id:id},
             data: dto
         })
-        const response: ResponseAdvertisementDto = AdvertisementMapper.toResponseDto(updatedAdvertisement);
+        const images = await this.getImages(id);
+        const response: ResponseAdvertisementDto = AdvertisementMapper.toResponseDto(updatedAdvertisement, images);
         return response;
     }
 
-    async getAdvertisementGridFilter(dto: AdvertisementMapQueryDto): Promise<SubGrid[]>{
+    
+    async getAdvertisementsPage(params: PaginationParams): Promise<PaginatedResponse<ResponseAdvertisementDto>>{
+
+        const { page, limit, order } = params;
+        const skip = (page - 1) * limit;
+
+        const [advertisements, total] = await Promise.all([
+            prisma.advertisement.findMany({
+                where: { isDeleted: false },
+                skip,
+                take: limit,
+                orderBy: { created_at: order },
+            }),
+            prisma.advertisement.count({
+                where:{isDeleted: false}
+            })
+        ])
+
+        const advertisementResponse = await Promise.all(
+            advertisements.map(async (ad) => {
+                const images = await this.getImages(ad.id);
+                return AdvertisementMapper.toResponseDto(ad, images);
+            })
+        );
+        
+        return {
+            data: advertisementResponse,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+
+    async getAdvertisementGridFilter(dto: AdvertisementMapQueryDto): Promise<SubGridResponse[]>{
 
         const { latitudeStep, longitudeStep } = this.getGridCellDimensions(dto);
         const subGrids = this.generateSubGrids(dto, latitudeStep, longitudeStep);
 
+        const result: SubGridResponse[] = [];
         for (const subGrid of subGrids){
-            subGrid.advertisementIds = await this.getAdvertisementBySubGrid(subGrid, dto);
+
+            const advertisements = await this.getAdvertisementBySubGrid(subGrid, dto); 
+            const advertisementIds= advertisements.map(a => a.id)
+
+
+            if(advertisementIds.length > 1 ){
+                result.push({
+                    latitudeCenter: subGrid.latitudeCenter,
+                    longitudeCenter: subGrid.longitudeCenter,
+                    advertisementIds,
+                });
+            } else if (advertisementIds.length === 1 ) {
+                const address =  await this.getAdvertisementAddressById(advertisements[0].advertisementAddressId);
+
+                result.push({
+                    latitudeCenter: address.latitude,
+                    longitudeCenter: address.longitude,
+                    advertisementIds,
+                });
+            }
         }
-        
-        return subGrids
+
+        return result;
     }
 
 
@@ -92,8 +155,11 @@ export class AdvertisementService{
                     minLongitude: dto.boundingBox.minLongitude + j * longitudeStep,
                     maxLongitude: dto.boundingBox.minLongitude + (j + 1) * longitudeStep,
                 };
-
+                const latitudeCenter = (subBoundingBox.maxLatitude + subBoundingBox.minLatitude)/2;
+                const longitudeCenter = (subBoundingBox.maxLongitude + subBoundingBox.minLongitude)/2;
                 subGrids.push({
+                    latitudeCenter,
+                    longitudeCenter,
                     subBoundingBox,
                     advertisementIds: [],
                 });
@@ -122,10 +188,26 @@ export class AdvertisementService{
                 ...(dto.filter?.categoryId && { category_id: dto.filter.categoryId }),
                 ...(dto.filter?.priceMax && { price: { lte: dto.filter.priceMax } }),
             },
-            select: { id: true },
+            select: { id: true, advertisementAddressId: true },
         });
 
-        return ads.map(a => a.id);
+        return ads;
+    }
+
+    async getAdvertisementAddressById(addressId: string){
+        const addressDb = await prisma.advertisementAddress.findUnique({
+                 where: {
+                    id:addressId,
+                }
+            });
+        
+        if(!addressDb){
+            throw new EntityNotFoundError("Endereço do anúncio", addressId);
+        }
+        
+        const addressResponse = AdvertisementAddressMapper.toResponseDto(addressDb);
+
+        return addressResponse;
     }
 
     private async saveAdvertisementAddress(id: string) {
@@ -144,5 +226,25 @@ export class AdvertisementService{
         };
 
         return await prisma.advertisementAddress.create({data});
+    }
+
+    async saveMultipleImages(advertisementId: string, urls: string[]){
+        
+        const data = urls.map((url) => ({
+            url,
+            advertisement_id: advertisementId
+        }));
+
+        const imagesDb = await prisma.image.createMany({data});
+        return imagesDb;
+    }
+    
+    private async getImages(advertisementId: string){
+        const imagesDb = await prisma.image.findMany({
+            where:{advertisement_id: advertisementId}
+        })
+        
+        const urls = imagesDb.map(img => img.url);
+        return urls
     }
 }

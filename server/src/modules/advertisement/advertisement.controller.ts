@@ -4,9 +4,13 @@ import { CreateAdvertisementSchema } from './dto/CreateAdvertisementDto';
 import { Request, Response } from 'express';
 import { UpdateAdvertisementSchema } from './dto/UpdateAdvertisementDto';
 import { AdvertisementMapQuerySchema } from './dto/AdvertisementMapQueryDto';
+import { getPaginationParams, PaginationQuery } from '../../utils/pagination';
+import { MulterRequest } from '../image/image.controller';
+import { ImageService } from '../image/image.service';
 
 
  const advertisementService = new AdvertisementService;
+ const imageServer= new ImageService;
 
  export async function createAdvertisement(req : Request, res: Response){
 
@@ -31,7 +35,6 @@ export async function updateAdvertisement(req : Request, res: Response){
   return res.status(200).json(advertisementDb);
 }
 
-
 export async function getAdvertisementGridFilter(req : Request, res: Response){
   
     const dto = AdvertisementMapQuerySchema.parse({
@@ -52,3 +55,26 @@ export async function getAdvertisementGridFilter(req : Request, res: Response){
   return res.status(200).json(grids);
 }
 
+export async function getAdvertisementsPage(req : Request, res: Response){
+  
+  const query: PaginationQuery = req.query;
+  const params = getPaginationParams(query);
+  const advertisements = await advertisementService.getAdvertisementsPage(params);
+  return res.status(200).json(advertisements);
+}
+
+export async function uploadAdvertisementsImage(req : Request, res: Response){
+
+  const {id} = req.params;
+  const files = (req as MulterRequest).files as Express.Multer.File[];;
+  
+  const uploadedImages = await Promise.all(
+    files.map(async (file) => {
+      const image = await imageServer.upload(file);
+      return image.url;
+    })
+  );
+
+  const savedImages = await advertisementService.saveMultipleImages(id, uploadedImages);
+  return res.status(200).json({images: savedImages});
+}

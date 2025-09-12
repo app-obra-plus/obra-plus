@@ -1,6 +1,7 @@
 import {Router, Request, Response} from 'express';
-import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter} from './advertisement.controller';
+import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage} from './advertisement.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
+import {upload} from  '../../config/multerConfig'
 
 const router = Router();
 
@@ -8,8 +9,16 @@ router.post('/', authMiddleware,  async (req: Request, res: Response) => {
     await createAdvertisement(req, res);
 })
 
+router.post('/upload/:id',upload.array('images',5), authMiddleware,  async (req: Request, res: Response) => {
+    await uploadAdvertisementsImage(req, res);
+})
+
 router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
     await getAdvertisementGridFilter(req, res);
+})
+
+router.get('/', authMiddleware,  async (req: Request, res: Response) => {
+    await getAdvertisementsPage(req, res);
 })
 
 router.get('/:id', authMiddleware,  async (req: Request, res: Response) => {
