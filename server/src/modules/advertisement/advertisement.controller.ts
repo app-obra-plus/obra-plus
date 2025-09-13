@@ -1,86 +1,94 @@
-import { validateSchema } from '../../utils/validateRequest';
-import { AdvertisementService } from './advertisement.service';
-import { CreateAdvertisementSchema } from './dto/CreateAdvertisementDto';
-import { Request, Response } from 'express';
-import { UpdateAdvertisementSchema } from './dto/UpdateAdvertisementDto';
-import { AdvertisementMapQuerySchema } from './dto/AdvertisementMapQueryDto';
-import { getPaginationParams, PaginationQuery } from '../../utils/pagination';
-import { MulterRequest } from '../image/image.controller';
-import { ImageService } from '../image/image.service';
+import { validateSchema } from "../../utils/validateRequest";
+import { AdvertisementService } from "./service/advertisement.service";
+import { CreateAdvertisementSchema } from "./dto/CreateAdvertisementDto";
+import { Request, Response } from "express";
+import { UpdateAdvertisementSchema } from "./dto/UpdateAdvertisementDto";
+import { AdvertisementMapQuerySchema } from "./dto/AdvertisementMapQueryDto";
+import { getPaginationParams, PaginationQuery } from "../../utils/pagination";
+import { MulterRequest } from "../image/image.controller";
+import { ImageService } from "../image/image.service";
+import { AdvertisementImageService } from "./service/advertisementImage.service";
+import { AdvertisementGridService } from "./service/advertisementGrid.service";
 
+const advertisementService = new AdvertisementService();
+const imageServer = new ImageService();
+const advertisementImageService = new AdvertisementImageService();
+const advertisementGridService = new AdvertisementGridService();
 
- const advertisementService = new AdvertisementService;
- const imageServer= new ImageService;
-
- export async function createAdvertisement(req : Request, res: Response){
-
-   const advertisementData = validateSchema(CreateAdvertisementSchema, req.body);
-   const userId = (req as any).auth.userId;
-   const advertisementDb = await advertisementService.createAdvertisement(advertisementData, userId);
-   return res.status(201).json(advertisementDb);
- }
-
-export async function getAdvertisementById(req : Request, res: Response){
-
-   const {id} = req.params;
-   const advertisementDb = await advertisementService.getAdvertisementbyId(id);
-   return res.status(200).json(advertisementDb);
+export async function createAdvertisement(req: Request, res: Response) {
+  const advertisementData = validateSchema(CreateAdvertisementSchema, req.body);
+  const userId = (req as any).auth.userId;
+  const advertisementDb = await advertisementService.createAdvertisement(
+    advertisementData,
+    userId
+  );
+  return res.status(201).json(advertisementDb);
 }
 
-export async function updateAdvertisement(req : Request, res: Response){
-
-  const {id} = req.params;
-  const advertisementData = validateSchema(UpdateAdvertisementSchema, req.body);
-  const advertisementDb = await advertisementService.updateAdvertisement(id, advertisementData);
+export async function getAdvertisementById(req: Request, res: Response) {
+  const { id } = req.params;
+  const advertisementDb = await advertisementService.getAdvertisementbyId(id);
   return res.status(200).json(advertisementDb);
 }
 
-export async function getAdvertisementGridFilter(req : Request, res: Response){
-  
-    const dto = AdvertisementMapQuerySchema.parse({
-      resolution: req.query.resolution,
-      boundingBox: {
-        minLatitude: req.query.minLatitude,
-        maxLatitude: req.query.maxLatitude,
-        minLongitude: req.query.minLongitude,
-        maxLongitude: req.query.maxLongitude,
-      },
-      filter: {
-        categoryId: req.query. categoryId ?? undefined,
-        priceMax: req.query. priceMax ?? undefined,
-      },
-    });
+export async function updateAdvertisement(req: Request, res: Response) {
+  const { id } = req.params;
+  const advertisementData = validateSchema(UpdateAdvertisementSchema, req.body);
+  const advertisementDb = await advertisementService.updateAdvertisement(
+    id,
+    advertisementData
+  );
+  return res.status(200).json(advertisementDb);
+}
 
-  const grids = await advertisementService.getAdvertisementGridFilter(dto);
+export async function getAdvertisementGridFilter(req: Request, res: Response) {
+  const dto = AdvertisementMapQuerySchema.parse({
+    resolution: req.query.resolution,
+    boundingBox: {
+      minLatitude: req.query.minLatitude,
+      maxLatitude: req.query.maxLatitude,
+      minLongitude: req.query.minLongitude,
+      maxLongitude: req.query.maxLongitude,
+    },
+    filter: {
+      categoryId: req.query.categoryId ?? undefined,
+      priceMax: req.query.priceMax ?? undefined,
+    },
+  });
+
+  const grids = await advertisementGridService.getAdvertisementGridFilter(dto);
   return res.status(200).json(grids);
 }
 
-export async function getAdvertisementsPage(req : Request, res: Response){
-  
+export async function getAdvertisementsPage(req: Request, res: Response) {
   const query: PaginationQuery = req.query;
   const params = getPaginationParams(query);
-  const advertisements = await advertisementService.getAdvertisementsPage(params);
+  const advertisements = await advertisementService.getAdvertisementsPage(
+    params
+  );
   return res.status(200).json(advertisements);
 }
 
-export async function uploadAdvertisementsImage(req : Request, res: Response){
+export async function uploadAdvertisementsImage(req: Request, res: Response) {
+  const { id } = req.params;
+  const files = (req as MulterRequest).files as Express.Multer.File[];
 
-  const {id} = req.params;
-  const files = (req as MulterRequest).files as Express.Multer.File[];;
-  
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
       const image = await imageServer.upload(file);
-      return image
+      return image;
     })
   );
 
-  const savedImages = await advertisementService.saveMultipleImages(id, uploadedImages);
+  const savedImages = await advertisementImageService.saveMultipleImages(
+    id,
+    uploadedImages
+  );
   return res.status(200).json(savedImages);
 }
 
-export async function deleteAdvertisementsImage(req : Request, res: Response){
-  const {id} = req.params;
-  await advertisementService.deleteImageById(id);
+export async function deleteAdvertisementsImage(req: Request, res: Response) {
+  const { id } = req.params;
+  await advertisementImageService.deleteImageById(id);
   return res.status(204).send();
 }

@@ -3,7 +3,6 @@ import { CreateAddressDto } from './dto/CreateAddressDto';
 import { AddressMapper } from './dto/mapper/AddressMapper';
 import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
 import { AddressResponseDto } from './dto/AddressResponseDto';
-import { Address } from '../../generated/prisma/index';
 import { AddressUpdateDto } from './dto/AddressUpdateDto';
 import { PaginationParams, PaginatedResponse } from '../../utils/pagination';
 
