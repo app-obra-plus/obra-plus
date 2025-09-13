@@ -10,10 +10,16 @@ import { ResponseAdvertisementDto } from "./dto/ResponseAdvertisementDto";
 import { AdvertisementMapQueryDto, SubGrid, SubGridResponse} from "./dto/AdvertisementMapQueryDto";
 import { AdvertisementAddressMapper } from "./dto/mapper/AdvertisementAddressMapper";
 import { PaginatedResponse, PaginationParams } from "../../utils/pagination";
+import { PutBlobResult } from '@vercel/blob';
+import { BadRequestError } from '../../exception/BadRequestError';
+import { ImageService } from '../image/image.service';
+import { ImageMapper } from './dto/mapper/ImageMapper';
+import { where } from 'ramda';
 
 export class AdvertisementService{
     private readonly addressService = new AddressService;
     private readonly categoryService = new CategoryService;
+    private readonly imageService = new ImageService;
 
     async createAdvertisement(advertisement: CreateAdvertisementDto, userId: string){
 
@@ -228,15 +234,31 @@ export class AdvertisementService{
         return await prisma.advertisementAddress.create({data});
     }
 
-    async saveMultipleImages(advertisementId: string, urls: string[]){
+    async saveMultipleImages(advertisementId: string, uploadedImages: PutBlobResult[]){
         
-        const data = urls.map((url) => ({
-            url,
-            advertisement_id: advertisementId
+        const data = uploadedImages.map((img) => ({
+            url: img.url,
+            advertisement_id: advertisementId,
+            pathname: img.pathname
         }));
 
         const imagesDb = await prisma.image.createMany({data});
         return imagesDb;
+    }
+
+    async deleteImageById(imageId: string){
+        const image = await prisma.image.findUnique({where:{id: imageId}});
+
+        if(!image){
+            throw new BadRequestError("Imagem não encontrada");
+        }
+
+        await this.imageService.deleteBlob(image.pathname);
+        await prisma.image.delete({
+            where:{
+                id:imageId
+            }
+        })
     }
     
     private async getImages(advertisementId: string){
@@ -244,7 +266,7 @@ export class AdvertisementService{
             where:{advertisement_id: advertisementId}
         })
         
-        const urls = imagesDb.map(img => img.url);
-        return urls
+        const imagesResponse = imagesDb.map((img) => ImageMapper.toResponseDto(img));
+        return imagesResponse
     }
 }

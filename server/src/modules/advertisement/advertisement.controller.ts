@@ -71,10 +71,16 @@ export async function uploadAdvertisementsImage(req : Request, res: Response){
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
       const image = await imageServer.upload(file);
-      return image.url;
+      return image
     })
   );
 
   const savedImages = await advertisementService.saveMultipleImages(id, uploadedImages);
-  return res.status(200).json({images: savedImages});
+  return res.status(200).json(savedImages);
+}
+
+export async function deleteAdvertisementsImage(req : Request, res: Response){
+  const {id} = req.params;
+  await advertisementService.deleteImageById(id);
+  return res.status(204).send();
 }
