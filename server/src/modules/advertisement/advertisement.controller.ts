@@ -5,8 +5,8 @@ import { Request, Response } from "express";
 import { UpdateAdvertisementSchema } from "./dto/UpdateAdvertisementDto";
 import { AdvertisementMapQuerySchema } from "./dto/AdvertisementMapQueryDto";
 import { getPaginationParams, PaginationQuery } from "../../utils/pagination";
-import { MulterRequest } from "../image/image.controller";
-import { ImageService } from "../image/image.service";
+import { ImageService } from "../../infra/blob/image.service";
+import { MulterRequest } from "../../types/multer.types";
 import { AdvertisementImageService } from "./service/advertisementImage.service";
 import { AdvertisementGridService } from "./service/advertisementGrid.service";
 

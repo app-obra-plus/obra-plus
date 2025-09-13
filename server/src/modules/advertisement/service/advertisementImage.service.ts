@@ -1,7 +1,7 @@
 import { prisma } from "../../../database/client";
 import { PutBlobResult } from "@vercel/blob";
 import { BadRequestError } from "../../../exception/BadRequestError";
-import { ImageService } from "../../image/image.service";
+import { ImageService } from "../../../infra/blob/image.service";
 import { ImageMapper } from "../dto/mapper/ImageMapper";
 
 export class AdvertisementImageService {
