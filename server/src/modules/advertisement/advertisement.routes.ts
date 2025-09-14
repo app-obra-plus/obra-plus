@@ -127,7 +127,7 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  *         schema:
  *           type: integer
  *       - in: query
- *         name: category
+ *         name: categoryId
  *         schema:
  *           type: string
  *     responses:
