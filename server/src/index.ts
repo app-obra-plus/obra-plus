@@ -8,11 +8,13 @@ import corsOptions from './config/corsConfig'
 import cors from 'cors';
 import { setupSwagger } from './docs/swaggerConfig';
 import dotenv from 'dotenv';
+import { apiLogger } from './middlewares/apiLogger'
 dotenv.config();
 
 
 const express = require('express');
 const  app = express();
+app.use(apiLogger);
 
 setupSwagger(app);
 app.use(cors(corsOptions));
