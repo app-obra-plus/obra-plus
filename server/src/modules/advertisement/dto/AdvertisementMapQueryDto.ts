@@ -15,7 +15,16 @@ export const AdvertisementMapQuerySchema = z.object({
 
 export type AdvertisementMapQueryDto = z.infer<typeof AdvertisementMapQuerySchema >;
 
+export const PaginationParamsSchema = z.object({
+  page: z.string().optional(),
+  limit: z.string().optional(),
+  order: z.string().optional()
+});
+
+
 export interface SubGrid {
+    latitudeCenter:number,
+    longitudeCenter: number,
     subBoundingBox:{
         minLatitude: number,
         maxLatitude: number,
@@ -24,6 +33,11 @@ export interface SubGrid {
     },
     advertisementIds: string[]
  
+}
+export interface SubGridResponse {
+  latitudeCenter: number;
+  longitudeCenter: number;
+  advertisementIds: string[];
 }
 
 export interface ResponseSubGridDto{
