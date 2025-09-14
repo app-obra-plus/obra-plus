@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Pressable, Text, TouchableOpacity } from "react-native";
 
 type ButtonType = "primary" | "outline" | "link";
 type ButtonColor = "light" | "dark";
@@ -54,14 +54,18 @@ export default function Button({
   const bgFillClass = bgFill ? (color === "dark" ? "bg-white" : "bg-black") : "";
 
   return (
-    <TouchableOpacity
+    <Pressable
       disabled={disabled}
+      onPress={onPress}
       className={`p-4 rounded-md ${buttonStyles[type][color]} ${disabled ? "opacity-60" : "opacity-100"} ${bgFillClass}`}
-      onPress={disabled ? () => {} : onPress}
+      android_ripple={{ color: "rgba(0,0,0,0.1)" }}
+      style={({ pressed }) => [
+        { opacity: pressed ? 0.7 : 1 },
+      ]}
     >
       <Text className={`text-center text-xl ${textStyles[type][color]}`}>
         {text}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

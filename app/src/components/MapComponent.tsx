@@ -2,16 +2,24 @@ import {PropsWithChildren, useEffect, useRef} from "react";
 import MapView, { Region } from "react-native-maps";
 import mapStyleLight from "../styles/mapStyleLight";
 import { useLocationStore } from "../stores/useLocationStore";
-import { Text, TouchableOpacity, View } from "react-native";
+import * as Location from 'expo-location';
+import { ActivityIndicator, Alert, Text, TouchableOpacity, View, Linking } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { set } from "zod";
+import Button from "./Button";
+import { getCurrentPositionAsync, LocationAccuracy, requestForegroundPermissionsAsync } from "expo-location";
 
 interface IMapProps extends PropsWithChildren {
   onRegionChange?: (region: Region) => void;
   setRegion?: (location: Region) => void;
 }
 
-export default function MapComponent({ children, onRegionChange, setRegion }: IMapProps) {
-  const {location} = useLocationStore()
+export default function MapComponent({ 
+  children, 
+  onRegionChange, 
+  setRegion,
+}: IMapProps) {
+  const {location, isLoading, locationAllowed, setLocationAllowed, setLocation, setIsLoading} = useLocationStore()
   const mapRef = useRef<MapView>(null);
 
 
@@ -36,8 +44,43 @@ export default function MapComponent({ children, onRegionChange, setRegion }: IM
         longitudeDelta: 0.01,
       })
     }
-  }, []);
+  }, [location]);
 
+  const handlePermitirAcesso = async () => {
+    Alert.alert(
+      "Permissão necessária",
+      "Você precisa liberar o acesso à localização nas configurações do app.",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Abrir configurações",
+          onPress: async () => {
+            await Linking.openSettings();
+          },
+        },
+      ]
+    );
+
+    setIsLoading(false);
+  }
+
+  if(!locationAllowed) {
+    return (
+      <View className="flex-1 justify-center items-center gap-4 px-4">
+        <Text className="text-center">Você precisa permitir o acesso à sua localização para acessar essa funcionalidade.</Text>
+        <Button text="Permitir acesso à localização" onPress={handlePermitirAcesso} />
+      </View>
+    )
+  }
+
+  if(isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center gap-4">
+        <ActivityIndicator size={"large"}/>
+        <Text>Buscando localização...</Text>
+      </View>
+    )
+  }
   
 
   return (

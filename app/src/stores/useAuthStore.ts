@@ -51,3 +51,7 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
+export const signOut = async () => {
+  useAuthStore.getState().signOut();
+};

@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputText from "../../../../../../components/Input";
 import { CreateAddressDto, CreateAddressSchema } from "../../../../../../api/address/addressSch";
 import { addressMdl } from "../../../../../../api/address/addressMdl";
+import Container from "../../../../../../components/Container";
 
 type AddAddressFormRouteProp = RouteProp<AddressStackParamList, "addAddressForm">;
 
@@ -27,7 +28,10 @@ export default function AddAddressForm() {
   const onSubmit = (data: CreateAddressDto) => {
     addressMdl.create(data).then(() => {
       console.log("Foi")
-      navigation.navigate("addressList" as never);
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "listAddress" as never }],
+      });
     }).catch((err) => {
       console.log(err)
     });
@@ -37,7 +41,7 @@ export default function AddAddressForm() {
   return (
     <View>
       <ScrollView className="h-full">
-        <View className="p-4">
+        <Container>
 
           <Controller
             control={control}
@@ -139,7 +143,7 @@ export default function AddAddressForm() {
               />
             )}
           />
-        </View>
+        </Container>
         <View className="w-full p-4 gap-4 pb-10">
           <Button text="Salvar Endereço" onPress={handleSubmit(onSubmit)} disabled={!isValid} />
           <Button text="Voltar ao Mapa" type="outline" bgFill onPress={navigation.goBack} />

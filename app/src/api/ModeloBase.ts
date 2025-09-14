@@ -1,5 +1,7 @@
-import axios, { AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { signOut } from '../stores/useAuthStore';
+import api from './api';
 
 const API_URL = 'http://192.168.1.85:3000';
 
@@ -23,54 +25,73 @@ export class ModeloBase<
 
   private async getAuthHeaders() {
     const token = await AsyncStorage.getItem('token');
+    const bearerToken = token ? `Bearer ${token}` : '';
     return {
-      Authorization: token || '',
+      Authorization: bearerToken,
     };
+  }
+
+  private async verifyResponse(response: AxiosResponse<any>) {
+    console.log(response)
+    if (response.status >= 200 && response.status < 300) {
+      return response.data;
+    }
+    if(response.status === 401) {
+      console.log('Unauthorized! Logging out...');
+      signOut()
+    }
   }
 
   async defaultPostRequest<T>(path: string, data?: Object): Promise<AxiosResponse<T>> {
     const headers = await this.getAuthHeaders();
-    const response = await axios.post<T>(
+    console.log('Headers:', headers); // Debugging line
+    const response = await api.post<T>(
       this.apiURL + this.modulePath + path,
       data,
       { headers }
     );
+    console.log('Response:', response); // Debugging line
+    this.verifyResponse(response);
     return response;
   }
 
   async defaultGetRequest<T>(path: string, params?: Object): Promise<AxiosResponse<T>> {
     const headers = await this.getAuthHeaders();
-    const response = await axios.get<T>(
+    const response = await api.get<T>(
       this.apiURL + this.modulePath + path,
       {
         headers,
         params,
       },
     );
+    this.verifyResponse(response);
     return response;
   }
 
   async defaultPutRequest<T>(path: string, data?: Object): Promise<AxiosResponse<T>> {
     const headers = await this.getAuthHeaders();
-    const response = await axios.put<T>(
+    const response = await api.put<T>(
       this.apiURL + this.modulePath + path,
       data,
       { headers }
     );
+    this.verifyResponse(response);
     return response;
   }
 
   async defaultDeleteRequest<T>(path: string): Promise<AxiosResponse<T>> {
     const headers = await this.getAuthHeaders();
-    const response = await axios.delete<T>(
+    const response = await api.delete<T>(
       this.apiURL + this.modulePath + path,
       { headers }
     );
+    this.verifyResponse(response);
     return response;
   }
 
   
   async create(data: Create) {
+    console.log(JSON.stringify(data, null, 2));
     return this.defaultPostRequest<Resource>("/", data as Object);
   }
 

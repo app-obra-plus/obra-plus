@@ -8,6 +8,7 @@ import { StatusBar } from 'react-native';
 import { useLocationStore } from './src/stores/useLocationStore';
 import { getCurrentPositionAsync, LocationAccuracy, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
 import { useEffect } from 'react';
+import { set } from 'zod';
 
 const queryClient = new QueryClient();
 
@@ -20,23 +21,33 @@ const myTheme = {
 } as typeof DefaultTheme;
 
 export default function App() {
-  const { setLocation } = useLocationStore();
+  const { setLocation, setIsLoading, setLocationAllowed, locationAllowed } = useLocationStore();
 
   useEffect(() => {
-  let subscription: any;
-  const startWatching = async () => {
-    const { status } = await requestForegroundPermissionsAsync();
-    if (status === "granted") {
-      subscription = await watchPositionAsync(
-        { accuracy: LocationAccuracy.High, timeInterval: 5000, distanceInterval: 10 },
-        (loc) => setLocation(loc)
-      );
-    }
-  };
+    let subscription: any;
 
-  startWatching();
-  return () => subscription?.remove();
-}, []);
+    const startWatching = async () => {
+      setIsLoading(true);
+      const { status } = await requestForegroundPermissionsAsync();
+      
+      if (status === "granted") {
+        subscription = await watchPositionAsync(
+          { accuracy: LocationAccuracy.High, timeInterval: 200, distanceInterval: 10 },
+          (loc) => {
+            setLocation(loc);
+            setIsLoading(false);
+            setLocationAllowed(true);
+          } 
+        );
+      } else {
+        setLocationAllowed(false);
+        setIsLoading(false);
+      }
+    };
+
+    startWatching();
+    return () => subscription?.remove();
+  }, [locationAllowed]);
 
   return (
     <QueryClientProvider client={queryClient}>

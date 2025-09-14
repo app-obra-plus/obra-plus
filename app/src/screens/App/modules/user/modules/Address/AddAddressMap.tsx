@@ -8,6 +8,7 @@ import { Region } from "react-native-maps";
 import { useState } from "react";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { AddressStackParamList } from "./Address.routes";
+import { useLocationStore } from "../../../../../../stores/useLocationStore";
 
 type AddAddressMapNavigationProp = NativeStackNavigationProp<
   AddressStackParamList,
@@ -17,6 +18,7 @@ type AddAddressMapNavigationProp = NativeStackNavigationProp<
 export default function AddAddressMap() {
   const [region, setRegion] = useState<Region | null>(null);
   const navigation = useNavigation<AddAddressMapNavigationProp>();
+  const { isLoading, locationAllowed } = useLocationStore();
 
   const handleBack = () => {
     navigation.goBack() 
@@ -29,14 +31,24 @@ export default function AddAddressMap() {
       })
   }
 
+  const hideLayout = isLoading || !locationAllowed;
+
   return (
     <View className="h-full">
       <MapComponent setRegion={setRegion} />
-      <Feather name="map-pin" size={24} color="black" className="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-100%]" />
-      <View className="absolute bottom-0 w-full p-4 gap-4 pb-10">
-        <Button text="Avançar" onPress={handleNext}/>
-        <Button text="Voltar" type="outline" onPress={handleBack}/>
-      </View>
+
+      {
+        !hideLayout && (
+          <>
+            <Feather name="map-pin" size={24} color="black" className="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-100%]" />
+            <View className="absolute bottom-0 w-full p-4 gap-4 pb-10">
+              <Button text="Avançar" onPress={handleNext}/>
+              <Button text="Voltar" type="outline" onPress={handleBack}/>
+            </View>
+          </>
+        )
+      }
+      
     </View>
   );
 }
