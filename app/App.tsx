@@ -5,6 +5,9 @@ import "./global.css"
 import ToastContainer from './src/components/Toast/ToastContainer';
 import { colors } from './src/theme/colors';
 import { StatusBar } from 'react-native';
+import { useLocationStore } from './src/stores/useLocationStore';
+import { getCurrentPositionAsync, LocationAccuracy, requestForegroundPermissionsAsync, watchPositionAsync } from 'expo-location';
+import { useEffect } from 'react';
 
 const queryClient = new QueryClient();
 
@@ -17,6 +20,24 @@ const myTheme = {
 } as typeof DefaultTheme;
 
 export default function App() {
+  const { setLocation } = useLocationStore();
+
+  useEffect(() => {
+  let subscription: any;
+  const startWatching = async () => {
+    const { status } = await requestForegroundPermissionsAsync();
+    if (status === "granted") {
+      subscription = await watchPositionAsync(
+        { accuracy: LocationAccuracy.High, timeInterval: 5000, distanceInterval: 10 },
+        (loc) => setLocation(loc)
+      );
+    }
+  };
+
+  startWatching();
+  return () => subscription?.remove();
+}, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer theme={myTheme}>
