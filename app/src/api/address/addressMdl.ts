@@ -1,7 +1,7 @@
 import { ModeloBase } from "../ModeloBase";
-import { AddressResponse, AddressUpdate, CreateAddress } from "./addressSch";
+import { AddressResponseDto, AddressUpdateDto, CreateAddressDto } from "./addressSch";
 
-class AddressMdl extends ModeloBase<AddressResponse, CreateAddress, AddressUpdate> {
+class AddressMdl extends ModeloBase<AddressResponseDto, CreateAddressDto, AddressUpdateDto> {
   constructor() {
     super("/addresses")
   }

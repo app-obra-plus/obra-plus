@@ -1,4 +1,4 @@
-import { AddressUpdate, CreateAddress } from "../../../../../../../api/address/addressSch"
+import { AddressUpdateDto } from "../../../../../../../api/address/addressSch"
 import { extAddressMdl } from "../../../../../../../api/extAddress/extAddressMdl"
 
 async function getAddressByLocation(latitude: number, longitude: number) {
@@ -7,11 +7,11 @@ async function getAddressByLocation(latitude: number, longitude: number) {
 
     console.log(response)
 
-    const address: AddressUpdate = {
+    const address: AddressUpdateDto = {
       street: response.address.road,
       number: response.address.house_number,
       complement: undefined,
-      neighborhood: response.address.neighbourhood,
+      neighborhood: response.address.neighbourhood || response.address.suburb,
       city: response.address.city,
       state: response.address.state,
       postal_code: response.address.postcode,

@@ -57,7 +57,7 @@ export default function Button({
     <TouchableOpacity
       disabled={disabled}
       className={`p-4 rounded-md ${buttonStyles[type][color]} ${disabled ? "opacity-60" : "opacity-100"} ${bgFillClass}`}
-      onPress={disabled ? undefined : onPress}
+      onPress={disabled ? () => {} : onPress}
     >
       <Text className={`text-center text-xl ${textStyles[type][color]}`}>
         {text}

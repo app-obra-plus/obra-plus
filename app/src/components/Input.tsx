@@ -11,6 +11,7 @@ interface InputProps {
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
   error?: string;
+  onBlur?: () => void;
 }
 
 export default function InputText(props: InputProps) {
@@ -23,6 +24,13 @@ export default function InputText(props: InputProps) {
           {props.label}
         </Text>
       )}
+      {
+        props.error && (
+          <Text className="absolute -bottom-2 right-3 bg-background px-1 text-red-800">
+            {props.error}
+          </Text>
+        )
+      }
       <View className="flex-row items-center">
         <TextInput
           className="flex-1 rounded-md p-2 mt-2"
@@ -32,6 +40,7 @@ export default function InputText(props: InputProps) {
           secureTextEntry={hidePassword}
           autoCapitalize={props.autoCapitalize || "none"}
           keyboardType={props.keyboardType || "default"}
+          onBlur={props.onBlur}
         />
         {props.secure && (
           <TouchableOpacity

@@ -5,21 +5,16 @@ const API_URL = "https://nominatim.openstreetmap.org"
 
 export interface ExtLocationResponse {
   address: {
-    "ISO3166-2-lvl4"?: string;
-    amenity?: string;
-    country: string;
-    country_code: string;
-    house_number?: string;
-    municipality?: string;
-    neighbourhood?: string;
-    postcode?: string;
-    region?: string;
-    road?: string;
-    state?: string;
-    state_district?: string;
-    town?: string;
-    city?: string;
-  };
+  road?: string;
+  house_number?: string;
+  neighbourhood?: string;
+  suburb?: string;
+  city?: string;
+  state?: string;
+  postcode?: string;
+  country?: string;
+  country_code?: string;
+}
   addresstype: string;
   boundingbox: [string, string, string, string];
   class: string;
@@ -41,16 +36,17 @@ class ExtAddressMdl extends ModeloBase {
     super("", API_URL);
   }
 
+
   async reverseGeocode(lat: number, lon: number) {
 
-
+    const FORMAT = "json"
     const response = await axios.get<ExtLocationResponse>(
       this.apiURL + "/reverse",
       {
         params: {
           lat,
           lon,
-          format: "json",
+          format: FORMAT
         },
         headers: {
           "User-Agent": "Obra+"
