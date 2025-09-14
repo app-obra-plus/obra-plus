@@ -2,6 +2,7 @@ import { Request, Response} from "express";
 import { AddressService } from './address.service';
 import { validateSchema } from "../../utils/validateRequest";
 import { CreateAddressSchema } from "./dto/CreateAddressDto";
+import { PaginationQuery, getPaginationParams } from "../../utils/pagination";
 
 
 const addressService = new AddressService;
@@ -24,7 +25,10 @@ export async function getAddress(req:Request, res: Response){
 export async function getAllAddress(req:Request, res: Response){
 
     const {userId} = req.params;
-    const address = await addressService.getAllAddresses(userId);
+    const query: PaginationQuery = req.query;
+    const params = getPaginationParams(query);
+
+    const address = await addressService.getAllAddresses(userId, params);
     return res.status(200).json(address);
 }
 

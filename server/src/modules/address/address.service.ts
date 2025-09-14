@@ -5,6 +5,7 @@ import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
 import { AddressResponseDto } from './dto/AddressResponseDto';
 import { Address } from '../../generated/prisma/index';
 import { AddressUpdateDto } from './dto/AddressUpdateDto';
+import { PaginationParams, PaginatedResponse } from '../../utils/pagination';
 
 
 export class AddressService {
@@ -32,15 +33,36 @@ export class AddressService {
         return addressResponse;
     }
 
-    async getAllAddresses(userId: string){
-        const addresses: Address[] = await prisma.address.findMany({
-            where: {
-                user_id: userId,
-            },
-        });
 
-        const addressesResponse: AddressResponseDto[] = addresses.map (addresse => AddressMapper.toResponseDto(addresse));
-        return addressesResponse;
+    async getAllAddresses(userId: string, params: PaginationParams): Promise<PaginatedResponse<AddressResponseDto>>{
+
+        const { page, limit, order } = params;
+        const skip = (page - 1) * limit;
+
+        const [addresses, total] = await Promise.all([
+            prisma.address.findMany({
+                where: { user_id: userId },
+                skip,
+                take: limit,
+                orderBy: { createdAt: order },
+            }),
+            prisma.address.count({
+                where: { user_id: userId },
+            }),
+        ]);
+
+        const addressesResponse: AddressResponseDto[] =
+            addresses.map((address) => AddressMapper.toResponseDto(address));
+
+        return {
+            data: addressesResponse,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
     }
 
     async updateAddress(addresId: string, addressUpdate: AddressUpdateDto ){

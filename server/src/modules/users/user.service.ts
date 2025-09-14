@@ -23,7 +23,7 @@ export class UserService {
         const userDb = await prisma.user.findUnique({
             where: {
                 id:id,
-                active:true
+                isDeleted:false
             }
         })
 
