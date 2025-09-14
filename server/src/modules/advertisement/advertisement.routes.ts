@@ -1,23 +1,360 @@
 import {Router, Request, Response} from 'express';
-import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter} from './advertisement.controller';
+import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage} from './advertisement.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
+import {upload} from  '../../config/multerConfig'
 
 const router = Router();
 
+/**
+ * @openapi
+ * /advertisements:
+ *   post:
+ *     summary: Cria um novo anúncio
+ *     tags:
+ *       - Anúncios
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateAdvertisementRequest'
+ *     responses:
+ *       201:
+ *         description: Anúncio criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdvertisementResponse'
+ */
 router.post('/', authMiddleware,  async (req: Request, res: Response) => {
     await createAdvertisement(req, res);
 })
 
+
+
+/**
+ * @openapi
+ * /advertisements/grid:
+ *   get:
+ *     summary: Retorna agrupamento de anúncios por grid geográfico
+ *     tags:
+ *       - Anúncios
+ *     parameters:
+ *       - in: query
+ *         name: resolution
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: minLatitude
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: maxLatitude
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: minLongitude
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: maxLongitude
+ *         schema:
+ *           type: number
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: priceMax
+ *         schema:
+ *           type: number
+ *     responses:
+ *       200:
+ *         description: Subgrids com anúncios
+ *         content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/GridResponse'
+ * 
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
     await getAdvertisementGridFilter(req, res);
 })
 
+/**
+ * @openapi
+ * /advertisements/page:
+ *   get:
+ *     summary: Lista anúncios com paginação
+ *     tags:
+ *       - Anúncios
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *       - in: query
+ *         name: priceMax
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista paginada de anúncios
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginatedAdvertisementResponse'
+ * 
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.get('/', authMiddleware,  async (req: Request, res: Response) => {
+    await getAdvertisementsPage(req, res);
+})
+
+/**
+ * @openapi
+ * /advertisements/{id}:
+ *   get:
+ *     summary: Retorna os detalhes de um anúncio
+ *     tags:
+ *       - Anúncios
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Anúncio encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdvertisementResponse'
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.get('/:id', authMiddleware,  async (req: Request, res: Response) => {
     await getAdvertisementById(req, res);
 })
 
+/**
+ * @openapi
+ * /advertisements /{id}:
+ *   put:
+ *     summary: Atualiza um anúncio existente
+ *     tags:
+ *       - Anúncios
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateAdvertisementRequest'
+ *     responses:
+ *       200:
+ *         description: Anúncio atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AdvertisementResponse'
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.put('/:id', authMiddleware,  async (req: Request, res: Response) => {
     await updateAdvertisement(req, res);
+})
+
+/**
+ * @openapi
+ * /advertisement/{id}/images:
+ *   post:
+ *     summary: Faz upload de imagens para um anúncio
+ *     tags:
+ *       - Anúncios
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Imagens enviadas com sucesso
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/:id/images',upload.array('images',5), authMiddleware,  async (req: Request, res: Response) => {
+    await uploadAdvertisementsImage(req, res);
+})
+
+/**
+ * @openapi
+ * /advertisement/image/{id}:
+ *   delete:
+ *     summary: Remove uma imagem de anúncio
+ *     tags:
+ *       - Anúncios
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Imagem removida com sucesso
+ * 
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.delete('/images/:id', authMiddleware,  async (req: Request, res: Response) => {
+    await deleteAdvertisementsImage(req, res);
 })
 
 export default router; 

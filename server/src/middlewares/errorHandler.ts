@@ -1,11 +1,17 @@
 import { Request, Response, NextFunction } from 'express'
 import { BaseError } from '../exception/BaseError'
 import  {InternalServerError}  from '../exception/InternalServerError' 
+import { ZodError } from "zod";
+import { ValidationError } from "../exception/ValidationError";
 
 
 const normalizeError = (err:Error) => {
   if (err instanceof BaseError) {
     return err
+  }
+
+  if (err instanceof ZodError) {
+    return new ValidationError(err.issues); 
   }
 
   return new InternalServerError(err)

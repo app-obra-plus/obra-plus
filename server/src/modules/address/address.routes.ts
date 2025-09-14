@@ -6,7 +6,7 @@ const router = Router();
 
 /**
  * @openapi
- * /address:
+ * /addresses:
  *   post:
  *     summary: Cria um novo endereço para o usuário autenticado
  *     tags:
@@ -45,7 +45,7 @@ router.post('/',authMiddleware,async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /address/{addressId}:
+ * /addresses/{addressId}:
  *   get:
  *     summary: Retorna um endereço específico
  *     tags:
@@ -81,13 +81,13 @@ router.post('/',authMiddleware,async (req: Request, res: Response) => {
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 
-router.get('/:addressId ',authMiddleware,async (req: Request, res: Response) => {
+router.get('/:addressId',authMiddleware,async (req: Request, res: Response) => {
     await getAddress(req, res);
 });
 
 /**
  * @openapi
- * /address/user/{userId}:
+ * /addresses/user/{userId}:
  *   get:
  *     summary: Lista todos os endereços de um usuário
  *     tags:
@@ -125,7 +125,7 @@ router.get('/user/:userId',authMiddleware,async (req: Request, res: Response) =>
 
 /**
  * @openapi
- * /address/{addressId}:
+ * /addresses/{addressId}:
  *   put:
  *     summary: Atualiza um endereço existente
  *     tags:
@@ -179,7 +179,7 @@ router.put('/:addressId',authMiddleware,async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /address/{addressId}:
+ * /addresses/{addressId}:
  *   delete:
  *     summary: Remove um endereço
  *     tags:
