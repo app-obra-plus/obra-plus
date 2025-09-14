@@ -27,7 +27,6 @@ export class AddressService {
 
     const addressResponse: AddressResponseDto =
       AddressMapper.toResponseDto(addressDb);
-    console.log("address:", addressResponse);
     return addressResponse;
   }
 
