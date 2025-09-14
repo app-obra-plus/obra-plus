@@ -81,7 +81,7 @@ router.post('/',authMiddleware,async (req: Request, res: Response) => {
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 
-router.get('/:addressId ',authMiddleware,async (req: Request, res: Response) => {
+router.get('/:addressId',authMiddleware,async (req: Request, res: Response) => {
     await getAddress(req, res);
 });
 
