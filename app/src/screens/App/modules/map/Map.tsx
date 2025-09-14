@@ -33,7 +33,6 @@ export default function MapScreen() {
       >
         <View style={{
           flex: 1,
-          // backgroundColor: colors.CARD,
           justifyContent: 'center',
           alignItems: 'center',
         }}

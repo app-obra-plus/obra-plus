@@ -10,6 +10,7 @@ interface ButtonProps {
   type?: ButtonType;
   color?: ButtonColor;
   disabled?: boolean;
+  bgFill?: boolean;
 }
 
 export default function Button({
@@ -17,7 +18,8 @@ export default function Button({
   text,
   type = "primary",
   color = "dark",
-  disabled = false
+  disabled = false,
+  bgFill = false
 }: ButtonProps) {
   const buttonStyles: Record<ButtonType, Record<ButtonColor, string>> = {
     primary: {
@@ -49,12 +51,13 @@ export default function Button({
     }
   };
 
+  const bgFillClass = bgFill ? (color === "dark" ? "bg-white" : "bg-black") : "";
+
   return (
     <TouchableOpacity
       disabled={disabled}
-      className={`p-4 rounded-md ${buttonStyles[type][color]} ${disabled ? "opacity-60" : "opacity-100"}`}
+      className={`p-4 rounded-md ${buttonStyles[type][color]} ${disabled ? "opacity-60" : "opacity-100"} ${bgFillClass}`}
       onPress={disabled ? undefined : onPress}
-      // activeOpacity={0.9}
     >
       <Text className={`text-center text-xl ${textStyles[type][color]}`}>
         {text}

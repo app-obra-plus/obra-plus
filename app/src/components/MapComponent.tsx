@@ -5,15 +5,20 @@ import { useLocationStore } from "../stores/useLocationStore";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
-interface IMapProps extends PropsWithChildren {}
+interface IMapProps extends PropsWithChildren {
+  onRegionChange?: (region: Region) => void;
+  setRegion?: (location: Region) => void;
+}
 
-export default function MapComponent({ children }: IMapProps) {
+export default function MapComponent({ children, onRegionChange, setRegion }: IMapProps) {
   const {location} = useLocationStore()
   const mapRef = useRef<MapView>(null);
 
 
   const handleMapMove = (region: Region) => {
-  }
+    onRegionChange?.(region);
+    setRegion?.(region);
+  };
 
   useEffect(() => {
     if (location) {
@@ -24,20 +29,16 @@ export default function MapComponent({ children }: IMapProps) {
         },
         zoom: 16,
       })
-    }
-  }, [location]);
-
-  const handleCenterMap = () => {
-    if (location) {
-      const region: Region = {
+      setRegion?.({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
-      };
-      mapRef.current?.animateToRegion(region, 500); // animação de 0,5s
+      })
     }
-  };
+  }, []);
+
+  
 
   return (
     <MapView

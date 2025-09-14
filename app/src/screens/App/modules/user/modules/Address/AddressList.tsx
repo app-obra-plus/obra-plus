@@ -10,7 +10,7 @@ export default function AddressList() {
   const { navigate } = useNavigation();
 
   const handleAddAddressPress = () => {
-    navigate("addAddress");
+    navigate("addAddressMap" as never);
   }
 
   // const { data: addresses = [], isLoading } = useQuery(

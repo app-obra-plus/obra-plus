@@ -1,8 +1,19 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddressList from "./AddressList";
-import AddAddress from "./AddAddress";
+import AddAddressMap from "./AddAddressMap";
+import AddAddressForm from "./AddAddressForm";
+import { AddressUpdate } from "../../../../../../api/address/addressSch";
 
-const Stack = createNativeStackNavigator();
+export type AddressStackParamList = {
+  listAddress: undefined;
+  addAddressMap: undefined;
+  addAddressForm: {
+    address: AddressUpdate | null;
+  };
+};
+
+const Stack = createNativeStackNavigator<AddressStackParamList>();
+
 
 export default function AddressRouter() {
   return (
@@ -16,8 +27,12 @@ export default function AddressRouter() {
         component={AddressList}
       />
       <Stack.Screen
-        name="addAddress"
-        component={AddAddress}
+        name="addAddressMap"
+        component={AddAddressMap}
+      />
+      <Stack.Screen
+        name="addAddressForm"
+        component={AddAddressForm}
       />
     </Stack.Navigator>
   )
