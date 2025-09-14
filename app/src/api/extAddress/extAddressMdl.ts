@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ModeloBase } from "./ModeloBase";
+import { ModeloBase } from "../ModeloBase";
 
 const API_URL = "https://nominatim.openstreetmap.org"
 

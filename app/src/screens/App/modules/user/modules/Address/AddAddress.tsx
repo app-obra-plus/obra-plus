@@ -8,7 +8,7 @@ import InputText from "../../../../../../components/Input";
 import Button from "../../../../../../components/Button";
 import Feather from "@expo/vector-icons/Feather";
 import ButtonNavMenu from "../../ButtonNavMenu";
-import { extAddressMdl } from "../../../../../../api/extAddressMdl";
+import { extAddressMdl } from "../../../../../../api/extAddress/extAddressMdl";
 
 
 export default function AddAddress() {

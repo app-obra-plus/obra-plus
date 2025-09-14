@@ -8,7 +8,11 @@ export interface SpringResponseView<T> {
   status: number;
 }
 
-export class ModeloBase<Resource, Create extends object, Update extends object> {
+export class ModeloBase<
+  Resource = unknown, 
+  Create = unknown, 
+  Update = unknown
+> {
   apiURL: string;
   modulePath: string;
 
@@ -67,7 +71,7 @@ export class ModeloBase<Resource, Create extends object, Update extends object> 
 
   
   async create(data: Create) {
-    return this.defaultPostRequest<Resource>("/", data);
+    return this.defaultPostRequest<Resource>("/", data as Object);
   }
 
   async getById(id: number) {
@@ -83,7 +87,7 @@ export class ModeloBase<Resource, Create extends object, Update extends object> 
   }
 
   async update(id: number, data: Update) {
-    return this.defaultPutRequest<Resource>(`/${id}`, data);
+    return this.defaultPutRequest<Resource>(`/${id}`, data as Object);
   }
 }
 

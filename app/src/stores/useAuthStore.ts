@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IUser } from '../types/IAuthResponse';
-import { authMdl } from '../api/authMdl';
+import { authMdl } from '../api/auth/authMdl';
 import { userMdl } from '../api/usersMdl';
 import { SignUpForm } from '../schemas/signUpSchema';
 
