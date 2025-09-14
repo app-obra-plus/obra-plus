@@ -4,11 +4,14 @@ import { CreateAdvertisementSchema } from "./dto/CreateAdvertisementDto";
 import { Request, Response } from "express";
 import { UpdateAdvertisementSchema } from "./dto/UpdateAdvertisementDto";
 import { AdvertisementMapQuerySchema } from "./dto/AdvertisementMapQueryDto";
-import { getPaginationParams, PaginationQuery } from "../../utils/pagination";
+import {
+  parseAdvertisementPaginationParams
+} from "../../utils/pagination/pagination";
 import { ImageService } from "../../infra/blob/image.service";
 import { MulterRequest } from "../../types/multer.types";
 import { AdvertisementImageService } from "./service/advertisementImage.service";
 import { AdvertisementGridService } from "./service/advertisementGrid.service";
+import { AdvertisementPaginationQuerySchema } from '../../utils/pagination/pagination.schema';
 
 const advertisementService = new AdvertisementService();
 const imageServer = new ImageService();
@@ -61,8 +64,8 @@ export async function getAdvertisementGridFilter(req: Request, res: Response) {
 }
 
 export async function getAdvertisementsPage(req: Request, res: Response) {
-  const query: PaginationQuery = req.query;
-  const params = getPaginationParams(query);
+  const parsed = AdvertisementPaginationQuerySchema.parse(req.query);
+  const params = parseAdvertisementPaginationParams(parsed);
   const advertisements = await advertisementService.getAdvertisementsPage(
     params
   );

@@ -122,6 +122,14 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  *         schema:
  *           type: string
  *           enum: [asc, desc]
+ *       - in: query
+ *         name: priceMax
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Lista paginada de anúncios

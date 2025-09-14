@@ -6,15 +6,15 @@ import { EntityNotFoundError } from "../../../exception/EntityNotFoundError";
 import { CategoryService } from "../../category/category.service";
 import { UpdateAdvertisementDto } from "../dto/UpdateAdvertisementDto";
 import { ResponseAdvertisementDto } from "../dto/ResponseAdvertisementDto";
-import { PaginatedResponse, PaginationParams } from "../../../utils/pagination";
 import { AdvertisementImageService } from "./advertisementImage.service";
 import { AdvertisementAddressService } from "./advertisementAddress.service";
+import { PaginatedResponse, AdvertisementPaginationParams } from '../../../utils/pagination/pagination.types';
 
 export class AdvertisementService {
-
   private readonly categoryService = new CategoryService();
   private readonly advertisementImageService = new AdvertisementImageService();
-  private readonly advertisementAddressService =new AdvertisementAddressService();
+  private readonly advertisementAddressService =
+    new AdvertisementAddressService();
 
   async createAdvertisement(
     advertisement: CreateAdvertisementDto,
@@ -74,20 +74,26 @@ export class AdvertisementService {
   }
 
   async getAdvertisementsPage(
-    params: PaginationParams
+    params: AdvertisementPaginationParams
   ): Promise<PaginatedResponse<ResponseAdvertisementDto>> {
-    const { page, limit, order } = params;
+    const { page, limit, order, priceMax, categoryId } = params;
     const skip = (page - 1) * limit;
+
+    const whereClause = {
+      isDeleted: false,
+      ...(priceMax !== undefined && { price: { lte: priceMax } }),
+      ...(categoryId && { category_id: categoryId }),
+    };
 
     const [advertisements, total] = await Promise.all([
       prisma.advertisement.findMany({
-        where: { isDeleted: false },
+        where: whereClause,
         skip,
         take: limit,
         orderBy: { created_at: order },
       }),
       prisma.advertisement.count({
-        where: { isDeleted: false },
+        where: whereClause,
       }),
     ]);
 
