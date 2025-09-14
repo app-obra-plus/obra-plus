@@ -317,7 +317,7 @@ router.post('/:id/images',upload.array('images',5), authMiddleware,  async (req:
 
 /**
  * @openapi
- * /advertisement/image/{id}:
+ * /advertisement/images/{id}:
  *   delete:
  *     summary: Remove uma imagem de anúncio
  *     tags:
