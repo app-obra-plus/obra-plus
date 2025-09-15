@@ -9,7 +9,7 @@ export const AddressResponse = {
     },
     addressName: {
       type: 'string',
-      description: 'Nome do endereçõ',
+      description: 'Nome do endereço',
       example: 'Obra A'
     },
     street: {

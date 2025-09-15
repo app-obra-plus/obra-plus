@@ -9,7 +9,7 @@ export const CreateAddressRequest = {
     },
     addressName: {
       type: 'string',
-      description: 'Nome do endereçõ',
+      description: 'Nome do endereço',
       example: 'Obra A'
     },
     number: {
