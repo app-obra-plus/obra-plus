@@ -28,6 +28,7 @@ model User {
 
 model Address {
   id           String   @id @default(uuid())@db.Uuid 
+  addressName  String   @map("address_name")
   street       String
   number       String
   complement   String?

@@ -1,5 +1,6 @@
 export type AddressResponseDto = {
   id: string;
+  addressName: string;
   street: string;
   number: string;
   complement?: string | null;
