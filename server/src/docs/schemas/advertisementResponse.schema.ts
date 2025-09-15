@@ -11,12 +11,12 @@ export const AdvertisementResponse = {
     title: {
       type: 'string',
       description: 'Título do anúncio',
-      example: 'Doação de brinquedos educativos'
+      example: 'Tijolos'
     },
     description: {
       type: 'string',
       description: 'Descrição detalhada do anúncio',
-      example: 'Brinquedos em ótimo estado para crianças de 3 a 6 anos'
+      example: 'Tijolos em ótimo estado para construção'
     },
     price: {
       type: 'number',

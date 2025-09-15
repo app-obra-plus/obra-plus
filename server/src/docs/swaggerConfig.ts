@@ -16,6 +16,7 @@ import { UpdateAdvertisementRequest } from './schemas/updateAdvertisementRequest
 import { PaginationMeta } from './schemas/PaginationMeta.schema';
 import { PaginatedAdvertisementResponse } from './schemas/paginatedAdvertisementResponse.schema';
 import { SubGridResponse, GridResponse } from './schemas/subGridResponse.schema';
+import { AdvertisementsBatchRequest } from './advertisementsBatchRequest.schema';
 
 // Documentação disponível em http://localhost:3000/api-docs
 const options: swaggerJSDoc.Options = {
@@ -45,7 +46,8 @@ const options: swaggerJSDoc.Options = {
         PaginationMeta,
         PaginatedAdvertisementResponse,
         SubGridResponse,
-        GridResponse
+        GridResponse,
+        AdvertisementsBatchRequest
       }
     },
     info: {

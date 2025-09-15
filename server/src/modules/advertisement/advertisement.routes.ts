@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage} from './advertisement.controller';
+import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds} from './advertisement.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
 import {upload} from  '../../config/multerConfig'
 
@@ -207,7 +207,7 @@ router.get('/:id', authMiddleware,  async (req: Request, res: Response) => {
 
 /**
  * @openapi
- * /advertisements /{id}:
+ * /advertisements/{id}:
  *   put:
  *     summary: Atualiza um anúncio existente
  *     tags:
@@ -260,6 +260,144 @@ router.get('/:id', authMiddleware,  async (req: Request, res: Response) => {
  */
 router.put('/:id', authMiddleware,  async (req: Request, res: Response) => {
     await updateAdvertisement(req, res);
+})
+
+
+/**
+ * @openapi
+ * /advertisements/user/{userId}:
+ *   get:
+ *     summary: Lista anúncios de um usuário com paginação
+ *     tags:
+ *       - Anúncios
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *       - in: query
+ *         name: priceMax
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista paginada de anúncios
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginatedAdvertisementResponse'
+ * 
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.get('/user/:userId', authMiddleware,  async (req: Request, res: Response) => {
+    await getUserAdvertisements(req, res);
+})
+
+/**
+ * @openapi
+ * /advertisements/batch:
+ *   post:
+ *     summary: Lista de anúncios com base em uma lista de IDs fornecidos.
+ *     tags:
+ *       - Anúncios
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *       - in: query
+ *         name: priceMax
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: categoryId
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AdvertisementsBatchRequest'
+ *     responses:
+ *       200:
+ *         description: Lista paginada de anúncios
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginatedAdvertisementResponse'
+ *       400:
+ *         description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/batch', authMiddleware,  async (req: Request, res: Response) => {
+    await getAdvertisementsByIds(req, res);
 })
 
 /**
