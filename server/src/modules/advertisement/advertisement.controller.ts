@@ -12,6 +12,7 @@ import { MulterRequest } from "../../types/multer.types";
 import { AdvertisementImageService } from "./service/advertisementImage.service";
 import { AdvertisementGridService } from "./service/advertisementGrid.service";
 import { AdvertisementPaginationQuerySchema } from '../../utils/pagination/pagination.schema';
+import { AdvertisementsBatchRequestSchema } from "./dto/AdvertisementsBatchRequestDto";
 
 const advertisementService = new AdvertisementService();
 const imageServer = new ImageService();
@@ -94,4 +95,24 @@ export async function deleteAdvertisementsImage(req: Request, res: Response) {
   const { id } = req.params;
   await advertisementImageService.deleteImageById(id);
   return res.status(204).send();
+}
+
+export async function getUserAdvertisements(req: Request, res: Response){
+
+  const { userId } = req.params;
+  const parsed = AdvertisementPaginationQuerySchema.parse(req.query);
+  const params = parseAdvertisementPaginationParams(parsed);
+  const advertisements = await advertisementService.getUserAdvertisements(userId,params);
+
+  return res.status(200).json(advertisements);
+}
+
+export async function getAdvertisementsByIds(req: Request, res: Response) {
+  
+  const { ids } = AdvertisementsBatchRequestSchema.parse(req.body);
+  const parsed = AdvertisementPaginationQuerySchema.parse(req.query);
+  const params = parseAdvertisementPaginationParams(parsed);
+  const advertisements = await advertisementService.getByIds(ids,params);
+
+  return res.json(advertisements);
 }

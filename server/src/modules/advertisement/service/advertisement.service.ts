@@ -8,13 +8,15 @@ import { UpdateAdvertisementDto } from "../dto/UpdateAdvertisementDto";
 import { ResponseAdvertisementDto } from "../dto/ResponseAdvertisementDto";
 import { AdvertisementImageService } from "./advertisementImage.service";
 import { AdvertisementAddressService } from "./advertisementAddress.service";
-import { PaginatedResponse, AdvertisementPaginationParams } from '../../../utils/pagination/pagination.types';
+import { PaginatedResponse, AdvertisementPaginationParams} from '../../../utils/pagination/pagination.types';
+import { ValidationError } from "../../../exception/ValidationError";
+import { BadRequestError } from "../../../exception/BadRequestError";
 
 export class AdvertisementService {
   private readonly categoryService = new CategoryService();
   private readonly advertisementImageService = new AdvertisementImageService();
-  private readonly advertisementAddressService =
-    new AdvertisementAddressService();
+  private readonly advertisementAddressService = new AdvertisementAddressService();
+  
 
   async createAdvertisement(
     advertisement: CreateAdvertisementDto,
@@ -106,6 +108,97 @@ export class AdvertisementService {
 
     return {
       data: advertisementResponse,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getUserAdvertisements (userId: string, params: AdvertisementPaginationParams){
+
+    const { page, limit, order, priceMax, categoryId } = params;
+    const skip = (page - 1) * limit;
+    const userAdsFilter = {
+      isDeleted: false,
+      user_id: userId,
+      ...(priceMax !== undefined && { price: { lte: priceMax } }),
+      ...(categoryId && { category_id: categoryId })
+    };
+
+    const [advertisements, total] = await Promise.all([
+      prisma.advertisement.findMany({
+        where: userAdsFilter,
+        skip,
+        take: limit,
+        orderBy: {created_at: order}
+      }),
+      prisma.advertisement.count({
+        where:userAdsFilter
+      })
+    ]);
+
+    
+    const advertisementsResponse = await Promise.all(
+      advertisements.map(async (ad) => {
+        const adImages = await this.advertisementImageService.getImages(ad.id);
+        return AdvertisementMapper.toResponseDto(ad, adImages);
+      })
+    );
+
+    return {
+      data:advertisementsResponse,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async getByIds(ids: string[], params: AdvertisementPaginationParams) {
+
+    if (!ids?.length) {
+      throw new BadRequestError("A lista de IDs está vazia ou inválida.");
+    }
+
+    const { page, limit, order, priceMax, categoryId } = params;
+    const skip = (page - 1) * limit;
+
+
+    const userAdsFilter = {
+      id: { in: ids },
+      isDeleted: false,
+      ...(priceMax !== undefined && { price: { lte: priceMax } }),
+      ...(categoryId && { category_id: categoryId })
+    }
+
+    const [advertisements, total]= await Promise.all([
+      prisma.advertisement.findMany({
+        where: userAdsFilter,
+        skip,
+        take: limit,
+        orderBy: {created_at: order}
+      }),
+
+      prisma.advertisement.count({
+        where:userAdsFilter
+      })
+
+    ]) 
+
+    const advertisementsResponse = await Promise.all(
+      advertisements.map(async (ad) => {
+        const adImages = await this.advertisementImageService.getImages(ad.id);
+        return AdvertisementMapper.toResponseDto(ad, adImages);
+      })
+    );
+
+    return {
+      data:advertisementsResponse,
       pagination: {
         total,
         page,
