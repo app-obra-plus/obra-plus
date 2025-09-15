@@ -1,21 +1,23 @@
 import React from "react";
 import { Image, Text, View } from "react-native";
+import { AddressResponseDto } from "../../../../../../api/address/addressSch";
+import MapComponent from "../../../../../../components/MapComponent";
+import { Feather } from "@expo/vector-icons";
 
-export default function AddressListCard() {
+interface IAddressListCardProps {
+  address: AddressResponseDto
+}
 
-  const addressImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7z2ko5zXbV2GvWN3PqHLpKDnRfL4PgUGe7A&s"
-
+export default function AddressListCard({ address }: IAddressListCardProps) {
   return (
-    <View className="bg-white rounded-lg shadow mb-4 overflow-hidden flex-row">
-      <Image
-        source={{ uri: addressImage }}
-        className="w-32 h-32"
-        resizeMode="cover"
-      />
+    <View className="bg-white rounded-lg shadow mb-4 h-fit overflow-hidden flex-row border border-1 border-gray-400">
+      <View className="flex h-32 w-32 items-center justify-center">
+        <Feather name="map-pin" size={42} color="#3b82f6" />
+      </View>
       <View className="flex-1 justify-between p-4">
-        <Text className="text-lg font-semibold">Endereço de Exemplo</Text>
+        <Text className="text-lg font-semibold">{address.number} {address.complement && "(" + address.complement + ")"} - {address?.street}</Text>
         <Text className="text-gray-600">
-          Rua Exemplo, 123 - Bairro Exemplo, Cidade - Estado
+          {address.neighborhood}, {address.city} - {address.state}
         </Text>
       </View>
     </View>

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, View, Text, ActivityIndicator } from "react-native";
 import { colors } from "../theme/colors";
+import { PaginatedResponse } from "../api/ModeloBase";
 
 interface RenderListProps<T> {
-  data: T[];
+  data: PaginatedResponse<T>;
   children: (item: T) => React.ReactNode;
   emptyMessage?: string;
   pageSize?: number;
-  onLoadMore?: () => Promise<void>; // função chamada ao chegar no fim da lista
+  onLoadMore?: () => Promise<void>;
   loading?: boolean;
 }
 
@@ -23,7 +24,8 @@ export function RenderList<T>({
   const [displayData, setDisplayData] = useState<T[]>([]);
 
   useEffect(() => {
-    setDisplayData(data.slice(0, pageSize * currentPage));
+    // setDisplayData(data?.slice(0, pageSize * currentPage));
+    console.log("Dados", data)
   }, [data, currentPage, pageSize]);
 
   const handleLoadMore = async () => {

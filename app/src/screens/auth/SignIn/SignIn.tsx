@@ -20,7 +20,6 @@ export default function SignIn() {
   const [isValid, setIsValid] = React.useState<boolean>(!!email || !!password);
 
   const handleLogin = () => {
-    console.log("tentando")
     login(email, password)
       .then(() => {
         navigation.navigate("app" as never);

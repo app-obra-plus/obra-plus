@@ -35,6 +35,7 @@ export class AddressService {
     params: PaginationParamsBase
   ): Promise<PaginatedResponse<AddressResponseDto>> {
     const { page, limit, order } = params;
+    console.log("params", params)
     const skip = (page - 1) * limit;
 
     const [addresses, total] = await Promise.all([

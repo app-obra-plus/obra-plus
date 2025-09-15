@@ -12,12 +12,14 @@ import { getCurrentPositionAsync, LocationAccuracy, requestForegroundPermissions
 interface IMapProps extends PropsWithChildren {
   onRegionChange?: (region: Region) => void;
   setRegion?: (location: Region) => void;
+  displayOnly?: boolean;
 }
 
 export default function MapComponent({ 
   children, 
   onRegionChange, 
   setRegion,
+  displayOnly = false
 }: IMapProps) {
   const {location, isLoading, locationAllowed, setLocationAllowed, setLocation, setIsLoading} = useLocationStore()
   const mapRef = useRef<MapView>(null);

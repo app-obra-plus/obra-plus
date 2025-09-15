@@ -5,8 +5,6 @@ async function getAddressByLocation(latitude: number, longitude: number) {
   try {
     const response = await extAddressMdl.reverseGeocode(latitude, longitude)
 
-    console.log(response)
-
     const address: AddressUpdateDto = {
       street: response.address.road,
       number: response.address.house_number,
@@ -22,7 +20,7 @@ async function getAddressByLocation(latitude: number, longitude: number) {
 
     return address
   } catch (error) {
-    console.log(error)
+    console.error(error)
     return null
   }
 }

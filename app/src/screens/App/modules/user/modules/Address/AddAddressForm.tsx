@@ -27,13 +27,12 @@ export default function AddAddressForm() {
 
   const onSubmit = (data: CreateAddressDto) => {
     addressMdl.create(data).then(() => {
-      console.log("Foi")
       navigation.reset({
         index: 0,
         routes: [{ name: "listAddress" as never }],
       });
     }).catch((err) => {
-      console.log(err)
+      console.error(err)
     });
   }
 

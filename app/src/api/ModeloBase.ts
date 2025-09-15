@@ -10,6 +10,24 @@ export interface SpringResponseView<T> {
   status: number;
 }
 
+export interface IPageableRequest {
+  page?: number;
+  limit?: number;
+  order?: 'ASC' | 'DESC';
+}
+
+export interface IPageableResponse {
+  limit: number;
+  page: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: IPageableResponse;
+}
+
 export class ModeloBase<
   Resource = unknown, 
   Create = unknown, 
@@ -32,30 +50,28 @@ export class ModeloBase<
   }
 
   private async verifyResponse(response: AxiosResponse<any>) {
-    console.log(response)
     if (response.status >= 200 && response.status < 300) {
       return response.data;
     }
     if(response.status === 401) {
-      console.log('Unauthorized! Logging out...');
       signOut()
     }
   }
 
   async defaultPostRequest<T>(path: string, data?: Object): Promise<AxiosResponse<T>> {
     const headers = await this.getAuthHeaders();
-    console.log('Headers:', headers); // Debugging line
     const response = await api.post<T>(
       this.apiURL + this.modulePath + path,
       data,
       { headers }
     );
-    console.log('Response:', response); // Debugging line
     this.verifyResponse(response);
     return response;
   }
 
-  async defaultGetRequest<T>(path: string, params?: Object): Promise<AxiosResponse<T>> {
+  async defaultGetRequest<T>(path: string, params?: Record<string, any>): Promise<AxiosResponse<T>> {
+    console.log("params", params)
+
     const headers = await this.getAuthHeaders();
     const response = await api.get<T>(
       this.apiURL + this.modulePath + path,
@@ -91,7 +107,6 @@ export class ModeloBase<
 
   
   async create(data: Create) {
-    console.log(JSON.stringify(data, null, 2));
     return this.defaultPostRequest<Resource>("/", data as Object);
   }
 
