@@ -7,6 +7,11 @@ export const AddressResponse = {
       description: 'ID do endereço',
       example: '2c4e68d1-874d-4849-8af0-d9b26ca53b19'
     },
+    addressName: {
+      type: 'string',
+      description: 'Nome do endereço',
+      example: 'Obra A'
+    },
     street: {
       type: 'string',
       description: 'Nome da rua',
