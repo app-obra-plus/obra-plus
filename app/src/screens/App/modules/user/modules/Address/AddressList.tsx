@@ -10,6 +10,7 @@ import { useAuthStore } from "../../../../../../stores/useAuthStore";
 import { AddressResponseDto } from "../../../../../../api/address/addressSch";
 import InfiniteScrollList from "../../../../../../components/InfiniteScrollList";
 import Container from "../../../../../../components/Container";
+import FloatingButton from "../../../../../../components/FloatingButton";
 
 export default function AddressList() {
   const { navigate } = useNavigation();
@@ -31,9 +32,7 @@ export default function AddressList() {
           {(item) => <AddressListCard address={item} />}
         </InfiniteScrollList>
       </Container>
-      <TouchableOpacity className="absolute bottom-0 right-0 m-4 p-4 bg-primary rounded-full shadow" onPress={handleAddAddressPress}>
-        <Feather name="plus" size={24} color="white" />
-      </TouchableOpacity>
+      <FloatingButton icon="plus" onPress={handleAddAddressPress} />
     </SafeAreaView>
   );
 }

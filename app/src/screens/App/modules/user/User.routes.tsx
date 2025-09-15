@@ -19,13 +19,14 @@ export default function UserConfigRouter() {
         headerShown: true, 
         headerBackground: () => <HeaderBackground />,
         headerTintColor: colors.white,
+        headerTitleAlign: 'center',
+        
         drawerActiveBackgroundColor: colors.primary,
         drawerActiveTintColor: colors.white,
         drawerInactiveTintColor: colors.white,
         drawerStyle: { backgroundColor: colors.support},
         drawerItemStyle: { borderRadius: 4 },
         
-        headerTitleAlign: 'center',
         drawerLabelStyle: { fontSize: 15 },
       }}
       drawerContent={(props) => <CustomDrawerContent {...props} />}

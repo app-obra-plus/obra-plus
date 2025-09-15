@@ -4,6 +4,7 @@ import Map from "./modules/map/Map";
 import UserConfigRouter from "./modules/user/User.routes";
 import { AddAdvertisementScreen, ChatScreen, SearchScreen } from "./telas-mockadas";
 import { DrawerActions } from "@react-navigation/native";
+import AdvertisementsConfigRouter from "./modules/Addvertisements/Addvertisements.routes";
 
 
 const tabsList: {
@@ -40,7 +41,7 @@ const tabsList: {
   },
   {
     name: "advertisements",
-    component: AddAdvertisementScreen,
+    component: AdvertisementsConfigRouter,
     title: "Meus anúncios",
     icon: "plus-circle",
     label: "Anúncios",

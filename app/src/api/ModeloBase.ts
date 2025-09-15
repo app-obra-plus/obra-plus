@@ -58,12 +58,12 @@ export class ModeloBase<
     }
   }
 
-  async defaultPostRequest<T>(path: string, data?: Object): Promise<AxiosResponse<T>> {
-    const headers = await this.getAuthHeaders();
+  async defaultPostRequest<T>(path: string, data?: Object, headers?: Record<string, string>): Promise<AxiosResponse<T>> {
+    const authHeaders = await this.getAuthHeaders();
     const response = await api.post<T>(
       this.apiURL + this.modulePath + path,
       data,
-      { headers }
+      { headers: { ...authHeaders, ...headers } }
     );
     this.verifyResponse(response);
     return response;
