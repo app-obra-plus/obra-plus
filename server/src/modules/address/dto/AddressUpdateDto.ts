@@ -1,5 +1,6 @@
 export interface AddressUpdateDto{
     street?: string;
+    addressName?: string;
     number?: string;
     complement?: string | null;
     neighborhood?: string;

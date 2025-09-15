@@ -6,6 +6,11 @@ export const UpdateAddressRequest = {
       description: 'Nome da rua',
       example: 'Rua das Laranjeiras'
     },
+      addressName: {
+      type: 'string',
+      description: 'Nome do endereço',
+      example: 'Obra A'
+    },
     number: {
       type: 'string',
       description: 'Número do imóvel',
