@@ -5,6 +5,7 @@ export class AddressMapper{
     static toResponseDto(address: Address): AddressResponseDto{
         const dto: AddressResponseDto = {
             id: address.id,
+            addressName: address.addressName,
             street: address.street,
             number: address.number,
             complement: address.complement ?? null,

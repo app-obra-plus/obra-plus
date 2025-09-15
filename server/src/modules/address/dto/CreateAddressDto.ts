@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const CreateAddressSchema = z.object({
+    addressName: z.string().trim().min(1, 'Nome do endereço é obrigatória'),
     street: z.string().trim().min(1, 'Rua é obrigatória'),
     number: z.string().trim().min(1, 'Número é obrigatório'),
     complement: z.string().trim().optional(),
