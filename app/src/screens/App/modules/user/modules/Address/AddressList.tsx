@@ -28,6 +28,7 @@ export default function AddressList() {
           keyExtractor={(item) => item.id.toString() + Math.random().toString()}
           params={[user?.id]}
           pageSize={10}  
+          queryKeyPrefix="userAddresses"
         >
           {(item) => <AddressListCard address={item} />}
         </InfiniteScrollList>

@@ -1,9 +1,10 @@
 import { Axios, AxiosResponse } from "axios";
 import { PaginatedResponse } from "../api/ModeloBase";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { QueryFunctionContext, useInfiniteQuery } from "@tanstack/react-query";
+import React, { ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import { addressMdl } from "../api/address/addressMdl";
+import { useFocusEffect } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 
 interface InfiniteScrollProps<T> {
   fetchFn: (page: number, limit: number, ...params: any[]) => Promise<AxiosResponse<PaginatedResponse<T>>>;
@@ -11,7 +12,20 @@ interface InfiniteScrollProps<T> {
   pageSize?: number;
   children: (item: T) => React.ReactElement;
   keyExtractor: (item: T) => string;
+  queryKeyPrefix: string;
+  ListHeaderComponent?: React.ComponentType;
+  ListEmptyComponent?: React.ComponentType
 }
+
+
+const DefaultListEmptyComponent = () => (
+  <View className="flex-1 justify-center items-center space-y-2">
+    <Feather name="inbox" size={64} color="gray" />
+    <Text className="font-bold text-gray-800 text-xl">Nenhum item encontrado</Text>
+  </View>
+);
+
+const DefaultListHeaderComponent = () => <></>;
 
 const InfiniteScrollList = <T,>({ 
   fetchFn,
@@ -19,10 +33,12 @@ const InfiniteScrollList = <T,>({
   pageSize = 3,
   children,
   keyExtractor,
+  queryKeyPrefix,
+  ListHeaderComponent = DefaultListHeaderComponent,
+  ListEmptyComponent = DefaultListEmptyComponent
 }: InfiniteScrollProps<T>) => {
 
   const stableParams = useMemo(() => params, [JSON.stringify(params)]);
-
 
   const {
     data,
@@ -30,9 +46,10 @@ const InfiniteScrollList = <T,>({
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    refetch,
     error,
   } = useInfiniteQuery({
-    queryKey: ['addresses', stableParams],
+    queryKey: [queryKeyPrefix, fetchFn.name, ...stableParams],
     queryFn: ({ pageParam }) => fetchFn(pageParam, pageSize, ...params),
     getNextPageParam: (lastPage, allPages) => {
       const atualPage = allPages.length;
@@ -42,8 +59,13 @@ const InfiniteScrollList = <T,>({
       return atualPage <= totalPages ? nextPage : undefined;
     },
     initialPageParam: 1,
-    
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  )
 
   const flatData = data?.pages.flatMap(page => page.data.data) ?? [];
 
@@ -74,20 +96,26 @@ const InfiniteScrollList = <T,>({
     );
   }
 
+  if(flatData.length === 0) {
+    return <ListEmptyComponent />;
+  }
+
 
 
   return (
     <FlatList
       data={flatData}
+      className="h-full"
       renderItem={({ item }) => children(item)}
       keyExtractor={keyExtractor}
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
       ListFooterComponent={isFetchingNextPage ? <ActivityIndicator style={{ margin: 16 }} /> : null}
-      // ListEmptyComponent={<Text>Nenhum item encontrado.</Text>}
-      // ListHeaderComponent={<Text>Topo da lista</Text>}
+      ListHeaderComponent={<ListHeaderComponent />}
     />
   );
 }
+
+
 
 export default InfiniteScrollList;

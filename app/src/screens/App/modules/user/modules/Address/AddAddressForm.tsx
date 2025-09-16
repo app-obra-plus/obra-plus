@@ -26,6 +26,7 @@ export default function AddAddressForm() {
   });
 
   const onSubmit = (data: CreateAddressDto) => {
+    console.log(data)
     addressMdl.create(data).then(() => {
       navigation.reset({
         index: 0,
@@ -36,12 +37,25 @@ export default function AddAddressForm() {
     });
   }
 
-
   return (
     <View>
       <ScrollView className="h-full">
         <Container>
 
+          <Controller
+            control={control}
+            name="addressName"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <InputText
+                onChange={onChange}
+                onBlur={onBlur}
+                value={value}
+                placeholder="Nome"
+                error={errors.addressName?.message}
+                label="Nome"
+              />
+            )}
+          />
           <Controller
             control={control}
             name="country"

@@ -7,6 +7,7 @@ import InfiniteScrollList from "../../../../components/InfiniteScrollList";
 import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
 import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
 import { useAuthStore } from "../../../../stores/useAuthStore";
+import AdvertisementItem from "./AdvertisementItem";
 
 export default function ListAdvertisements() {
   const navigation = useNavigation()
@@ -19,11 +20,12 @@ export default function ListAdvertisements() {
   return (
     <SafeAreaView edges={["left", "right"]} className="h-full">
       <InfiniteScrollList<ResponseAdvertisementDto>
-        fetchFn={advertisementMdl.listByUserId}
+        fetchFn={advertisementMdl.listByUserId.bind(advertisementMdl)}
         keyExtractor={(item) => item.id}
         params={[user?.id]}
+        queryKeyPrefix="userAdvertisements"
       >
-        {(item) => <Text>Item {item.id}</Text>}
+        {(item) => <AdvertisementItem item={item} />}
       </InfiniteScrollList>
       <FloatingButton icon="plus" onPress={handleAddAddressPress} />
     </SafeAreaView>

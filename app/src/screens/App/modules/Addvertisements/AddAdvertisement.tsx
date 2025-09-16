@@ -5,10 +5,11 @@ import AdvertisementForm from "./AdvertisementForm";
 import { ScrollView } from "react-native";
 import { CreateAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
 import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 export default function AddAdvertisement() {
   const [images, setImages] = React.useState<string[]>([]);
+  const navigation = useNavigation();
 
   useFocusEffect(
     useCallback(() => {
@@ -21,7 +22,7 @@ export default function AddAdvertisement() {
     async function uploadAdvertisement() {
       const response = await advertisementMdl.create(data).then(res => res.data)
       const imageResponse = await advertisementMdl.uploadImages(response.id, images)
-      console.log("imageResponse", imageResponse)
+      navigation.goBack()
     }
     uploadAdvertisement();
   }

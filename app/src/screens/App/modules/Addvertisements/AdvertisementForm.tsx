@@ -20,16 +20,7 @@ export default function AdvertisementForm({ onSubmit }: IAdvertisementForm) {
   const {user} = useAuthStore()
 
   const { control, handleSubmit, reset } = useForm<CreateAdvertisementDto>({
-    defaultValues: {
-      addressId: "de470f91-58c6-4434-976c-52d3d267e532",
-      category_id: "d1ee12d9-5dfc-4ca2-8b9e-ce4d86ea9a93",
-      amount: 50,
-      description: "Descricao generica",
-      isDonation: false,
-      price: 100,
-      title: "Titulo generico",
-      unitOfMeasure: UnitOfMeasure.KG,
-    }
+    defaultValues: {}
   })
 
   useFocusEffect(
