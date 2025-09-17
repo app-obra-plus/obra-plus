@@ -4,7 +4,7 @@ import Map from "./modules/map/Map";
 import UserConfigRouter from "./modules/user/User.routes";
 import { AddAdvertisementScreen, ChatScreen, SearchScreen } from "./telas-mockadas";
 import { DrawerActions } from "@react-navigation/native";
-import AdvertisementsConfigRouter from "./modules/Addvertisements/Addvertisements.routes";
+import AdvertisementsConfigRouter from "./modules/Advertisements/Advertisements.routes";
 
 
 const tabsList: {

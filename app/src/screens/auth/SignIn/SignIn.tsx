@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Image, KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import StepWrapper from "../SignUp/StepWrapper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../../styles/style";
@@ -45,45 +45,48 @@ export default function SignIn() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         className="h-screen"
       >
-        <StatusBar barStyle="light-content" />
-        <View className="bg-support items-center py-12 pt-16 rounded-b">
-          <Image source={Logo} className="scale-[0.6]"/>
-        </View>
-        <View className="justify-between px-4 flex-1">
-          <View className="gap-4 py-10">
-            <Text
-              className="text-center text-2xl mb-4 text-support"
-            >Acesse sua conta</Text>
-            <InputText
-              label="Email"
-              placeholder="email@example.com"
-              value={email}
-              onChange={setEmail}
-            />
-            <InputText
-              label="Senha"
-              placeholder="***********"
-              secure
-              value={password}
-              onChange={setPassword}
-            />
+          <StatusBar barStyle="light-content" />
+          <View className="bg-support items-center py-12 pt-16 rounded-b">
+            <Image source={Logo} className="scale-[0.6]"/>
           </View>
-          <View 
-            className="py-8 gap-6"
-          >
-            <Button
-              text="Entrar"
-              type="primary"
-              onPress={handleLogin}
-              disabled={!isValid}
-            />
-            <Button
-              text="Ainda não tenho uma conta"
-              type="link"
-              onPress={() => navigation.goBack()}
-            />
+        <ScrollView>
+          <View className="justify-between px-4 flex-1">
+            <View className="flex-1 gap-4 py-10">
+              <Text
+                className="text-center text-2xl mb-4 text-support"
+              >Acesse sua conta</Text>
+              <InputText
+                label="Email"
+                placeholder="email@example.com"
+                value={email}
+                onChange={setEmail}
+              />
+              <InputText
+                label="Senha"
+                placeholder="***********"
+                secure
+                value={password}
+                onChange={setPassword}
+              />
+            </View>
+            <View 
+              className="py-8 gap-6"
+            >
+              <Button
+                text="Entrar"
+                type="primary"
+                onPress={handleLogin}
+                disabled={!isValid}
+              />
+              <Button
+                text="Ainda não tenho uma conta"
+                type="link"
+                onPress={() => navigation.goBack()}
+              />
+            </View>
           </View>
-        </View>
+          
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )

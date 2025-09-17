@@ -8,6 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import Button from "./Button";
 
 interface Option<T> {
   label: string;
@@ -19,7 +20,9 @@ interface BottomSelectProps<T> {
   value?: T;
   onChange: (val: T) => void;
   getLabel?: (val: T) => string;
+  className?: string;
   label?: string;
+  error?: string;
   placeholder?: string;
 }
 
@@ -28,21 +31,43 @@ export default function BottomSelect<T>({
   value,
   getLabel = (val: T) => (val as unknown as string) || "",
   onChange,
+  className,
   label,
+  error,
   placeholder = "Selecione...",
 }: BottomSelectProps<T>) {
   const [visible, setVisible] = useState(false);
+  const [preSelected, setPreSelected] = useState<T | undefined>(value);
+
+  const handleClickOption = (val: T) => {
+    setPreSelected(val);
+  }
+  
+  const handleSelect = () => {
+    onChange(preSelected as T);
+    setVisible(false);
+  }
 
   return (
     <>
       <TouchableOpacity
-        className=" h-16 justify-center border border-support rounded-md p-2 mb-4 relative"
+        className={
+          "h-16 justify-center border border-support rounded-md p-2 mb-4" +
+          (className ? ` ${className}` : "")
+        }
         onPress={() => setVisible(true)}
         activeOpacity={0.7}
       >
         <Text className="absolute -top-3 left-3 bg-background px-1 text-support">
           {label}
         </Text>
+        {
+          error && (
+            <Text className="absolute -bottom-2 right-3 bg-background px-1 text-red-800">
+              {error}
+            </Text>
+          )
+        }
         <Text className="text-base">
           {value ? getLabel(value) : placeholder}
         </Text>
@@ -61,21 +86,30 @@ export default function BottomSelect<T>({
         />
 
         <View className="bg-white max-h-[50%] rounded-t-3xl p-6 elevation-2xl shadow-[10px_2px_5px_rgba(0,0,0,0.7)]">
+          <View className="m-auto w-32 h-2 rounded-lg bg-slate-300" />
+          <Text className="text-lg font-semibold my-4">Selecione uma opção</Text>
           <FlatList
             data={options}
             keyExtractor={(_, index) => index.toString()}
+            style={{ gap: "8px" }}
             renderItem={({ item }) => (
               <TouchableOpacity
-                className="p-4 border-b border-gray-200 rounded-3xl"
-                onPress={() => {
-                  onChange(item.value);
-                  setVisible(false);
-                }}
+                className="p-4 rounded-3xl flex-row flex justify-between items-center"
+                onPress={() => handleClickOption(item.value)}
+                activeOpacity={1}
               >
-                <Text className="text-base">{item.label}</Text>
+                <Text className="text-lg">{item.label}</Text>
+                <View className={`w-6 h-6 p-[3px] rounded-full border-2 border-primary`}>
+                  {
+                    preSelected === item.value && (
+                      <View className="w-full h-full rounded-full bg-primary m-auto" />
+                    )
+                  }
+                </View>
               </TouchableOpacity>
             )}
           />
+          <Button text="Selecionar" onPress={handleSelect} disabled={!preSelected} />
         </View>
       </Modal>
     </>

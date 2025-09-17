@@ -18,20 +18,25 @@ type AddAddressMapNavigationProp = NativeStackNavigationProp<
 export default function AddAddressMap() {
   const [region, setRegion] = useState<Region | null>(null);
   const navigation = useNavigation<AddAddressMapNavigationProp>();
-  const { isLoading, locationAllowed } = useLocationStore();
+  const { isLoading: isLoadingLocation, locationAllowed } = useLocationStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleBack = () => {
     navigation.goBack() 
   }
 
   const handleNext = () => {
+    setIsLoading(true);
     getAddressByLocation(region?.latitude!, region?.longitude!)
       .then((address) => {
         navigation.navigate('addAddressForm', { address })
       })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
 
-  const hideLayout = isLoading || !locationAllowed;
+  const hideLayout = isLoadingLocation || !locationAllowed;
 
   return (
     <View className="h-full">
@@ -42,7 +47,7 @@ export default function AddAddressMap() {
           <>
             <Feather name="map-pin" size={24} color="black" className="absolute top-[50%] right-[50%] translate-x-[50%] translate-y-[-100%]" />
             <View className="absolute bottom-0 w-full p-4 gap-4 pb-10">
-              <Button text="Avançar" onPress={handleNext}/>
+              <Button text="Avançar" onPress={handleNext} isLoading={isLoading} />
               <Button text="Voltar" type="outline" onPress={handleBack}/>
             </View>
           </>

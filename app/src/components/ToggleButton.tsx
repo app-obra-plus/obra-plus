@@ -5,12 +5,14 @@ interface ToggleButtonProps {
   value?: boolean;
   onChange?: (val: boolean) => void;
   label?: string;
+  className?: string;
 }
 
 export default function ToggleButton({
   value = false,
   onChange,
   label,
+  className,
 }: ToggleButtonProps) {
   const [active, setActive] = useState(value);
 
@@ -21,7 +23,7 @@ export default function ToggleButton({
   }
 
   return (
-    <View className="w-full h-16 justify-between flex-row items-center mb-4">
+    <View className={`w-full h-16 justify-between flex-row items-center mb-4 ${className}`}>
       <Text>
         {label}
       </Text>

@@ -100,8 +100,6 @@ const InfiniteScrollList = <T,>({
     return <ListEmptyComponent />;
   }
 
-
-
   return (
     <FlatList
       data={flatData}

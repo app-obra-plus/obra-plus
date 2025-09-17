@@ -16,6 +16,7 @@ type AddAddressFormRouteProp = RouteProp<AddressStackParamList, "addAddressForm"
 export default function AddAddressForm() {
   const route = useRoute<AddAddressFormRouteProp>();
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const { address } = route.params;
 
@@ -26,7 +27,7 @@ export default function AddAddressForm() {
   });
 
   const onSubmit = (data: CreateAddressDto) => {
-    console.log(data)
+    setIsLoading(true);
     addressMdl.create(data).then(() => {
       navigation.reset({
         index: 0,
@@ -34,6 +35,8 @@ export default function AddAddressForm() {
       });
     }).catch((err) => {
       console.error(err)
+    }).finally(() => {
+      setIsLoading(false);
     });
   }
 
@@ -158,7 +161,7 @@ export default function AddAddressForm() {
           />
         </Container>
         <View className="w-full p-4 gap-4 pb-10">
-          <Button text="Salvar Endereço" onPress={handleSubmit(onSubmit)} disabled={!isValid} />
+          <Button text="Salvar Endereço" onPress={handleSubmit(onSubmit)} disabled={!isValid} isLoading={isLoading} />
           <Button text="Voltar ao Mapa" type="outline" bgFill onPress={navigation.goBack} />
         </View>
       </ScrollView>

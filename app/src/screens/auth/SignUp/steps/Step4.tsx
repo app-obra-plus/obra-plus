@@ -21,6 +21,7 @@ export default function Step4() {
       label="Telefone"
       value={registerForm.phone_number}
       onChange={handleChangePhone}
+      mask={{ mask: "(99) 99999-9999" }}
       keyboardType="phone-pad"
       // error={phoneError}
     />

@@ -59,7 +59,6 @@ export default function MultiImageInput({ onChange }: MultiImageInputProps) {
 
   return (
     <View>
-      <Text className="text-lg font-semibold mb-4">Fotos do item</Text>
       <View className="flex-row items-center">
         <FlatList
           data={images}

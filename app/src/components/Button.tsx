@@ -1,5 +1,5 @@
 import React from "react";
-import { Pressable, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, Pressable, Text, TouchableOpacity, View } from "react-native";
 
 type ButtonType = "primary" | "outline" | "link";
 type ButtonColor = "light" | "dark";
@@ -11,6 +11,7 @@ interface ButtonProps {
   color?: ButtonColor;
   disabled?: boolean;
   bgFill?: boolean;
+  isLoading?: boolean;
 }
 
 export default function Button({
@@ -19,7 +20,8 @@ export default function Button({
   type = "primary",
   color = "dark",
   disabled = false,
-  bgFill = false
+  bgFill = false,
+  isLoading = false
 }: ButtonProps) {
   const buttonStyles: Record<ButtonType, Record<ButtonColor, string>> = {
     primary: {
@@ -53,19 +55,27 @@ export default function Button({
 
   const bgFillClass = bgFill ? (color === "dark" ? "bg-white" : "bg-black") : "";
 
+  const canPress = !(disabled || isLoading);
+
   return (
     <Pressable
-      disabled={disabled}
+      disabled={!canPress}
       onPress={onPress}
-      className={`p-4 rounded-md ${buttonStyles[type][color]} ${disabled ? "opacity-60" : "opacity-100"} ${bgFillClass}`}
+      className={`flex h-16 items-center justify-center p-4 rounded-md ${buttonStyles[type][color]} ${!canPress ? "opacity-60" : "opacity-100"} ${bgFillClass}`}
       android_ripple={{ color: "rgba(0,0,0,0.1)" }}
       style={({ pressed }) => [
         { opacity: pressed ? 0.7 : 1 },
       ]}
     >
-      <Text className={`text-center text-xl ${textStyles[type][color]}`}>
-        {text}
-      </Text>
+      {
+        isLoading ? (
+          <ActivityIndicator className="" color={type === "primary" ? "white" : (color === "dark" ? "black" : "white")} />
+        ) : (
+          <Text className={`text-center text-xl ${textStyles[type][color]}`}>
+            {text}
+          </Text>
+        )
+      }
     </Pressable>
   );
 }
