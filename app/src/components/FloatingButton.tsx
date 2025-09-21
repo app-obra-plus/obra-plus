@@ -5,6 +5,7 @@ import { TouchableOpacity } from "react-native";
 interface IFloatingButtonProps {
   onPress?: () => void;
   icon: keyof typeof Feather.glyphMap;
+  
 }
 
 export default function FloatingButton({ onPress, icon }: IFloatingButtonProps) {

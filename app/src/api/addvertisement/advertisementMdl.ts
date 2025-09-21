@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
-import { ModeloBase, PaginatedResponse } from "../ModeloBase";
-import { CreateAdvertisementDto, ResponseAdvertisementDto, UpdateAdvertisementDto } from "./addvertisementSch";
+import { ModeloBase, PaginatedResponse, SpringResponseView } from "../ModeloBase";
+import { CreateAdvertisementDto, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./addvertisementSch";
 
 function createFormData(uris: string[], fieldName = "files") {
   const formData = new FormData();
@@ -48,6 +48,11 @@ class AdvertisementModel extends ModeloBase<ResponseAdvertisementDto, CreateAdve
       limit,
       order: 'desc'
     });
+    return response;
+  }
+
+  async grid(params: {minLatitude: number, maxLatitude: number, minLongitude: number, maxLongitude: number, resolution: number}) {
+    const response = this.defaultGetRequest<ResponseAdvertisementGridDto[]>('/grid', params);
     return response;
   }
 }

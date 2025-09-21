@@ -53,6 +53,12 @@ export interface ResponseAdvertisementDto {
   images: ResponseImageDto[];
 }
 
+export interface ResponseAdvertisementGridDto {
+  latitudeCenter: number;
+  longitudeCenter: number;
+  advertisementIds: string[];
+}
+
 
 export const AdvertisementStatusSchema = z.nativeEnum(AdvertisementStatus )
 

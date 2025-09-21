@@ -92,7 +92,7 @@ export default function MapComponent({
       customMapStyle={mapStyleLight}
       showsUserLocation
       showsMyLocationButton={true}
-      showsCompass
+      showsCompass={true}
       onRegionChangeComplete={handleMapMove}
     >
       {children ? <>{children}</> : null}
