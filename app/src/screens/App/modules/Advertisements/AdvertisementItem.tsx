@@ -1,14 +1,32 @@
 import React from "react";
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
+import EditDeleteDrawer from "../../../../components/EditDeleteDrawer";
+import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
 
 interface IAdvertisementForm {
   item: ResponseAdvertisementDto
 }
 
 export default function AdvertisementItem({ item }: IAdvertisementForm) {
+  const [isDrawerVisible, setIsDrawerVisible] = React.useState(false);
+
+  const handleDelete = async () => {
+    await advertisementMdl.delete(item.id);
+  }
+
   return (
-    <View className="bg-white h-40 rounded-xl m-4 shadow mb-4 overflow-hidden flex-row  elevation-lg">
+    <Pressable 
+      className="bg-white h-40 rounded-xl m-4 shadow mb-4 overflow-hidden flex-row  elevation-lg"
+      onPress={() => setIsDrawerVisible(true)}
+    >
+      <EditDeleteDrawer
+        isVisible={isDrawerVisible}
+        onClose={() => setIsDrawerVisible(false)}
+        onEdit={() => {}}
+        onDelete={handleDelete}
+        disableDelete={true}
+      />
       <View className="flex h-full w-32 mr-4 items-center justify-center">
         <Image
             source={{ uri: item?.images[0]?.url || "" }}
@@ -32,6 +50,7 @@ export default function AdvertisementItem({ item }: IAdvertisementForm) {
           </View>
         </View>
       </View>
-    </View>
+      
+    </Pressable>
   )
 }

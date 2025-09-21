@@ -21,7 +21,7 @@ export default function BottomDrawer({ children, isVisible, onClose }: BottomDra
       />
 
       <View className="bg-white max-h-[50%] rounded-t-3xl p-6 elevation-2xl shadow-[10px_2px_5px_rgba(0,0,0,0.7)]">
-        <View className="m-auto w-32 h-2 rounded-lg bg-slate-300" />
+        <View className="m-auto w-32 h-2 rounded-lg bg-slate-300 mb-4" />
         {children}
       </View>
     </Modal>

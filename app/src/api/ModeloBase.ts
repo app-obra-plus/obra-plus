@@ -110,7 +110,7 @@ export class ModeloBase<
     return this.defaultPostRequest<Resource>("/", data as Object);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     return this.defaultGetRequest<Resource>(`/${id}`);
   }
 
@@ -118,11 +118,11 @@ export class ModeloBase<
     return this.defaultGetRequest<Resource[]>(`/`);
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return this.defaultDeleteRequest<Resource>(`/${id}`);
   }
 
-  async update(id: number, data: Update) {
+  async update(id: string, data: Update) {
     return this.defaultPutRequest<Resource>(`/${id}`, data as Object);
   }
 }
