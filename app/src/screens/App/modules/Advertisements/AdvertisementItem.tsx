@@ -1,11 +1,11 @@
 import React from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
 import EditDeleteDrawer from "../../../../components/EditDeleteDrawer";
 import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
 
 interface IAdvertisementForm {
-  item: ResponseAdvertisementDto
+  item: ResponseAdvertisementDto;
 }
 
 export default function AdvertisementItem({ item }: IAdvertisementForm) {
@@ -13,44 +13,117 @@ export default function AdvertisementItem({ item }: IAdvertisementForm) {
 
   const handleDelete = async () => {
     await advertisementMdl.delete(item.id);
-  }
+  };
 
   return (
-    <Pressable 
-      className="bg-white h-40 rounded-xl m-4 shadow mb-4 overflow-hidden flex-row  elevation-lg"
-      onPress={() => setIsDrawerVisible(true)}
-    >
-      <EditDeleteDrawer
-        isVisible={isDrawerVisible}
-        onClose={() => setIsDrawerVisible(false)}
-        onEdit={() => {}}
-        onDelete={handleDelete}
-        disableDelete={true}
-      />
-      <View className="flex h-full w-32 mr-4 items-center justify-center">
-        <Image
+    <View style={styles.wrapper}>
+      <Pressable
+        style={styles.card}
+        onPress={() => setIsDrawerVisible(true)}
+      >
+        <EditDeleteDrawer
+          isVisible={isDrawerVisible}
+          onClose={() => setIsDrawerVisible(false)}
+          onEdit={() => {}}
+          onDelete={handleDelete}
+          disableDelete={true}
+        />
+
+        <View style={styles.imageContainer}>
+          <Image
             source={{ uri: item?.images[0]?.url || "" }}
-            className="h-full w-full object-cover"
+            style={styles.image}
+            resizeMode="cover"
           />
-      </View>
-      <View className="flex-1 justify-between py-4 pr-4">
-        <View className="w-full h-full flex justify-between">
-          <View>
-            <Text className="text-xl font-bold">{item?.title}</Text>
-            <Text className="text-md">{item?.description}</Text>
-          </View>
-          <View className="w-full flex-row justify-end">
-            {
-              item.isDonation ? (
-                <Text className="text-white bg-secondary text-xl font-bold text-right p-1 rounded-md">Doação</Text>
+        </View>
+
+        <View style={styles.content}>
+          <View style={styles.contentInner}>
+            <View>
+              <Text style={styles.title}>{item?.title}</Text>
+              <Text style={styles.description}>{item?.description}</Text>
+            </View>
+
+            <View style={styles.priceContainer}>
+              {item.isDonation ? (
+                <Text style={styles.donationBadge}>Doação</Text>
               ) : (
-                <Text className="text-primary text-2xl font-bold text-right">R$ {(item?.price/100).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</Text>
-              )
-            }
+                <Text style={styles.price}>
+                  R$ {(item?.price / 100).toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </Text>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-      
-    </Pressable>
-  )
+      </Pressable>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  wrapper: {
+    padding: 16,
+    width: "50%",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    marginBottom: 16,
+    overflow: "hidden",
+    elevation: 4,
+  },
+  imageContainer: {
+    height: 128,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  image: {
+    height: "100%",
+    width: "100%",
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+  },
+  content: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingRight: 12,
+    paddingLeft: 12,
+  },
+  contentInner: {
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#111",
+  },
+  description: {
+    fontSize: 14,
+    color: "#444",
+    marginTop: 4,
+  },
+  priceContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 8,
+  },
+  price: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#007BFF", // cor primária
+  },
+  donationBadge: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
+    backgroundColor: "#6C63FF", // cor secundária
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    overflow: "hidden",
+  },
+});

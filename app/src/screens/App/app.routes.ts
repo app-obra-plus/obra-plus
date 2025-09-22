@@ -2,9 +2,10 @@ import { BottomTabNavigationOptions } from "@react-navigation/bottom-tabs";
 import Feather from "@expo/vector-icons/Feather";
 import Map from "./modules/map/Map";
 import UserConfigRouter from "./modules/user/User.routes";
-import { AddAdvertisementScreen, ChatScreen, SearchScreen } from "./telas-mockadas";
-import { DrawerActions } from "@react-navigation/native";
+import { ChatScreen } from "./telas-mockadas";
 import AdvertisementsConfigRouter from "./modules/Advertisements/Advertisements.routes";
+import SearchScreen from "./modules/search/SearchScreen";
+
 
 
 const tabsList: {

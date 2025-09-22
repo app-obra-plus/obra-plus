@@ -2,7 +2,7 @@ import { Axios, AxiosResponse } from "axios";
 import { PaginatedResponse } from "../api/ModeloBase";
 import React, { ComponentType, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 
@@ -15,6 +15,7 @@ interface InfiniteScrollProps<T> {
   queryKeyPrefix: string;
   ListHeaderComponent?: React.ComponentType;
   ListEmptyComponent?: React.ComponentType
+  numColumns?: number;
 }
 
 
@@ -35,7 +36,8 @@ const InfiniteScrollList = <T,>({
   keyExtractor,
   queryKeyPrefix,
   ListHeaderComponent = DefaultListHeaderComponent,
-  ListEmptyComponent = DefaultListEmptyComponent
+  ListEmptyComponent = DefaultListEmptyComponent,
+  numColumns = 1,
 }: InfiniteScrollProps<T>) => {
 
   const stableParams = useMemo(() => params, [JSON.stringify(params)]);
@@ -103,8 +105,9 @@ const InfiniteScrollList = <T,>({
   return (
     <FlatList
       data={flatData}
-      className="h-full"
+      contentContainerStyle={styles.list}
       renderItem={({ item }) => children(item)}
+      numColumns={numColumns}
       keyExtractor={keyExtractor}
       onEndReached={loadMore}
       onEndReachedThreshold={0.5}
@@ -114,6 +117,11 @@ const InfiniteScrollList = <T,>({
   );
 }
 
-
+const styles = StyleSheet.create({
+  list: {
+    flexGrow: 0,
+    alignItems: 'stretch',
+  }
+})
 
 export default InfiniteScrollList;

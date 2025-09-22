@@ -55,6 +55,17 @@ class AdvertisementModel extends ModeloBase<ResponseAdvertisementDto, CreateAdve
     const response = this.defaultGetRequest<ResponseAdvertisementGridDto[]>('/grid', params);
     return response;
   }
+
+  async getAllPaginated(page: number, limit: number, categoryId?: string, priceMax?: number) {
+    const response = this.defaultGetRequest<PaginatedResponse<ResponseAdvertisementDto>>('/', {
+      page,
+      limit,
+      order: 'desc',
+      categoryId,
+      priceMax
+    });
+    return response;
+  }
 }
 
 export const advertisementMdl = new AdvertisementModel()

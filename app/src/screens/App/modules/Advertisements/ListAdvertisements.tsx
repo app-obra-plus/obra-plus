@@ -24,6 +24,7 @@ export default function ListAdvertisements() {
         keyExtractor={(item) => item.id}
         params={[user?.id]}
         queryKeyPrefix="userAdvertisements"
+        numColumns={2}
       >
         {(item) => <AdvertisementItem item={item} />}
       </InfiniteScrollList>
