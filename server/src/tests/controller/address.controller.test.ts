@@ -1,4 +1,3 @@
-// tests/controllers/address.controller.test.ts
 import {
   createAddress,
   getAddress,
