@@ -3,31 +3,24 @@ import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
 import EditDeleteDrawer from "../../../../components/EditDeleteDrawer";
 import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
+import { Feather } from "@expo/vector-icons";
+import { colors } from "../../../../theme/colors";
+import { useLocationStore } from "../../../../stores/useLocationStore";
+import { calcularDistancia } from "../../../../utils/locationUtils";
 
 interface IAdvertisementForm {
   item: ResponseAdvertisementDto;
+  onClick?: () => void;
 }
 
-export default function AdvertisementItem({ item }: IAdvertisementForm) {
-  const [isDrawerVisible, setIsDrawerVisible] = React.useState(false);
-
-  const handleDelete = async () => {
-    await advertisementMdl.delete(item.id);
-  };
+export default function AdvertisementItem({ item, onClick }: IAdvertisementForm) {
 
   return (
     <View style={styles.wrapper}>
       <Pressable
         style={styles.card}
-        onPress={() => setIsDrawerVisible(true)}
+        onPress={onClick}
       >
-        <EditDeleteDrawer
-          isVisible={isDrawerVisible}
-          onClose={() => setIsDrawerVisible(false)}
-          onEdit={() => {}}
-          onDelete={handleDelete}
-          disableDelete={true}
-        />
 
         <View style={styles.imageContainer}>
           <Image
@@ -40,10 +33,9 @@ export default function AdvertisementItem({ item }: IAdvertisementForm) {
         <View style={styles.content}>
           <View style={styles.contentInner}>
             <View>
-              <Text style={styles.title}>{item?.title}</Text>
-              <Text style={styles.description}>{item?.description}</Text>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.description}</Text>
             </View>
-
             <View style={styles.priceContainer}>
               {item.isDonation ? (
                 <Text style={styles.donationBadge}>Doação</Text>
@@ -69,7 +61,7 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 12,
+    borderRadius: 8,
     marginBottom: 16,
     overflow: "hidden",
     elevation: 4,
@@ -78,13 +70,13 @@ const styles = StyleSheet.create({
     height: 128,
     width: "100%",
     alignItems: "center",
+    padding: 8,
     justifyContent: "center",
   },
   image: {
+    borderRadius: 4,
     height: "100%",
     width: "100%",
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
   },
   content: {
     flex: 1,
@@ -99,7 +91,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#111",
   },
   description: {
     fontSize: 14,

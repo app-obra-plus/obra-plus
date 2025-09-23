@@ -2,13 +2,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddressList from "./AddressList";
 import AddAddressMap from "./AddAddressMap";
 import AddAddressForm from "./AddAddressForm";
-import { AddressUpdate } from "../../../../../../api/address/addressSch";
+import { AddressUpdateDto } from "../../../../../../api/address/addressSch";
 
 export type AddressStackParamList = {
   listAddress: undefined;
   addAddressMap: undefined;
   addAddressForm: {
-    address: AddressUpdate | null;
+    address: AddressUpdateDto | null;
   };
 };
 

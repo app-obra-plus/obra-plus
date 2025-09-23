@@ -9,14 +9,27 @@ import Filters from "./Filters";
 import AdvertisementItem from "../Advertisements/AdvertisementItem";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors } from "../../../../theme/colors";
+import { useNavigation } from "@react-navigation/native";
+import { SearchStackParamList } from "./search.routes";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export interface FilterProps {
   categoryId?: string;
   priceMax?: number;
 }
 
+export type SearchScreenNavigationProp = NativeStackNavigationProp<
+  SearchStackParamList,
+  "advertisementList"
+>;
+
 export default function SearchScreen() {
   const [filter, setFilter] = useState<FilterProps>({});
+  const navigation = useNavigation<SearchScreenNavigationProp>();
+
+  const handleShowDetails = (advertisementId: string) => {
+    navigation.navigate("advertisementDetails", { advertisementId });
+  }
 
   return (
     <View style={styles.container}>
@@ -35,7 +48,7 @@ export default function SearchScreen() {
           queryKeyPrefix="allAdvertisements"
           numColumns={2}
         >
-          {(item) => <AdvertisementItem item={item} />}
+          {(item) => <AdvertisementItem item={item} onClick={() => handleShowDetails(item.id)} />}
         </InfiniteScrollList>
       </View>
     </View>

@@ -3,8 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { signOut } from '../stores/useAuthStore';
 import api from './api';
 
-const API_URL = 'http://192.168.1.85:3000';
-
+const API_URL = 'http://192.168.0.6:3000';
 export interface SpringResponseView<T> {
   data: T;
   status: number;

@@ -5,6 +5,7 @@ import UserConfigRouter from "./modules/user/User.routes";
 import { ChatScreen } from "./telas-mockadas";
 import AdvertisementsConfigRouter from "./modules/Advertisements/Advertisements.routes";
 import SearchScreen from "./modules/search/SearchScreen";
+import SearchConfigRouter from "./modules/search/search.routes";
 
 
 
@@ -26,7 +27,7 @@ const tabsList: {
   },
   {
     name: "search",
-    component: SearchScreen,
+    component: SearchConfigRouter,
     title: "Pesquisar",
     icon: "search",
     label: "Pesquisar",
