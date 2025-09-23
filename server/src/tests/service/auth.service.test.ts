@@ -31,6 +31,7 @@ describe('AuthService', () => {
     first_name: 'João',
     last_name: 'Silva',
     profile_picture: null,
+    isDeleted: false,
     phone_number: '11999999999', 
     created_at: new Date('2023-01-01T00:00:00Z'),
     updated_at: new Date('2023-01-01T00:00:00Z'),
@@ -58,13 +59,13 @@ describe('AuthService', () => {
     const result = await authService.login(loginDto);
 
     expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { email: loginDto.email, active: true },
+      where: { email: loginDto.email, isDeleted : false },
     });
     expect(bcrypt.compare).toHaveBeenCalledWith(loginDto.password, validUser.password);
     expect(jwt.sign).toHaveBeenCalledWith(
       { userId: validUser.id, email: validUser.email },
       'minha_chave_teste',
-      { expiresIn: '10m' }
+      { expiresIn: '1d' }
     );
     expect(result).toEqual({
     token: jwtToken,
