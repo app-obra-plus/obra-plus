@@ -1,29 +1,11 @@
 import { prisma } from "../../../database/client";
+import { AdvertisementWithAddress, GeoPoint, SimplifiedAdLocation } from "../../../types/geo.types";
 import {
   AdvertisementMapQueryDto,
   SubGrid,
   SubGridResponse,
 } from "../dto/AdvertisementMapQueryDto";
 
-
-interface AdvertisementWithAddress {
-  id: string;
-  advertisementAddress: {
-    latitude: number;
-    longitude: number;
-  };
-}
-
-interface SimplifiedAdLocation {
-  id: string;
-  lat: number;
-  lng: number;
-}
-
-export interface GeoPoint {
-  lat: number;
-  lng: number;
-}
 export class AdvertisementGridService {
 
   private async getAdvertisementsForGrid(dto: AdvertisementMapQueryDto) {
