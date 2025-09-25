@@ -14,6 +14,7 @@ export function parseAdvertisementPaginationParams(query: AdvertisementPaginatio
  const basePageParams = getPaginationParams(query);
  const priceMax = query.priceMax ? parseFloat(query.priceMax): undefined;
  const categoryId = query.categoryId;
+ const text = query.text;
 
-  return { ...basePageParams, priceMax, categoryId };
+  return { ...basePageParams, priceMax, categoryId, text};
 }

@@ -7,6 +7,7 @@ export const AdvertisementPaginationQuerySchema = z
     order: z.enum(["asc", "desc"]).optional(),
     priceMax: z.string().optional(),
     categoryId: z.string().optional(),
+    text: z.string().optional(),
   })
   .strict();
 

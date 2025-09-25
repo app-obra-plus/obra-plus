@@ -1,7 +1,7 @@
 import { prisma } from "../../../database/client";
 import { CreateAdvertisementDto } from "../dto/CreateAdvertisementDto";
 import { AdvertisementMapper } from "../dto/mapper/AdvertisementMapper";
-import { AdvertisementStatus } from "../../../generated/prisma";
+import { AdvertisementStatus, Prisma } from "../../../generated/prisma";
 import { EntityNotFoundError } from "../../../exception/EntityNotFoundError";
 import { CategoryService } from "../../category/category.service";
 import { UpdateAdvertisementDto } from "../dto/UpdateAdvertisementDto";
@@ -81,10 +81,18 @@ export class AdvertisementService {
     const { page, limit, order, priceMax, categoryId } = params;
     const skip = (page - 1) * limit;
 
+    const orConditions: Prisma.AdvertisementWhereInput[] | undefined = params.text
+    ? [
+        { title: { contains: params.text, mode: "insensitive" } },
+        { description: { contains: params.text, mode: "insensitive" } }
+      ]
+    : undefined;
+
     const whereClause = {
       isDeleted: false,
       ...(priceMax !== undefined && { price: { lte: priceMax } }),
       ...(categoryId && { category_id: categoryId }),
+      ...(params.text && { OR: orConditions })
     };
 
     const [advertisements, total] = await Promise.all([
