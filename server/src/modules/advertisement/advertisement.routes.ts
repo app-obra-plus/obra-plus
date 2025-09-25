@@ -495,6 +495,48 @@ router.delete('/images/:id', authMiddleware,  async (req: Request, res: Response
     await deleteAdvertisementsImage(req, res);
 })
 
+
+
+/**
+ * @openapi
+ * /advertisements/{id}:
+ *   delete:
+ *     summary: Remove um anúncio pelo ID
+ *     tags:
+ *       - Anúncios
+ *     responses:
+ *       204:
+ *         description: Anúncio removido com sucesso (sem corpo de resposta)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginatedAdvertisementResponse'
+ * 
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
 router.delete('/:id', authMiddleware,  async (req: Request, res: Response) => {
     await deleteAdvertisement(req, res);
 })
