@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds} from './advertisement.controller';
+import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds, deleteAdvertisement} from './advertisement.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
 import {upload} from  '../../config/multerConfig'
 
@@ -494,5 +494,10 @@ router.post('/:id/images',upload.array('images',5), authMiddleware,  async (req:
 router.delete('/images/:id', authMiddleware,  async (req: Request, res: Response) => {
     await deleteAdvertisementsImage(req, res);
 })
+
+router.delete('/:id', authMiddleware,  async (req: Request, res: Response) => {
+    await deleteAdvertisement(req, res);
+})
+
 
 export default router; 

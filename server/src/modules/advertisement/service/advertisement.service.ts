@@ -9,8 +9,8 @@ import { ResponseAdvertisementDto } from "../dto/ResponseAdvertisementDto";
 import { AdvertisementImageService } from "./advertisementImage.service";
 import { AdvertisementAddressService } from "./advertisementAddress.service";
 import { PaginatedResponse, AdvertisementPaginationParams} from '../../../utils/pagination/pagination.types';
-import { ValidationError } from "../../../exception/ValidationError";
 import { BadRequestError } from "../../../exception/BadRequestError";
+import { ForbiddenAccessError } from "../../../exception/ForbiddenAccessError";
 
 export class AdvertisementService {
   private readonly categoryService = new CategoryService();
@@ -157,6 +157,23 @@ export class AdvertisementService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async deleteAdvertisement (advertisementId: string, userId: string){
+   const result = await prisma.advertisement.updateMany({
+      where: {
+        id: advertisementId,
+        user_id: userId,
+        isDeleted: false,
+      },
+      data: {
+        isDeleted: true,
+        updated_at: new Date(),
+      },
+    });
+    if (result.count === 0) {
+      throw new ForbiddenAccessError();
+    }
   }
 
   async getByIds(ids: string[], params: AdvertisementPaginationParams) {
