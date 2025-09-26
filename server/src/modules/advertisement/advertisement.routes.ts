@@ -130,6 +130,10 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  *         name: categoryId
  *         schema:
  *           type: string
+ *       - in: query
+ *         name: text
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Lista paginada de anúncios
