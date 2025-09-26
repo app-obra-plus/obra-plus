@@ -1,47 +1,120 @@
 import { prisma } from "../../../database/client";
+import { AdvertisementWithAddress, GeoPoint, SimplifiedAdLocation } from "../../../types/geo.types";
 import {
   AdvertisementMapQueryDto,
   SubGrid,
   SubGridResponse,
 } from "../dto/AdvertisementMapQueryDto";
-import { AdvertisementAddressService } from "./advertisementAddress.service";
 
 export class AdvertisementGridService {
-  private readonly advertisementAddressService = new AdvertisementAddressService();
 
-  async getAdvertisementGridFilter(
-    dto: AdvertisementMapQueryDto
-  ): Promise<SubGridResponse[]> {
-    const { latitudeStep, longitudeStep } = this.getGridCellDimensions(dto);
-    const subGrids = this.generateSubGrids(dto, latitudeStep, longitudeStep);
-
-    const result: SubGridResponse[] = [];
-    for (const subGrid of subGrids) {
-      const advertisements = await this.getAdvertisementBySubGrid(subGrid, dto);
-      const advertisementIds = advertisements.map((a) => a.id);
-
-      if (advertisementIds.length > 1) {
-        result.push({
-          latitudeCenter: subGrid.latitudeCenter,
-          longitudeCenter: subGrid.longitudeCenter,
-          advertisementIds,
-        });
-      } else if (advertisementIds.length === 1) {
-        const address =
-          await this.advertisementAddressService.getAdvertisementAddressById(
-            advertisements[0].advertisementAddressId
-          );
-
-        result.push({
-          latitudeCenter: address.latitude,
-          longitudeCenter: address.longitude,
-          advertisementIds,
-        });
-      }
-    }
-
-    return result;
+  private async getAdvertisementsForGrid(dto: AdvertisementMapQueryDto) {
+    return prisma.advertisement.findMany({
+      where: {
+        advertisementAddress: {
+          latitude: {
+            gte: dto.boundingBox.minLatitude,
+            lte: dto.boundingBox.maxLatitude,
+          },
+          longitude: {
+            gte: dto.boundingBox.minLongitude,
+            lte: dto.boundingBox.maxLongitude,
+          },
+          isDeleted: false,
+        },
+        isDeleted: false,
+        status: "ACTIVE",
+        ...(dto.filter?.categoryId && { category_id: dto.filter.categoryId }),
+        ...(dto.filter?.priceMax && { price: { lte: dto.filter.priceMax } }),
+      },
+      select: {
+        id: true,
+        advertisementAddress: {
+          select: {
+            latitude: true,
+            longitude: true,
+          },
+        },
+      },
+    });
   }
+
+private groupAdvertisementsBySubGrid(
+  subGrids: SubGrid[],
+  ads: AdvertisementWithAddress[]
+): Map<SubGrid, SimplifiedAdLocation[]> {
+  const gridMap = new Map<SubGrid, SimplifiedAdLocation[]>();
+
+  for (const subGrid of subGrids) {
+    const adsInGrid = ads.filter((ad) => {
+      const lat = ad.advertisementAddress.latitude;
+      const lng = ad.advertisementAddress.longitude;
+      return (
+        lat >= subGrid.subBoundingBox.minLatitude &&
+        lat <= subGrid.subBoundingBox.maxLatitude &&
+        lng >= subGrid.subBoundingBox.minLongitude &&
+        lng <= subGrid.subBoundingBox.maxLongitude
+      );
+    });
+
+    if (adsInGrid.length > 0) {
+      gridMap.set(
+        subGrid,
+        adsInGrid.map((ad) => ({
+          id: ad.id,
+          lat: ad.advertisementAddress.latitude,
+          lng: ad.advertisementAddress.longitude,
+        }))
+      );
+    }
+  }
+
+  return gridMap;
+}
+
+private calculateGridCenter(
+  ads: GeoPoint[],
+  fallback: GeoPoint
+): GeoPoint {
+
+  const totalDeAnuncios = ads.length;
+
+  if (ads.length > 1) {
+    const lat = ads.reduce((sum, a) => sum + a.lat, 0) / totalDeAnuncios;
+    const lng = ads.reduce((sum, a) => sum + a.lng, 0) / totalDeAnuncios;
+    return { lat, lng };
+  }
+
+  return fallback;
+}
+
+async getAdvertisementGridFilter(
+  dto: AdvertisementMapQueryDto
+): Promise<SubGridResponse[]> {
+
+  const { latitudeStep, longitudeStep } = this.getGridCellDimensions(dto);
+  const subGrids = this.generateSubGrids(dto, latitudeStep, longitudeStep);
+  const allAdvertisement = await this.getAdvertisementsForGrid(dto);
+  const grouped = this.groupAdvertisementsBySubGrid(subGrids, allAdvertisement);
+
+  const result: SubGridResponse[] = [];
+
+  for (const [subGrid, ads] of grouped.entries()) {
+    const center = this.calculateGridCenter(ads, {
+      lat: ads[0].lat,
+      lng: ads[0].lng,
+    });
+
+    result.push({
+      latitudeCenter: center.lat,
+      longitudeCenter: center.lng,
+      advertisementIds: ads.map((a) => a.id),
+    });
+  }
+
+  return result;
+}
+
 
   private getGridCellDimensions(dto: AdvertisementMapQueryDto) {
     const latitudeStep =
@@ -85,31 +158,4 @@ export class AdvertisementGridService {
     return subGrids;
   }
 
-  private async getAdvertisementBySubGrid(
-    subGrid: SubGrid,
-    dto: AdvertisementMapQueryDto
-  ) {
-    const ads = await prisma.advertisement.findMany({
-      where: {
-        advertisementAddress: {
-          latitude: {
-            gte: subGrid.subBoundingBox.minLatitude,
-            lte: subGrid.subBoundingBox.maxLatitude,
-          },
-          longitude: {
-            gte: subGrid.subBoundingBox.minLongitude,
-            lte: subGrid.subBoundingBox.maxLongitude,
-          },
-          isDeleted: false,
-        },
-        isDeleted: false,
-        status: "ACTIVE",
-        ...(dto.filter?.categoryId && { category_id: dto.filter.categoryId }),
-        ...(dto.filter?.priceMax && { price: { lte: dto.filter.priceMax } }),
-      },
-      select: { id: true, advertisementAddressId: true },
-    });
-
-    return ads;
-  }
 }

@@ -73,6 +73,15 @@ export async function getAdvertisementsPage(req: Request, res: Response) {
   return res.status(200).json(advertisements);
 }
 
+export async function deleteAdvertisement(req: Request, res: Response){
+
+  const {id} = req.params;
+  const userId = (req as any).auth.userId;
+  await advertisementService.deleteAdvertisement(id, userId);
+
+  return res.status(204).send();
+}
+
 export async function uploadAdvertisementsImage(req: Request, res: Response) {
   const { id } = req.params;
   const files = (req as MulterRequest).files as Express.Multer.File[];

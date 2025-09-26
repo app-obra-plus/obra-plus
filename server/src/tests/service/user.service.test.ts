@@ -113,7 +113,7 @@ describe('UserService.getUserById', () => {
     last_name: 'Usuário',
     phone_number: '11999999999',
     profile_picture: undefined,
-    active: true,
+   
   };
 
   beforeEach(() => {
@@ -127,7 +127,7 @@ describe('UserService.getUserById', () => {
     const result = await userService.getUserById('user-id');
 
     expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { id: 'user-id', active: true },
+      where: { id: 'user-id', isDeleted : false},
     });
     expect(UserMapper.toResponseDto).toHaveBeenCalledWith(mockUserDb);
     expect(result).toEqual(mockUserResponse);
@@ -139,7 +139,7 @@ describe('UserService.getUserById', () => {
     await expect(userService.getUserById('user-id')).rejects.toThrow(EntityNotFoundError);
 
     expect(prisma.user.findUnique).toHaveBeenCalledWith({
-      where: { id: 'user-id', active: true },
+      where: { id: 'user-id', isDeleted : false},
     });
   });
 });
@@ -173,7 +173,7 @@ describe('UserService.updateUser', () => {
     last_name: 'NovoSobrenome',
     phone_number: '11988888888',
     profile_picture: undefined,
-    active: true,
+
   };
 
   beforeEach(() => {

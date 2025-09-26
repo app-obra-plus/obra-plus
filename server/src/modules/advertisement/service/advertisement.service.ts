@@ -1,7 +1,7 @@
 import { prisma } from "../../../database/client";
 import { CreateAdvertisementDto } from "../dto/CreateAdvertisementDto";
 import { AdvertisementMapper } from "../dto/mapper/AdvertisementMapper";
-import { AdvertisementStatus } from "../../../generated/prisma";
+import { AdvertisementStatus, Prisma } from "../../../generated/prisma";
 import { EntityNotFoundError } from "../../../exception/EntityNotFoundError";
 import { CategoryService } from "../../category/category.service";
 import { UpdateAdvertisementDto } from "../dto/UpdateAdvertisementDto";
@@ -9,8 +9,8 @@ import { ResponseAdvertisementDto } from "../dto/ResponseAdvertisementDto";
 import { AdvertisementImageService } from "./advertisementImage.service";
 import { AdvertisementAddressService } from "./advertisementAddress.service";
 import { PaginatedResponse, AdvertisementPaginationParams} from '../../../utils/pagination/pagination.types';
-import { ValidationError } from "../../../exception/ValidationError";
 import { BadRequestError } from "../../../exception/BadRequestError";
+import { ForbiddenAccessError } from "../../../exception/ForbiddenAccessError";
 
 export class AdvertisementService {
   private readonly categoryService = new CategoryService();
@@ -81,10 +81,18 @@ export class AdvertisementService {
     const { page, limit, order, priceMax, categoryId } = params;
     const skip = (page - 1) * limit;
 
+    const orConditions: Prisma.AdvertisementWhereInput[] | undefined = params.text
+    ? [
+        { title: { contains: params.text, mode: "insensitive" } },
+        { description: { contains: params.text, mode: "insensitive" } }
+      ]
+    : undefined;
+
     const whereClause = {
       isDeleted: false,
       ...(priceMax !== undefined && { price: { lte: priceMax } }),
       ...(categoryId && { category_id: categoryId }),
+      ...(params.text && { OR: orConditions })
     };
 
     const [advertisements, total] = await Promise.all([
@@ -157,6 +165,23 @@ export class AdvertisementService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async deleteAdvertisement (advertisementId: string, userId: string){
+   const result = await prisma.advertisement.updateMany({
+      where: {
+        id: advertisementId,
+        user_id: userId,
+        isDeleted: false,
+      },
+      data: {
+        isDeleted: true,
+        updated_at: new Date(),
+      },
+    });
+    if (result.count === 0) {
+      throw new ForbiddenAccessError();
+    }
   }
 
   async getByIds(ids: string[], params: AdvertisementPaginationParams) {

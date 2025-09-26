@@ -27,4 +27,5 @@ export interface PaginatedResponse<T> {
 export interface AdvertisementPaginationParams extends PaginationParamsBase {
   priceMax?: number;
   categoryId?: string;
+  text?: string;
 }

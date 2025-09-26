@@ -1,4 +1,3 @@
-// tests/controllers/address.controller.test.ts
 import {
   createAddress,
   getAddress,
@@ -11,6 +10,7 @@ import * as addressModule from '../../modules/address/address.service'
 import { validateSchema } from '../../../src/utils/validateRequest';
 import { Request, Response } from 'express';
 import { AddressResponseDto } from '../../modules/address/dto/AddressResponseDto';
+import { PaginatedResponse } from '../../utils/pagination/pagination.types';
 
 jest.mock('../../../src/modules/address/address.service');
 jest.mock('../../../src/utils/validateRequest');
@@ -72,10 +72,12 @@ describe('getAddress', () => {
       params: { addressId: 'addr-001' },
     } as unknown as AuthRequest;
 
+
     const res = mockRes();
 
     const mockResponse: AddressResponseDto = {
         id: 'addr-001',
+        addressName: 'Endereço A',
         street: 'Rua B',
         number: '123',
         neighborhood: 'Centro',
@@ -107,32 +109,52 @@ describe('getAllAddress', () => {
       params: { userId: 'user-123' },
     } as unknown as AuthRequest;
 
+    const reqGetAllAddress = {
+      params: { userId: 'user-123' },
+      query: {
+        page: '1',
+        limit: '10',
+        order: 'asc',
+      },
+    } as unknown as AuthRequest;
+
     const res = mockRes();
 
 
-    const mockResponse: AddressResponseDto[] = [
-    {
-        id: 'addr-001',
-        street: 'Rua B',
-        number: '123',
-        neighborhood: 'Centro',
-        city: 'São Paulo',
-        state: 'SP',
-        postal_code: '01000-000',
-        country: 'Brasil',
-        latitude: -23.5,
-        longitude: -46.6,
-        complement: null,
-    },
-  
-];
+    const mockResponse: PaginatedResponse<AddressResponseDto> = {
+      data: [
+        {
+          id: 'addr-001',
+          addressName: 'Endereço A',
+          street: 'Rua B',
+          number: '123',
+          neighborhood: 'Centro',
+          city: 'São Paulo',
+          state: 'SP',
+          postal_code: '01000-000',
+          country: 'Brasil',
+          latitude: -23.5,
+          longitude: -46.6,
+          complement: null,
+        },
+      ],
+      pagination: {
+        total: 1,
+        page: 1,
+        limit: 10,
+        totalPages: 1,
+      },
+    };
    
-    const getAllAddressesMock = jest.spyOn(addressModule.AddressService.prototype, 'getAllAddresses')
-      .mockResolvedValue(mockResponse);
+  const getAllAddressesMock = jest.spyOn(addressModule.AddressService.prototype, 'getAllAddresses')
+    .mockResolvedValue(mockResponse);
+  await getAllAddress(reqGetAllAddress, res);
 
-    await getAllAddress(req, res);
-
-    expect(getAllAddressesMock).toHaveBeenCalledWith('user-123');
+  expect(getAllAddressesMock).toHaveBeenCalledWith('user-123', {
+    page: 1,
+    limit: 10,
+    order: 'asc',
+  });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockResponse);
 
@@ -151,6 +173,7 @@ describe('updateAddress', () => {
 
         const mockResponse: AddressResponseDto = {
         id: 'addr-001',
+        addressName: 'Endereço A',
         street: 'Rua B',
         number: '123',
         neighborhood: 'Centro',

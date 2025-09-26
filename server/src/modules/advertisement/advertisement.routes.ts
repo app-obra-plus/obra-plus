@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds} from './advertisement.controller';
+import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds, deleteAdvertisement} from './advertisement.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
 import {upload} from  '../../config/multerConfig'
 
@@ -128,6 +128,10 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  *           type: integer
  *       - in: query
  *         name: categoryId
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: text
  *         schema:
  *           type: string
  *     responses:
@@ -494,5 +498,52 @@ router.post('/:id/images',upload.array('images',5), authMiddleware,  async (req:
 router.delete('/images/:id', authMiddleware,  async (req: Request, res: Response) => {
     await deleteAdvertisementsImage(req, res);
 })
+
+
+
+/**
+ * @openapi
+ * /advertisements/{id}:
+ *   delete:
+ *     summary: Remove um anúncio pelo ID
+ *     tags:
+ *       - Anúncios
+ *     responses:
+ *       204:
+ *         description: Anúncio removido com sucesso (sem corpo de resposta)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PaginatedAdvertisementResponse'
+ * 
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Anúncio não encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.delete('/:id', authMiddleware,  async (req: Request, res: Response) => {
+    await deleteAdvertisement(req, res);
+})
+
 
 export default router; 
