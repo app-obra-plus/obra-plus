@@ -14,6 +14,8 @@ import { FullAdvertisement } from "../../../types/advertisement.types";
 import { GeoPoint } from "../../../types/geo.types";
 import { getDistance } from "geolib";
 
+
+const KM_PER_DEGREE = 111;
 export class AdvertisementService {
 
   private readonly categoryService = new CategoryService();
@@ -301,7 +303,7 @@ export class AdvertisementService {
     minLng: number;
     maxLng: number;
   } {
-    const delta = radiusKm / 111;
+    const delta = radiusKm / KM_PER_DEGREE;
     return {
       minLat: center.latitude - delta,
       maxLat: center.latitude + delta,
