@@ -11,6 +11,8 @@ import { PaginatedResponse, AdvertisementPaginationParams} from '../../../utils/
 import { BadRequestError } from "../../../exception/BadRequestError";
 import { ForbiddenAccessError } from "../../../exception/ForbiddenAccessError";
 import { FullAdvertisement } from "../../../types/advertisement.types";
+import { GeoPoint } from "../../../types/geo.types";
+import { getDistance } from "geolib";
 
 export class AdvertisementService {
 
@@ -23,8 +25,6 @@ export class AdvertisementService {
     category: true,
     images: true,
   };
-  
-
 
   async createAdvertisement(
     advertisement: CreateAdvertisementDto,
@@ -93,7 +93,27 @@ export class AdvertisementService {
   async getAdvertisementsPage(
     params: AdvertisementPaginationParams
   ): Promise<PaginatedResponse<ResponseAdvertisementDto>> {
-    const { page, limit, order, priceMax, categoryId } = params;
+
+    const { 
+      page, 
+      limit, 
+      order, 
+      priceMax, 
+      categoryId, 
+      distanceMax,
+      userLatitude,
+      userLongitude 
+    } = params;
+
+
+    const range = this.getBoundingBoxFromRadius(
+      {
+        latitude: userLatitude, 
+        longitude: userLongitude 
+      },
+      distanceMax!
+    )
+
     const skip = (page - 1) * limit;
 
     const orConditions: Prisma.AdvertisementWhereInput[] | undefined = params.text
@@ -105,6 +125,16 @@ export class AdvertisementService {
 
     const whereClause = {
       isDeleted: false,
+      advertisementAddress: {
+        latitude: {
+          gte: range.minLat,
+          lte: range.maxLat,
+        },
+        longitude: {
+          gte: range.minLng,
+          lte: range.maxLng,
+        },
+      },
       ...(priceMax !== undefined && { price: { lte: priceMax } }),
       ...(categoryId && { category_id: categoryId }),
       ...(params.text && { OR: orConditions })
@@ -123,7 +153,9 @@ export class AdvertisementService {
       }),
     ]);
 
-    const advertisementResponse = advertisements.map(AdvertisementMapper.toResponseDto);
+    const userLocation = {lat: userLatitude, lng: userLongitude}
+    const adsInRaio = this.filtrarPorRaio(advertisements, userLocation, distanceMax!);
+    const advertisementResponse = adsInRaio.map(AdvertisementMapper.toResponseDto)
 
     return {
       data: advertisementResponse,
@@ -243,4 +275,39 @@ export class AdvertisementService {
       },
     };
   }
+  
+  private filtrarPorRaio(
+    anuncios: FullAdvertisement[],
+    userLocation: GeoPoint,
+    maxDistanceKm: number
+  ): (FullAdvertisement & { distance: number })[] {
+    return anuncios
+      .map((ad) => {
+        const location = {latitude: ad.advertisementAddress.latitude, longitude: ad.advertisementAddress.longitude}
+        const distance = getDistance(userLocation, location) / 1000;
+        return { ...ad, distance };
+      })
+      .filter((ad) => ad.distance <= maxDistanceKm * 1000)
+      .sort((a, b) => a.distance - b.distance);
+  }
+  
+
+  private getBoundingBoxFromRadius(
+    center: { latitude: number; longitude: number },
+    radiusKm: number
+  ): {
+    minLat: number;
+    maxLat: number;
+    minLng: number;
+    maxLng: number;
+  } {
+    const delta = radiusKm / 111;
+    return {
+      minLat: center.latitude - delta,
+      maxLat: center.latitude + delta,
+      minLng: center.longitude - delta,
+      maxLng: center.longitude + delta,
+    };
+  }
+
 }

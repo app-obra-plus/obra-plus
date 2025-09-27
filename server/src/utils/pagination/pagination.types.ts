@@ -28,4 +28,8 @@ export interface AdvertisementPaginationParams extends PaginationParamsBase {
   priceMax?: number;
   categoryId?: string;
   text?: string;
+  distanceMax?: number;
+  userLatitude:number;
+  userLongitude:number;
+
 }
