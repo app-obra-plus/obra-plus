@@ -4,7 +4,7 @@ export interface UserResponseDto{
     phone_number: string;
     first_name: string;
     last_name: string;
-    profile_picture?: string;
+    profile_picture: string | null;
 }
 
 

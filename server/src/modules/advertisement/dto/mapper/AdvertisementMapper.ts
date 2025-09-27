@@ -1,12 +1,17 @@
-import { Advertisement } from "../../../../generated/prisma";
-import { ResponseImageDto } from "../ImageResponseDto";
+import { FullAdvertisement } from "../../../../types/advertisement.types";
+import { CategoryMapper } from "../../../category/dto/mapper/CategoryMapper";
+import { UserMapper } from "../../../users/dto/mapper/UserMapper";
 import { ResponseAdvertisementDto } from "../ResponseAdvertisementDto";
+import { AdvertisementAddressMapper } from "./AdvertisementAddressMapper";
 
 export class AdvertisementMapper {
-  static toResponseDto(
-    ad: Advertisement,
-    images: ResponseImageDto[]
-  ): ResponseAdvertisementDto {
+  static toResponseDto(ad:FullAdvertisement): ResponseAdvertisementDto {
+    
+    const { advertisementAddress, user, category, images} = ad;
+    const userResponse = UserMapper.toResponseDto(user);
+    const addressResponse = AdvertisementAddressMapper.toResponseDto(advertisementAddress);
+    const categoryResponse = CategoryMapper.toResponseDto(category);
+
     const dto: ResponseAdvertisementDto = {
       id: ad.id,
       title: ad.title,
@@ -14,9 +19,9 @@ export class AdvertisementMapper {
       price: ad.price,
       status: ad.status,
       isDonation: ad.isDonation,
-      user_id: ad.user_id,
-      category_id: ad.category_id,
-      advertisementAddressId: ad.advertisementAddressId,
+      user: userResponse,
+      category: categoryResponse,
+      advertisementAddress: addressResponse,
       images,
     };
     return dto;

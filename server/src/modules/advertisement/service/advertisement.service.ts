@@ -6,17 +6,25 @@ import { EntityNotFoundError } from "../../../exception/EntityNotFoundError";
 import { CategoryService } from "../../category/category.service";
 import { UpdateAdvertisementDto } from "../dto/UpdateAdvertisementDto";
 import { ResponseAdvertisementDto } from "../dto/ResponseAdvertisementDto";
-import { AdvertisementImageService } from "./advertisementImage.service";
 import { AdvertisementAddressService } from "./advertisementAddress.service";
 import { PaginatedResponse, AdvertisementPaginationParams} from '../../../utils/pagination/pagination.types';
 import { BadRequestError } from "../../../exception/BadRequestError";
 import { ForbiddenAccessError } from "../../../exception/ForbiddenAccessError";
+import { FullAdvertisement } from "../../../types/advertisement.types";
 
 export class AdvertisementService {
+
   private readonly categoryService = new CategoryService();
-  private readonly advertisementImageService = new AdvertisementImageService();
   private readonly advertisementAddressService = new AdvertisementAddressService();
+
+  private readonly advertisementInclude = {
+    user: true,
+    advertisementAddress: true,
+    category: true,
+    images: true,
+  };
   
+
 
   async createAdvertisement(
     advertisement: CreateAdvertisementDto,
@@ -39,9 +47,13 @@ export class AdvertisementService {
       user_id: userId,
       advertisementAddressId: advertisementAddressDb.id,
     };
-    const advertisementDb = await prisma.advertisement.create({ data });
+    const advertisementDb = await prisma.advertisement.create({ 
+      data,
+      include:this.advertisementInclude,
+    });
 
-    const response = AdvertisementMapper.toResponseDto(advertisementDb, []);
+    const response = AdvertisementMapper.toResponseDto(advertisementDb);
+
     return response;
   }
 
@@ -51,27 +63,30 @@ export class AdvertisementService {
         id: id,
         status: AdvertisementStatus.ACTIVE,
       },
+      include: this.advertisementInclude,
     });
 
     if (!advertisementDb) {
       throw new EntityNotFoundError("Anúncio", id);
     }
 
-    const images = await this.advertisementImageService.getImages(id);
-    const response = AdvertisementMapper.toResponseDto(advertisementDb, images);
+    const response = AdvertisementMapper.toResponseDto(advertisementDb);
 
     return response;
   }
 
   async updateAdvertisement(id: string, dto: UpdateAdvertisementDto) {
+
     await this.getAdvertisementbyId(id);
-    const updatedAdvertisement = await prisma.advertisement.update({
+
+    const updatedAdvertisement : FullAdvertisement= await prisma.advertisement.update({
       where: { id: id },
+      include:this.advertisementInclude,
       data: dto,
     });
-    const images = await this.advertisementImageService.getImages(id);
-    const response: ResponseAdvertisementDto =
-      AdvertisementMapper.toResponseDto(updatedAdvertisement, images);
+
+    const response: ResponseAdvertisementDto = AdvertisementMapper.toResponseDto(updatedAdvertisement);
+
     return response;
   }
 
@@ -98,6 +113,7 @@ export class AdvertisementService {
     const [advertisements, total] = await Promise.all([
       prisma.advertisement.findMany({
         where: whereClause,
+        include: this.advertisementInclude,
         skip,
         take: limit,
         orderBy: { created_at: order },
@@ -107,12 +123,7 @@ export class AdvertisementService {
       }),
     ]);
 
-    const advertisementResponse = await Promise.all(
-      advertisements.map(async (ad) => {
-        const images = await this.advertisementImageService.getImages(ad.id);
-        return AdvertisementMapper.toResponseDto(ad, images);
-      })
-    );
+    const advertisementResponse = advertisements.map(AdvertisementMapper.toResponseDto);
 
     return {
       data: advertisementResponse,
@@ -139,6 +150,7 @@ export class AdvertisementService {
     const [advertisements, total] = await Promise.all([
       prisma.advertisement.findMany({
         where: userAdsFilter,
+        include: this.advertisementInclude,
         skip,
         take: limit,
         orderBy: {created_at: order}
@@ -151,8 +163,7 @@ export class AdvertisementService {
     
     const advertisementsResponse = await Promise.all(
       advertisements.map(async (ad) => {
-        const adImages = await this.advertisementImageService.getImages(ad.id);
-        return AdvertisementMapper.toResponseDto(ad, adImages);
+        return AdvertisementMapper.toResponseDto(ad);
       })
     );
 
@@ -204,6 +215,7 @@ export class AdvertisementService {
     const [advertisements, total]= await Promise.all([
       prisma.advertisement.findMany({
         where: userAdsFilter,
+        include: this.advertisementInclude,
         skip,
         take: limit,
         orderBy: {created_at: order}
@@ -217,8 +229,7 @@ export class AdvertisementService {
 
     const advertisementsResponse = await Promise.all(
       advertisements.map(async (ad) => {
-        const adImages = await this.advertisementImageService.getImages(ad.id);
-        return AdvertisementMapper.toResponseDto(ad, adImages);
+        return AdvertisementMapper.toResponseDto(ad);
       })
     );
 

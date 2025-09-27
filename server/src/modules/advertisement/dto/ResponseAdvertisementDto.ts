@@ -1,5 +1,8 @@
 import { AdvertisementStatus } from "../../../generated/prisma";
+import { CategoryResponseDto } from "../../category/dto/ResponseCategoryDto";
+import { UserResponseDto } from "../../users/dto/UserResponseDto";
 import { ResponseImageDto } from "./ImageResponseDto";
+import { ResponseAdvertisementAddressDto } from "./ResponseAdvertisementAddressDto";
 
 export interface ResponseAdvertisementDto {
   id: string;
@@ -8,8 +11,8 @@ export interface ResponseAdvertisementDto {
   price: number;
   status: AdvertisementStatus;
   isDonation: boolean;
-  user_id: string;
-  category_id: string;
-  advertisementAddressId: string;
+  user: UserResponseDto;
+  category: CategoryResponseDto;
+  advertisementAddress: ResponseAdvertisementAddressDto;
   images: ResponseImageDto[];
 }
