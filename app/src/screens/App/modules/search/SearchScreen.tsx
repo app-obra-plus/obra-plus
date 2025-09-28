@@ -15,6 +15,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useLocationStore } from "../../../../stores/useLocationStore";
 
 export interface FilterProps {
+  distanceMax?: number;
   categoryId?: string;
   priceMax?: number;
   text?: string;
@@ -26,7 +27,11 @@ export type SearchScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 export default function SearchScreen() {
-  const [filter, setFilter] = useState<FilterProps>({});
+  const [filter, setFilter] = useState<FilterProps>({
+    text: undefined,
+    priceMax: 100000,
+    distanceMax: 100,
+  });
   const navigation = useNavigation<SearchScreenNavigationProp>();
   const {location} = useLocationStore()
 
@@ -52,7 +57,7 @@ export default function SearchScreen() {
           params={[{
             userLatitude: location.coords.latitude,
             userLongitude: location.coords.longitude,
-            distanceMax: 100,
+            distanceMax: filter.distanceMax,
             text: filter.text,
             categoryId: filter.categoryId,
             priceMax: filter.priceMax,

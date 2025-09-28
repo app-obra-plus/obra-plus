@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { StyleSheet } from "react-native";
 import { colors } from "../../../../theme/colors";
@@ -32,9 +32,17 @@ export default function FilterButton({ filter, setFilter }: FilterButtonProps) {
         <View style={styles.formContainer}>
           <SliderInput
             label="Preço máximo"
-            max={1000}
+            max={100000}
+            selectedReturn={filter.priceMax ? `R$ ${(filter.priceMax / 100).toFixed(0)}` : "R$ 1000,00"}
             value={filter.priceMax !== undefined ? filter.priceMax : 1000}
             onChange={(value) => setFilter(prev => ({ ...prev, priceMax: value == 1000 ? undefined : value }))}
+          />
+          <SliderInput
+            label="Distância máxima"
+            max={1000}
+            value={filter.distanceMax !== undefined ? filter.distanceMax : 1000}
+            selectedReturn={filter.distanceMax ? `${filter.distanceMax} km` : "1000 km"}
+            onChange={(value) => setFilter(prev => ({ ...prev, distanceMax: value == 1000 ? undefined : value }))}
           />
           <BottomSelect<string>
             options={categories.map(c => ({ label: c.name, value: c.id }))}

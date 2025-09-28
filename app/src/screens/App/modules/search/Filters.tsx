@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   },
   selectedFilterList: {
     paddingHorizontal: 16,
-    paddingTop: 12,
     display: 'flex',
     gap: 16,
     flexDirection: 'row',

@@ -10,6 +10,7 @@ interface SliderInputProps {
   min?: number;
   max?: number;
   step?: number;
+  selectedReturn?: string;
   onChange: (value: number) => void;
 }
 
@@ -19,6 +20,7 @@ export default function SliderInput({
   min = 0,
   max = 100,
   step = 1,
+  selectedReturn,
   onChange,
 }: SliderInputProps) {
   const screenWidth = Dimensions.get("window").width;
@@ -28,7 +30,7 @@ export default function SliderInput({
     <View style={styles.container}>
       <View style={styles.labelContainer}>
         <Text>{label}</Text>
-        <Text>R$ {value.toFixed(2)}</Text>
+        <Text>{selectedReturn ? selectedReturn : value}</Text>
       </View>
       <View className="flex-1">
         <MultiSlider
