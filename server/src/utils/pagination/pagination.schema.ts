@@ -8,6 +8,9 @@ export const AdvertisementPaginationQuerySchema = z
     priceMax: z.string().optional(),
     categoryId: z.string().optional(),
     text: z.string().optional(),
+    distanceMax: z.string().default("50"),
+    userLatitude: z.string(),
+    userLongitude: z.string()
   })
   .strict();
 

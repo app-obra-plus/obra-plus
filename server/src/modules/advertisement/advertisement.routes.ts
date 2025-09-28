@@ -110,6 +110,18 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  *       - Anúncios
  *     parameters:
  *       - in: query
+ *         name: userLongitude
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: userLatitude
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: distanceMax
+ *         schema:
+ *           type: integer
+ *       - in: query
  *         name: page
  *         schema:
  *           type: integer
