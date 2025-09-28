@@ -34,7 +34,7 @@ export default function MapScreen() {
   //     minLatitude: (region?.latitude || 0) - (region?.latitudeDelta || 0),
   //     maxLongitude: (region?.longitude || 0) + (region?.longitudeDelta || 0),
   //     minLongitude: (region?.longitude || 0) - (region?.longitudeDelta || 0),
-  //     resolution: 10
+  //     resolution: 100
   //   }),
   //   select: data => data.data,
   //   enabled: !!region
@@ -43,7 +43,7 @@ export default function MapScreen() {
   return (
     <View style={{flex: 1}}>
     <MapComponent onRegionChange={handleOnRegionChange}>
-      {
+      {/* {
         markers.map((marker, index) => (
           <Marker
             key={index}
@@ -51,7 +51,7 @@ export default function MapScreen() {
             title={`Marker ${index + 1}`}
           />
         ))
-      }
+      } */}
       {/* {
         gridData.map((adGroup, index) => (
           <Marker

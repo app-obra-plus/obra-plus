@@ -7,8 +7,6 @@ import AdvertisementsConfigRouter from "./modules/Advertisements/Advertisements.
 import SearchScreen from "./modules/search/SearchScreen";
 import SearchConfigRouter from "./modules/search/search.routes";
 
-
-
 const tabsList: {
   name: string;
   component: React.ComponentType<any>;

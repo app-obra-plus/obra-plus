@@ -105,13 +105,13 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#007BFF", // cor primária
+    color: colors.primary
   },
   donationBadge: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
-    backgroundColor: "#6C63FF", // cor secundária
+    backgroundColor: colors.secondary,
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
