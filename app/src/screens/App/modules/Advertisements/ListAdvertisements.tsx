@@ -5,12 +5,14 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InfiniteScrollList from "../../../../components/InfiniteScrollList";
 import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
-import { ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
+import { IUserAdvertisementsParams, ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
 import { useAuthStore } from "../../../../stores/useAuthStore";
 import AdvertisementItem from "./AdvertisementItem";
+import { useLocationStore } from "../../../../stores/useLocationStore";
 
 export default function ListAdvertisements() {
   const navigation = useNavigation()
+  const { location } = useLocationStore()
   const {user} = useAuthStore()
 
   const handleAddAddressPress = () => {
@@ -22,7 +24,11 @@ export default function ListAdvertisements() {
       <InfiniteScrollList<ResponseAdvertisementDto>
         fetchFn={advertisementMdl.listByUserId.bind(advertisementMdl)}
         keyExtractor={(item) => item.id}
-        params={[user?.id]}
+        params={[{
+          userId: user?.id,
+          userLatitude: location?.coords.latitude || 0,
+          userLongitude: location?.coords.longitude || 0
+        } as IUserAdvertisementsParams]}
         queryKeyPrefix="userAdvertisements"
         numColumns={2}
       >

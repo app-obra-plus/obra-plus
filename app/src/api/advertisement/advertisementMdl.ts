@@ -1,5 +1,5 @@
 import { ModeloBase, PaginatedResponse } from "../ModeloBase";
-import { CreateAdvertisementDto, IAdvertisementPaginationFilter, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./advertisementSch";
+import { CreateAdvertisementDto, IAdvertisementPaginationFilter, IUserAdvertisementsParams, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./advertisementSch";
 
 function createFormData(uris: string[], fieldName = "files") {
   const formData = new FormData();
@@ -41,11 +41,12 @@ class AdvertisementModel extends ModeloBase<ResponseAdvertisementDto, CreateAdve
     }).finally(() => { console.log("Finalizou") });
   }
 
-  async listByUserId(page: number, limit: number, userId: string) {
-    const response = this.defaultGetRequest<PaginatedResponse<ResponseAdvertisementDto>>(`/user/${userId}`, {
+  async listByUserId(page: number, limit: number, filter: IUserAdvertisementsParams) {
+    const response = this.defaultGetRequest<PaginatedResponse<ResponseAdvertisementDto>>(`/user/${filter.userId}`, {
       page,
       limit,
-      order: 'desc'
+      order: 'desc',
+      ...{ ...filter, userId: undefined }
     });
     return response;
   }

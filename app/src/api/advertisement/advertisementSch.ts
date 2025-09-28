@@ -108,3 +108,9 @@ export interface IAdvertisementPaginationFilter {
   userLatitude: number;
   userLongitude: number;
 }
+
+export interface IUserAdvertisementsParams {
+  userId: string;
+  userLatitude: number;
+  userLongitude: number;
+}
