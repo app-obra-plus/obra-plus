@@ -5,6 +5,7 @@ import AuthRouter from "./Auth.routes"
 import { useEffect } from "react"
 import { useNavigation } from "@react-navigation/native"
 import { useAuthStore } from "../stores/useAuthStore"
+import { colors } from "../theme/colors"
 
 const Stack = createNativeStackNavigator()
 
@@ -14,14 +15,19 @@ export default function MainRouter() {
   
   useEffect(() => {
     if (!user) {
-      navigate("auth")  
+      navigate("auth" as never)  
     } else {
-      navigate("app")
+      navigate("app" as never)
     }
   }, [user])
 
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator 
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
       <Stack.Screen
         name="auth"
         component={AuthRouter}

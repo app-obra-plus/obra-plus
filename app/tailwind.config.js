@@ -6,30 +6,24 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#2C3E50",
-        primaryLight: "#34495E",
-        secondary: "#AAB7B8",
+        primary: "#f38e1a",
+        secondary: "#2a9d8f",
+        support: "#34495E",
 
-        accent: "#E67E22",
-        success: "#27AE60",
-        warning: "#F39C12",
-        error: "#C0392B",
 
-        background: "#F2F2F2",
-        card: "#FFFFFF",
-        border: "#D5D8DC",
-
-        textPrimary: "#2C3E50",
-        textSecondary: "#7F8C8D",
-
+        background: "#ffffff",
         white: "#FFFFFF",
-        black: "#000000",
       },
       container: {
         container: "16px",
       },
       padding: {
         "container": "16px",
+      },
+      borderRadius: {
+        DEFAULT: 8,
+        sm: 4,
+        lg: 16,
       }
     },
   },

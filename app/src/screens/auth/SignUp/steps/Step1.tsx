@@ -3,6 +3,7 @@ import { useSignUpStore } from "../store/useSignUpStore";
 import { useState } from "react";
 import { emailSchema } from "../../../../schemas/signUpSchema"; // importa apenas o schema de email
 import { StepProps } from "./StepProps";
+import InputText from "../../../../components/Input";
 
 export default function Step1({setIsValid}: StepProps) {
   const { registerForm, setRegisterForm } = useSignUpStore();
@@ -17,12 +18,13 @@ export default function Step1({setIsValid}: StepProps) {
   };
 
   return (
-    <Input
+    <InputText
       placeholder="Email"
-      icon="mail"
+      // icon="mail"
+      label="Email"
       value={registerForm.email}
-      onChangeText={handleChangeEmail}
-      error={emailError}
+      onChange={handleChangeEmail}
+      // error={emailError}
     />
   );
 }

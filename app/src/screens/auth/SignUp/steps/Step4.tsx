@@ -2,6 +2,7 @@ import { useState } from "react";
 import Input from "../../../../components/AuthFormComponents/Input";
 import { useSignUpStore } from "../store/useSignUpStore";
 import { phoneNumberSchema } from "../../../../schemas/signUpSchema";
+import InputText from "../../../../components/Input";
 
 export default function Step4() {
   const { registerForm, setRegisterForm } = useSignUpStore();
@@ -15,12 +16,14 @@ export default function Step4() {
   };
 
   return (
-    <Input
+    <InputText
       placeholder="Telefone"
-      icon="phone"
+      label="Telefone"
       value={registerForm.phone_number}
-      onChangeText={handleChangePhone}
-      error={phoneError}
+      onChange={handleChangePhone}
+      mask={{ mask: "(99) 99999-9999" }}
+      keyboardType="phone-pad"
+      // error={phoneError}
     />
   );
 }

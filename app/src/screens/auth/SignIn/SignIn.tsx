@@ -1,21 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
-import { KeyboardAvoidingView, Platform, StatusBar, StyleSheet, Text, View } from "react-native";
-import Input from "../../../components/AuthFormComponents/Input";
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StatusBar, StyleSheet, Text, View } from "react-native";
 import StepWrapper from "../SignUp/StepWrapper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../../../styles/style";
-import Button from "../../../components/AuthFormComponents/Button";
 import React, { useEffect } from "react";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import InputText from "../../../components/Input";
+import Button from "../../../components/Button";
+import { useToast } from "../../../components/Toast/useToast";
 
-interface SignInProps {
-  children?: React.ReactNode;
-  title: string;
-  isValid?: boolean;
-}
+const Logo = require("../../../../assets/logo/branca.png")
 
-export default function SignIn({children}: SignInProps) {
-  const {navigate} = useNavigation()
+export default function SignIn() {
+  const { showToast } = useToast()
+  const navigation = useNavigation()
   const { login } = useAuthStore();
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -24,10 +22,11 @@ export default function SignIn({children}: SignInProps) {
   const handleLogin = () => {
     login(email, password)
       .then(() => {
-        navigate("app");
+        navigation.navigate("app" as never);
       })
       .catch((error) => {
-        console.error("Login failed:", error);
+        showToast("Erro ao fazer login. Verifique os dados e tente novamente.", "error");
+        // console.error("Login failed:", error);
       });
   }
 
@@ -40,90 +39,55 @@ export default function SignIn({children}: SignInProps) {
   }, [email, password]);
 
   return (
-    <SafeAreaView edges={["top", "bottom"]} style={{ flex: 1 }}>
+    <SafeAreaView edges={["bottom"]} style={{ flex: 1 }} className="bg-background">
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.wrapper}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        className="h-screen"
       >
-        <View style={styles.inputWrapper}>
-          <View style={styles.header}>
-            {/* {ratio !== undefined && <WizzardProgress ratio={ratio} />} */}
-            <Text style={styles.headerTitle}>{"Entre na sua conta"}</Text>
+          <StatusBar barStyle="light-content" />
+          <View className="bg-support items-center py-12 pt-16 rounded-b">
+            <Image source={Logo} className="scale-[0.6]"/>
           </View>
-
-          <View style={styles.inputsContainer}>
-            <Input
-              icon="mail"
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <Input
-              icon="lock"
-              placeholder="Senha"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-            <Button
-              title={"Entrar"}
-              onPress={handleLogin}
-              rightIcon="chevron-right"
-              disabled={!isValid}
-            />
-          </View>
-            <Text style={styles.signInText}>
-            Não tenho uma conta.{" "}
+        <ScrollView>
+          <View className="justify-between px-4 flex-1">
+            <View className="flex-1 gap-4 py-10">
               <Text
-                style={styles.signInLink}
-                onPress={() => {
-                  navigate("auth", {
-                    screen: "signup"
-                  })
-                }}
-              >
-                Criar conta.
-              </Text>
-            </Text>
-        </View>
+                className="text-center text-2xl mb-4 text-support"
+              >Acesse sua conta</Text>
+              <InputText
+                label="Email"
+                placeholder="email@example.com"
+                value={email}
+                onChange={setEmail}
+              />
+              <InputText
+                label="Senha"
+                placeholder="***********"
+                secure
+                value={password}
+                onChange={setPassword}
+              />
+            </View>
+            <View 
+              className="py-8 gap-6"
+            >
+              <Button
+                text="Entrar"
+                type="primary"
+                onPress={handleLogin}
+                disabled={!isValid}
+              />
+              <Button
+                text="Ainda não tenho uma conta"
+                type="link"
+                onPress={() => navigation.goBack()}
+              />
+            </View>
+          </View>
+          
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    height: "100%",
-    padding: colors.CONTAINER_PADDING,
-    // justifyContent: "center",
-    marginTop: 64,
-    gap: 20,
-  },
-  inputWrapper: {
-    gap: 24,
-  },
-  header: {
-    gap: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  inputsContainer: {
-    gap: 16,
-  },
-  error: {
-    color: colors.ERROR,
-    fontSize: 14,
-    marginTop: 8,
-  },
-  signInLink: {
-    color: colors.PRIMARY,
-    textDecorationLine: "underline",
-  },
-  signInText: {
-    fontSize: 18,
-    textAlign: "center",
-  }
-});

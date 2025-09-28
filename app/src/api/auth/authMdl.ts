@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
-import { ModeloBase } from "./ModeloBase";
-import { IAuthResponse } from "../types/IAuthResponse";
+import { ModeloBase } from "../ModeloBase";
+import { IAuthResponse } from "../../types/IAuthResponse";
 
 class AuthMdl extends ModeloBase {
   constructor() {
