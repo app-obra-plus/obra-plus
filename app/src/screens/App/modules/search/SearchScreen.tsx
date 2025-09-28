@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import InfiniteScrollList from "../../../../components/InfiniteScrollList";
-import { ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
+import { IAdvertisementPaginationFilter, ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
 import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
 import InputText from "../../../../components/Input";
 import FilterButton from "./FilterButton";
@@ -12,10 +12,12 @@ import { colors } from "../../../../theme/colors";
 import { useNavigation } from "@react-navigation/native";
 import { SearchStackParamList } from "./search.routes";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useLocationStore } from "../../../../stores/useLocationStore";
 
 export interface FilterProps {
   categoryId?: string;
   priceMax?: number;
+  text?: string;
 }
 
 export type SearchScreenNavigationProp = NativeStackNavigationProp<
@@ -26,10 +28,13 @@ export type SearchScreenNavigationProp = NativeStackNavigationProp<
 export default function SearchScreen() {
   const [filter, setFilter] = useState<FilterProps>({});
   const navigation = useNavigation<SearchScreenNavigationProp>();
+  const {location} = useLocationStore()
 
   const handleShowDetails = (advertisementId: string) => {
     navigation.navigate("advertisementDetails", { advertisementId });
   }
+
+  if(!location) return <View><Text>Carregando localização...</Text></View>
 
   return (
     <View style={styles.container}>
@@ -44,7 +49,14 @@ export default function SearchScreen() {
         <InfiniteScrollList<ResponseAdvertisementDto>
           fetchFn={advertisementMdl.getAllPaginated.bind(advertisementMdl)}
           keyExtractor={(item) => item.id}
-          params={[filter.categoryId, filter.priceMax  ? filter.priceMax * 100 : undefined]}
+          params={[{
+            userLatitude: location.coords.latitude,
+            userLongitude: location.coords.longitude,
+            distanceMax: 100,
+            text: filter.text,
+            categoryId: filter.categoryId,
+            priceMax: filter.priceMax,
+          } as IAdvertisementPaginationFilter]}
           queryKeyPrefix="allAdvertisements"
           numColumns={2}
         >

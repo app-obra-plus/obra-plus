@@ -100,4 +100,11 @@ export const UpdateAdvertisementSchema = BaseUpdateAdvertisementSchema.superRefi
 
 export type UpdateAdvertisementDto = z.infer<typeof UpdateAdvertisementSchema>;
 
-
+export interface IAdvertisementPaginationFilter {
+  priceMax?: number;
+  categoryId?: string;
+  text?: string;
+  distanceMax?: number;
+  userLatitude: number;
+  userLongitude: number;
+}

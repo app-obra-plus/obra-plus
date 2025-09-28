@@ -1,5 +1,5 @@
 import { ModeloBase, PaginatedResponse } from "../ModeloBase";
-import { CreateAdvertisementDto, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./advertisementSch";
+import { CreateAdvertisementDto, IAdvertisementPaginationFilter, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./advertisementSch";
 
 function createFormData(uris: string[], fieldName = "files") {
   const formData = new FormData();
@@ -54,14 +54,14 @@ class AdvertisementModel extends ModeloBase<ResponseAdvertisementDto, CreateAdve
     const response = this.defaultGetRequest<ResponseAdvertisementGridDto[]>('/grid', params);
     return response;
   }
+  
 
-  async getAllPaginated(page: number, limit: number, categoryId?: string, priceMax?: number) {
+  async getAllPaginated(page: number, limit: number, filter: IAdvertisementPaginationFilter) {
     const response = this.defaultGetRequest<PaginatedResponse<ResponseAdvertisementDto>>('/', {
       page,
       limit,
       order: 'desc',
-      categoryId,
-      priceMax
+      ...filter
     });
     return response;
   }

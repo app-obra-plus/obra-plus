@@ -20,6 +20,7 @@ export default function Filters({ filter, setFilter }: IFiltersProps) {
       <View style={styles.searchContainer}>
         <InputText
           placeholder="Pesquisar anúncios..."
+          onChange={text => setFilter({ ...filter, text: text as string })}
         />
       </View>
       <View style={styles.filtersListContainer}>
