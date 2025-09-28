@@ -1,4 +1,7 @@
 import { z } from "zod";
+import { IUser } from "../../types/IAuthResponse";
+import { CategoryResponseDto } from "../caregory/categorySch";
+import { ResponseAdvertisementAddressDto } from "../advertisementAddress/advertisementAddressSch";
 
 export enum UnitOfMeasure {
   UNIT = 'UNIT',
@@ -47,11 +50,12 @@ export interface ResponseAdvertisementDto {
   price: number;
   status: AdvertisementStatus;
   isDonation: boolean;
-  user_id: string;
-  category_id: string;
-  advertisementAddressId: string;
+  user: IUser;
+  category: CategoryResponseDto;
+  advertisementAddress: ResponseAdvertisementAddressDto;
   images: ResponseImageDto[];
 }
+
 
 export interface ResponseAdvertisementGridDto {
   latitudeCenter: number;

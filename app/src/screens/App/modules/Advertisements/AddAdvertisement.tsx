@@ -3,9 +3,9 @@ import MultiImageInput from "../../../../components/MultipleImageInput";
 import Container from "../../../../components/Container";
 import AdvertisementForm from "./AdvertisementForm";
 import { ScrollView, Text } from "react-native";
-import { CreateAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
-import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
+import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { CreateAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
 
 export default function AddAdvertisement() {
   const [images, setImages] = React.useState<string[]>([]);

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import InfiniteScrollList from "../../../../components/InfiniteScrollList";
-import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
-import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
+import { ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
+import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
 import InputText from "../../../../components/Input";
 import FilterButton from "./FilterButton";
 import Filters from "./Filters";

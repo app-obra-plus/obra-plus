@@ -5,8 +5,8 @@ import MapComponent from "../../../../components/MapComponent";
 import FloatingButton from "../../../../components/FloatingButton";
 import { set } from "zod";
 import { useQuery } from "@tanstack/react-query";
-import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
-import { ResponseAdvertisementGridDto } from "../../../../api/addvertisement/addvertisementSch";
+import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
+import { ResponseAdvertisementGridDto } from "../../../../api/advertisement/advertisementSch";
 import { SpringResponseView } from "../../../../api/ModeloBase";
 import { getFixedRegion, getGrid } from "./mapUtils";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
+import { ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
 import { View } from "react-native";
 
 interface AdvertisementItemProps {

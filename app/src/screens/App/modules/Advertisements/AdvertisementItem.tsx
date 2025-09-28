@@ -1,8 +1,8 @@
 import React from "react";
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
-import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
+import { ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
 import EditDeleteDrawer from "../../../../components/EditDeleteDrawer";
-import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
+import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
 import { Feather } from "@expo/vector-icons";
 import { colors } from "../../../../theme/colors";
 import { useLocationStore } from "../../../../stores/useLocationStore";

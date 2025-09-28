@@ -4,8 +4,8 @@ import FloatingButton from "../../../../components/FloatingButton";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import InfiniteScrollList from "../../../../components/InfiniteScrollList";
-import { advertisementMdl } from "../../../../api/addvertisement/advertisementMdl";
-import { ResponseAdvertisementDto } from "../../../../api/addvertisement/addvertisementSch";
+import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
+import { ResponseAdvertisementDto } from "../../../../api/advertisement/advertisementSch";
 import { useAuthStore } from "../../../../stores/useAuthStore";
 import AdvertisementItem from "./AdvertisementItem";
 

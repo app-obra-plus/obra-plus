@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from "react";
 import { View } from "react-native";
 import BottomSelect from "../../../../components/BottomSelect";
 import InputText from "../../../../components/Input";
-import { CreateAdvertisementDto, CreateAdvertisementSchema, optionsUnitOfMeasure, UnitOfMeasure } from "../../../../api/addvertisement/addvertisementSch";
+import { CreateAdvertisementDto, CreateAdvertisementSchema, optionsUnitOfMeasure, UnitOfMeasure } from "../../../../api/advertisement/advertisementSch";
 import { Controller, useForm } from "react-hook-form";
 import ToggleButton from "../../../../components/ToggleButton";
 import { useQuery } from "@tanstack/react-query";

@@ -1,6 +1,5 @@
-import axios, { AxiosError } from "axios";
-import { ModeloBase, PaginatedResponse, SpringResponseView } from "../ModeloBase";
-import { CreateAdvertisementDto, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./addvertisementSch";
+import { ModeloBase, PaginatedResponse } from "../ModeloBase";
+import { CreateAdvertisementDto, ResponseAdvertisementDto, ResponseAdvertisementGridDto, UpdateAdvertisementDto } from "./advertisementSch";
 
 function createFormData(uris: string[], fieldName = "files") {
   const formData = new FormData();

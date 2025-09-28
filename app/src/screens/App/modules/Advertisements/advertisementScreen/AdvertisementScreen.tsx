@@ -3,7 +3,7 @@ import React from "react";
 import { Dimensions, Image, ScrollView, Text, View } from "react-native";
 import { SearchStackParamList } from "../../search/search.routes";
 import { useQuery } from "@tanstack/react-query";
-import { advertisementMdl } from "../../../../../api/addvertisement/advertisementMdl";
+import { advertisementMdl } from "../../../../../api/advertisement/advertisementMdl";
 import Button from "../../../../../components/Button";
 
 type AdvertisementScreenRouteProp = RouteProp<SearchStackParamList, "advertisementDetails">;
