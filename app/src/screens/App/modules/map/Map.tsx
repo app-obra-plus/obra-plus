@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
-import MapView, { Marker, Polyline, Region } from "react-native-maps";
-import { Button, Modal, StyleSheet, Text, View } from "react-native";
-import MapComponent from "../../../../components/MapComponent";
-import FloatingButton from "../../../../components/FloatingButton";
-import { set } from "zod";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useMemo, useState } from "react";
+import { Marker } from "react-native-maps";
+import type { Region } from "react-native-maps";
+import { View } from "react-native";
+import { debugGrid, getGrid, getSearchBounds, GridCell } from "./mapUtils";
+import { useQueries } from "@tanstack/react-query";
 import { advertisementMdl } from "../../../../api/advertisement/advertisementMdl";
-import { ResponseAdvertisementGridDto } from "../../../../api/advertisement/advertisementSch";
-import { SpringResponseView } from "../../../../api/ModeloBase";
-import { getFixedRegion, getGrid } from "./mapUtils";
+import MapComponent from "../../../../components/MapComponent";
+import AdvertisementMarker from "./components/advertisementMarker";
 
 
 export default function MapScreen() {
   const [region, setRegion] = useState<Region>()
+  const [gridRequestDataList, setGridRequestDataList] = useState<GridCell[]>([])
   const [markers, setMarkers] = useState<{
     latitude: number;
     longitude: number;
@@ -23,51 +22,45 @@ export default function MapScreen() {
   }
 
   useEffect(() => {
-    if(!region) return;
-    setMarkers(getGrid(region));
+    setGridRequestDataList(getGrid(region!) || [])
   }, [region])
 
-  // const {data: gridData = []} = useQuery({
-  //   queryKey: ['markers', region],
-  //   queryFn: () => advertisementMdl.grid({
-  //     maxLatitude: (region?.latitude || 0) + (region?.latitudeDelta || 0),
-  //     minLatitude: (region?.latitude || 0) - (region?.latitudeDelta || 0),
-  //     maxLongitude: (region?.longitude || 0) + (region?.longitudeDelta || 0),
-  //     minLongitude: (region?.longitude || 0) - (region?.longitudeDelta || 0),
-  //     resolution: 100
-  //   }),
-  //   select: data => data.data,
-  //   enabled: !!region
-  // })
+  const results = useQueries({
+    queries: gridRequestDataList.map((gridRequestData) => ({
+      queryKey: ["advertisementMdl", "grid", gridRequestData],
+      queryFn: () => advertisementMdl.grid({
+        minLatitude: gridRequestData.minLatitude,
+        maxLatitude: gridRequestData.maxLatitude,
+        minLongitude: gridRequestData.minLongitude,
+        maxLongitude: gridRequestData.maxLongitude,
+        resolution: 10
+      })
+    })),
+  })
+
+  const flatMarkers = useMemo(
+    () => results.flatMap(result => result.data?.data || []),
+    [results]
+  );
 
   return (
     <View style={{flex: 1}}>
-    <MapComponent onRegionChange={handleOnRegionChange}>
-      {/* {
-        markers.map((marker, index) => (
-          <Marker
-            key={index}
-            coordinate={{ latitude: marker.latitude, longitude: marker.longitude }}
-            title={`Marker ${index + 1}`}
-          />
-        ))
-      } */}
-      {/* {
-        gridData.map((adGroup, index) => (
-          <Marker
-            key={index}
-            coordinate={{ latitude: adGroup.latitudeCenter, longitude: adGroup.longitudeCenter }}
-            title={`Marker ${index + 1}`}
-            description={`Latitude: ${adGroup.latitudeCenter.toFixed(5)}, Longitude: ${adGroup.longitudeCenter.toFixed(5)}`}
-          >
-            <View className="rounded-full bg-blue-500 w-6 h-6 justify-center items-center border-2 border-white">
-              <Text style={{color: 'white', fontWeight: 'bold', textAlign: 'center'}}>{adGroup.advertisementIds.length}</Text>
-            </View>
-          </Marker>
-        ))
-      } */}
-    </MapComponent>
-  </View>
+      <MapComponent onRegionChange={handleOnRegionChange}>
+        {
+          flatMarkers.map((marker, index) => (
+            <Marker
+              key={`${marker.latitudeCenter}-${marker.longitudeCenter}`}
+              coordinate={{
+                latitude: marker.latitudeCenter,
+                longitude: marker.longitudeCenter,
+              }}
+            >
+              <AdvertisementMarker label={marker.advertisementIds.length.toString()} />
+            </Marker>
+          ))
+        }
+      </MapComponent>
+    </View>
   )
 
 }

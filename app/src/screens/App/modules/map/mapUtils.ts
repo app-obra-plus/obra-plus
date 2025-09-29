@@ -1,70 +1,149 @@
 import { Region } from "react-native-maps";
 
-function getZoomLevel(region: Region) {
+function getZoomLevel(region: Region): number {
   const { latitudeDelta } = region;
   return Math.round(Math.log(360 / latitudeDelta) / Math.LN2);
 }
 
 export function getMapBounds(region: Region) {
+  const { latitude, longitude, latitudeDelta, longitudeDelta } = region;
+
   return {
-    maxLongitude: region.longitude + region.longitudeDelta / 2,
-    minLongitude: region.longitude - region.longitudeDelta / 2,
-    maxLatitude: region.latitude + region.latitudeDelta / 2,
-    minLatitude: region.latitude - region.latitudeDelta / 2,
-  }
+    maxLongitude: longitude + longitudeDelta,
+    minLongitude: longitude - longitudeDelta,
+    maxLatitude: latitude + latitudeDelta,
+    minLatitude: latitude - latitudeDelta,
+  };
 }
 
-function round(num: number,step: number) {
+function roundToStep(num: number, step: number): number {
   return Math.round(num / step) * step;
 }
 
 export function getFixedRegion(region: Region) {
   return {
-    latitude: round(region.latitude, 0.008),
-    longitude: round(region.longitude, 0.008)
-  }
+    latitude: roundToStep(region.latitude, 0.008),
+    longitude: roundToStep(region.longitude, 0.008),
+  };
 }
 
-function getResolutionByZoom(zoom: number) {
-  const map: Record<number, number> = {
-    20: 0.0002,
-    19: 0.0002,
-    18: 0.0002,
-    17: 0.0005,
-    16: 0.001,
-    15: 0.003,
-    14: 0.005,
-    13: 0.01,
-    12: 0.02,
-    11: 0.05,
-    10: 0.1,
-    9: 0.2,
-    8: 0.5,
-    7: 1,
-    6: 2,
-    5: 5,
-    4: 10,
-    3: 20,
-    2: 50,
-  }
+function getResolutionByZoom(zoom: number): number {
+  const resolutionMap: Record<number, number> = {
+    20: 0.001,
+    19: 0.001,
+    18: 0.003,
+    17: 0.003,
+    16: 0.005,
+    15: 0.01,
+    14: 0.02,
+    13: 0.02,
+    12: 0.05,
+    11: 0.1,
+    10: 0.2,
+    9: 0.5,
+    8: 1,
+    7: 2,
+    6: 5,
+    5: 10,
+    4: 20,
+    3: 50,
+    2: 100,
+  };
 
-  return map[zoom] || 50
+  return resolutionMap[zoom] ?? 50;
 }
 
-export function getGrid(region: Region) {
-  const mapBounds = getMapBounds(region)
+function getTicks(min: number, max: number, step: number): number[] {
+  const start = Math.floor(min / step) * step;
+  const end = Math.ceil(max / step) * step + step;
+  const ticks: number[] = [];
 
-  const steps = getResolutionByZoom(getZoomLevel(region))
+  for (let value = start; value <= end; value += step) {
+    ticks.push(value);
+  }
 
-  const startLat = Math.floor(mapBounds.minLatitude / steps) * steps
-  const startLng = Math.floor(mapBounds.minLongitude / steps) * steps
+  return ticks;
+}
 
-  const grid = []
-  for (let lat = startLat; lat < mapBounds.maxLatitude; lat += steps) {
-    for (let lng = startLng; lng < mapBounds.maxLongitude; lng += steps) {
-      grid.push({latitude: lat, longitude: lng})
+function getHorizontalTicks(region: Region): number[] {
+  const resolution = getResolutionByZoom(getZoomLevel(region));
+  const { minLatitude, maxLatitude } = getMapBounds(region);
+  return getTicks(minLatitude, maxLatitude, resolution);
+}
+
+function getVerticalTicks(region: Region): number[] {
+  const resolution = getResolutionByZoom(getZoomLevel(region));
+  const { minLongitude, maxLongitude } = getMapBounds(region);
+  return getTicks(minLongitude, maxLongitude, resolution);
+}
+
+export function debugGrid(region: Region) {
+  const horizontalTicks = getHorizontalTicks(region);
+  const verticalTicks = getVerticalTicks(region);
+
+  const lines: { latitude: number; longitude: number }[][] = [];
+
+  horizontalTicks.forEach(lat => {
+    lines.push([
+      { latitude: lat, longitude: region.longitude - region.longitudeDelta },
+      { latitude: lat, longitude: region.longitude + region.longitudeDelta },
+    ]);
+  });
+
+  verticalTicks.forEach(lng => {
+    lines.push([
+      { latitude: region.latitude - region.latitudeDelta, longitude: lng },
+      { latitude: region.latitude + region.latitudeDelta, longitude: lng },
+    ]);
+  });
+
+  return lines;
+}
+
+export interface GridCell {
+  maxLatitude: number;
+  minLatitude: number;
+  maxLongitude: number;
+  minLongitude: number;
+}
+
+export function getGrid(region?: Region): GridCell[] {
+  if (!region) return [];
+
+  const horizontalTicks = getHorizontalTicks(region);
+  const verticalTicks = getVerticalTicks(region);
+
+  const grid: GridCell[] = [];
+
+  for (let i = 0; i < horizontalTicks.length - 1; i++) {
+    for (let j = 0; j < verticalTicks.length - 1; j++) {
+      grid.push({
+        maxLatitude: horizontalTicks[i + 1],
+        minLatitude: horizontalTicks[i],
+        maxLongitude: verticalTicks[j + 1],
+        minLongitude: verticalTicks[j],
+      });
     }
   }
 
-  return grid
+  return grid;
+}
+
+export function getSearchBounds(region?: Region): GridCell[] {
+  if (!region) return [];
+
+  const { minLatitude, maxLatitude, minLongitude, maxLongitude } = getMapBounds(region);
+  const resolution = getResolutionByZoom(getZoomLevel(region));
+
+  const minLat = Math.floor(minLatitude * resolution) / resolution;
+  const maxLat = Math.ceil(maxLatitude * resolution) / resolution;
+  const minLng = Math.floor(minLongitude * resolution) / resolution;
+  const maxLng = Math.ceil(maxLongitude * resolution) / resolution;
+
+  return [{
+    minLatitude: minLat,
+    maxLatitude: maxLat,
+    minLongitude: minLng,
+    maxLongitude: maxLng,
+  }];
 }

@@ -1,13 +1,10 @@
 import {PropsWithChildren, useEffect, useRef} from "react";
-import MapView, { Region } from "react-native-maps";
+import MapView from "react-native-maps";
+import type { Region } from "react-native-maps";
 import mapStyleLight from "../styles/mapStyleLight";
 import { useLocationStore } from "../stores/useLocationStore";
-import * as Location from 'expo-location';
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View, Linking } from "react-native";
-import { Feather } from "@expo/vector-icons";
-import { set } from "zod";
+import { ActivityIndicator, Alert, Text, View, Linking } from "react-native";
 import Button from "./Button";
-import { getCurrentPositionAsync, LocationAccuracy, requestForegroundPermissionsAsync } from "expo-location";
 
 interface IMapProps extends PropsWithChildren {
   onRegionChange?: (region: Region) => void;
