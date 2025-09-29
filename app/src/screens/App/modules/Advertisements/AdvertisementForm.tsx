@@ -169,7 +169,7 @@ export default function AdvertisementForm({ onSubmit, isLoading }: IAdvertisemen
         name="addressId"
         render={({ field: { onChange, value } }) => (
           <BottomSelect<string>
-            options={enderecos.map(e => ({ label: e.number + ", " + e.street, value: e.id }))}
+            options={enderecos.map(e => ({ label: e.addressName, value: e.id }))}
             value={value || undefined}
             label="Endereço"
             onChange={onChange}
