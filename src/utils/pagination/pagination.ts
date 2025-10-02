@@ -1,5 +1,5 @@
-import { PaginationQueryBase, PaginationParamsBase, Order, AdvertisementPaginationParams} from './pagination.types';
-import { AdvertisementPaginationQuery } from './pagination.schema';
+import { PaginationQueryBase, PaginationParamsBase, Order, AdvertisementPaginationParams, UserAdvertisementParams} from './pagination.types';
+import { AdvertisementPaginationQuery, UserAdvertisementQuery } from './pagination.schema';
 
 export function getPaginationParams(query: PaginationQueryBase): PaginationParamsBase {
   const page = parseInt(query.page ?? "1"); 
@@ -27,5 +27,21 @@ export function parseAdvertisementPaginationParams(query: AdvertisementPaginatio
     distanceMax,
     userLatitude,
     userLongitude
+  };
+}
+
+export function parseUserAdvertisementParams(
+  query: UserAdvertisementQuery
+): UserAdvertisementParams {
+  const basePageParams = getPaginationParams(query);
+  const priceMax = query.priceMax ? parseFloat(query.priceMax) : undefined;
+  const categoryId = query.categoryId;
+  const text = query.text;
+
+  return {
+    ...basePageParams,
+    priceMax,
+    categoryId,
+    text,
   };
 }

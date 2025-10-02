@@ -33,3 +33,9 @@ export interface AdvertisementPaginationParams extends PaginationParamsBase {
   userLongitude:number;
 
 }
+
+export interface UserAdvertisementParams extends PaginationParamsBase {
+  priceMax?: number;
+  categoryId?: string;
+  text?: string;
+}

@@ -7,7 +7,7 @@ import { CategoryService } from "../../category/category.service";
 import { UpdateAdvertisementDto } from "../dto/UpdateAdvertisementDto";
 import { ResponseAdvertisementDto } from "../dto/ResponseAdvertisementDto";
 import { AdvertisementAddressService } from "./advertisementAddress.service";
-import { PaginatedResponse, AdvertisementPaginationParams} from '../../../utils/pagination/pagination.types';
+import { PaginatedResponse, AdvertisementPaginationParams, UserAdvertisementParams} from '../../../utils/pagination/pagination.types';
 import { BadRequestError } from "../../../exception/BadRequestError";
 import { ForbiddenAccessError } from "../../../exception/ForbiddenAccessError";
 import { FullAdvertisement } from "../../../types/advertisement.types";
@@ -170,15 +170,24 @@ export class AdvertisementService {
     };
   }
 
-  async getUserAdvertisements (userId: string, params: AdvertisementPaginationParams){
+  async getUserAdvertisements (userId: string, params: UserAdvertisementParams){
 
     const { page, limit, order, priceMax, categoryId } = params;
     const skip = (page - 1) * limit;
+
+    const orConditions: Prisma.AdvertisementWhereInput[] | undefined = params.text
+    ? [
+        { title: { contains: params.text, mode: "insensitive" } },
+        { description: { contains: params.text, mode: "insensitive" } }
+      ]
+    : undefined;
+
     const userAdsFilter = {
       isDeleted: false,
       user_id: userId,
       ...(priceMax !== undefined && { price: { lte: priceMax } }),
-      ...(categoryId && { category_id: categoryId })
+      ...(categoryId && { category_id: categoryId }),
+      ...(params.text && { OR: orConditions })
     };
 
     const [advertisements, total] = await Promise.all([
