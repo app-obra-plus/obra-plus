@@ -15,7 +15,7 @@ export async function createAddress(req: Request, res: Response) {
 }
 
 export async function getAddress(req: Request, res: Response) {
-    // console.log("aQUI")
+
   const { addressId } = req.params;
   const address = await addressService.getAddressById(addressId);
   return res.status(200).json(address);
