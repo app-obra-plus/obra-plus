@@ -112,7 +112,7 @@ describe('UserService.getUserById', () => {
     first_name: 'Teste',
     last_name: 'Usuário',
     phone_number: '11999999999',
-    profile_picture: undefined,
+    profile_picture: null,
    
   };
 
@@ -172,7 +172,7 @@ describe('UserService.updateUser', () => {
     first_name: 'NovoNome',
     last_name: 'NovoSobrenome',
     phone_number: '11988888888',
-    profile_picture: undefined,
+    profile_picture: null,
 
   };
 
@@ -210,7 +210,7 @@ describe('UserService.deleteUser', () => {
         first_name: 'João',
         last_name: 'Silva',
         phone_number: '11999999999',
-        profile_picture: undefined,
+        profile_picture: null,
         active: true
         } as UserResponseDto);
   });

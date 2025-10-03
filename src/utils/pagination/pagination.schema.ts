@@ -1,17 +1,26 @@
 import { z } from "zod";
 
-export const AdvertisementPaginationQuerySchema = z
+
+export const UserAdvertisementQuerySchema = z
   .object({
     page: z.string().optional(),
     limit: z.string().optional(),
-    order: z.enum(["asc", "desc"]).optional(),
+    orderField: z.enum(["created_at", "price", "distance"]).optional(),
+    orderDirection: z.enum(["asc", "desc"]).optional(),
     priceMax: z.string().optional(),
     categoryId: z.string().optional(),
-    text: z.string().optional(),
+    text: z.string().optional()
+  })
+  .strict();
+
+export type UserAdvertisementQuery = z.infer<typeof UserAdvertisementQuerySchema>;
+
+
+export const AdvertisementPaginationQuerySchema = UserAdvertisementQuerySchema.merge(
+  z.object({
     distanceMax: z.string().default("50"),
     userLatitude: z.string(),
     userLongitude: z.string()
   })
-  .strict();
-
+);
 export type AdvertisementPaginationQuery = z.infer<typeof AdvertisementPaginationQuerySchema>;
