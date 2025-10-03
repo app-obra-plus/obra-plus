@@ -4,7 +4,7 @@ import { AddressMapper } from '../../../src/modules/address/dto/mapper/AddressMa
 import { CreateAddressDto } from '../../../src/modules/address/dto/CreateAddressDto';
 import { AddressResponseDto } from '../../../src/modules/address/dto/AddressResponseDto';
 import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
-import { PaginationParamsBase, OrderField } from '../../utils/pagination/pagination.types';
+import { PaginationParamsBase} from '../../utils/pagination/pagination.types';
 
 jest.mock('../../../src/database/client', () => ({
   prisma: {

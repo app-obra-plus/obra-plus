@@ -10,7 +10,7 @@ import * as addressModule from '../../modules/address/address.service'
 import { validateSchema } from '../../../src/utils/validateRequest';
 import { Request, Response } from 'express';
 import { AddressResponseDto } from '../../modules/address/dto/AddressResponseDto';
-import { PaginatedResponse, OrderField } from '../../utils/pagination/pagination.types';
+import { PaginatedResponse} from '../../utils/pagination/pagination.types';
 
 jest.mock('../../../src/modules/address/address.service');
 jest.mock('../../../src/utils/validateRequest');
