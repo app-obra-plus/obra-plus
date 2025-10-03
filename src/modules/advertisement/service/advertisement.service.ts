@@ -107,8 +107,8 @@ export class AdvertisementService {
       userLongitude 
     } = params;
 
-    const orderField = order.field ?? "distance";
-    const orderDirection = order.direction ?? "asc"
+    const orderField = order?.field ?? "distance";
+    const orderDirection = order?.direction ?? "asc"
 
     const range = this.getBoundingBoxFromRadius(
       {
@@ -204,7 +204,7 @@ export class AdvertisementService {
         include: this.advertisementInclude,
         skip,
         take: limit,
-        orderBy: {created_at: order.direction ?? 'desc'}
+        orderBy: {created_at: order?.direction ?? 'desc'}
       }),
       prisma.advertisement.count({
         where:userAdsFilter,
@@ -269,7 +269,7 @@ export class AdvertisementService {
         include: this.advertisementInclude,
         skip,
         take: limit,
-        orderBy: {created_at: order.direction}
+        orderBy: {created_at: order?.direction}
       }),
 
       prisma.advertisement.count({

@@ -2,8 +2,8 @@
 export type OrderField = "created_at" | "price" | "distance";
 export type OrderDirection = "asc" | "desc";
 export interface OrderBy {
-  field: OrderField
-  direction: OrderDirection
+  field?: OrderField
+  direction?: OrderDirection
 }
 
 export interface PaginationQueryBase {
@@ -16,7 +16,7 @@ export interface PaginationQueryBase {
 export interface PaginationParamsBase {
   page: number;
   limit: number;
-  order: OrderBy;
+  order?: OrderBy;
 }
 
 export interface PaginationMeta {
