@@ -5,7 +5,8 @@ export const UserAdvertisementQuerySchema = z
   .object({
     page: z.string().optional(),
     limit: z.string().optional(),
-    order: z.enum(["asc", "desc"]).optional(),
+    orderField: z.enum(["created_at", "price", "distance"]).optional(),
+    orderDirection: z.enum(["asc", "desc"]).optional(),
     priceMax: z.string().optional(),
     categoryId: z.string().optional(),
     text: z.string().optional()

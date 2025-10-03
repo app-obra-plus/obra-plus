@@ -1,15 +1,22 @@
-export type Order = "asc" | "desc";
+
+export type OrderField = "created_at" | "price" | "distance";
+export type OrderDirection = "asc" | "desc";
+export interface OrderBy {
+  field: OrderField
+  direction: OrderDirection
+}
 
 export interface PaginationQueryBase {
   page?: string;
   limit?: string;
-  order?: string;
+  orderField?: string;
+  orderDirection?: string;
 }
 
 export interface PaginationParamsBase {
   page: number;
   limit: number;
-  order: Order;
+  order: OrderBy;
 }
 
 export interface PaginationMeta {

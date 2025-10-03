@@ -1,12 +1,14 @@
-import { PaginationQueryBase, PaginationParamsBase, Order, AdvertisementPaginationParams, UserAdvertisementParams} from './pagination.types';
+import { PaginationQueryBase, PaginationParamsBase, AdvertisementPaginationParams, UserAdvertisementParams, OrderDirection, OrderField } from './pagination.types';
 import { AdvertisementPaginationQuery, UserAdvertisementQuery } from './pagination.schema';
 
 export function getPaginationParams(query: PaginationQueryBase): PaginationParamsBase {
   const page = parseInt(query.page ?? "1"); 
   const limit = parseInt(query.limit ?? "10");
-  const order: Order = (query.order as Order) || "desc";
+  const field: OrderField = (query.orderField as OrderField );
+  const direction: OrderDirection = (query.orderDirection as OrderDirection );
+  const order= {field: field, direction: direction }
 
-  return { page, limit, order };
+  return { page, limit, order};
 }
 
 export function parseAdvertisementPaginationParams(query: AdvertisementPaginationQuery): AdvertisementPaginationParams {

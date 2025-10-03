@@ -107,6 +107,8 @@ export class AdvertisementService {
       userLongitude 
     } = params;
 
+    const orderField = order.field ?? "distance";
+    const orderDirection = order.direction ?? "asc"
 
     const range = this.getBoundingBoxFromRadius(
       {
@@ -148,7 +150,7 @@ export class AdvertisementService {
         include: this.advertisementInclude,
         skip,
         take: limit,
-        orderBy: { created_at: order },
+        orderBy: orderField === "distance" ? undefined : { [orderField]: orderDirection },
       }),
       prisma.advertisement.count({
         where: whereClause,
@@ -157,7 +159,13 @@ export class AdvertisementService {
 
     const userLocation = {lat: userLatitude, lng: userLongitude}
     const adsInRaio = this.filtrarPorRaio(advertisements, userLocation, distanceMax!);
-    const advertisementResponse = adsInRaio.map(AdvertisementMapper.toResponseDto)
+    const sortedAds = orderField === "distance"
+      ? adsInRaio.toSorted((adA, adB) =>
+        orderDirection === 'asc'
+          ? adA.distance - adB.distance
+          : adB.distance - adA.distance
+    ) : adsInRaio;
+    const advertisementResponse = sortedAds.map(AdvertisementMapper.toResponseDto)
 
     return {
       data: advertisementResponse,
@@ -196,10 +204,10 @@ export class AdvertisementService {
         include: this.advertisementInclude,
         skip,
         take: limit,
-        orderBy: {created_at: order}
+        orderBy: {created_at: order.direction ?? 'desc'}
       }),
       prisma.advertisement.count({
-        where:userAdsFilter
+        where:userAdsFilter,
       })
     ]);
 
@@ -261,7 +269,7 @@ export class AdvertisementService {
         include: this.advertisementInclude,
         skip,
         take: limit,
-        orderBy: {created_at: order}
+        orderBy: {created_at: order.direction}
       }),
 
       prisma.advertisement.count({
@@ -299,7 +307,6 @@ export class AdvertisementService {
         return { ...ad, distance };
       })
       .filter((ad) => ad.distance <= maxDistanceKm * 1000)
-      .sort((a, b) => a.distance - b.distance);
   }
   
 
