@@ -6,8 +6,13 @@ import { EntityNotFoundError } from "../../exception/EntityNotFoundError";
 import { UpdateUserDto } from "./dto/UpdateUserDto";
 import { UserMapper } from "./dto/mapper/UserMapper";
 import { generateLoginResponse } from "../auth/utils/authUtils";
+import { BadRequestError } from "../../exception/BadRequestError";
+import { ImageService } from "../../infra/blob/image.service";
+import { PutBlobResult } from "@vercel/blob";
 
 export class UserService {
+    
+    private readonly imageService = new ImageService();
 
     async createUser(data: CreateUserDto){ 
         const salt = await bcrypt.genSalt(10);
@@ -56,5 +61,31 @@ export class UserService {
                 id: id,
             },
         });
+    }
+
+    async uploadUserImage(userId: string, file: Express.Multer.File): Promise<PutBlobResult>{
+
+        const uploadedImage: PutBlobResult = await this.imageService.upload(`profile`, file);
+        const url = uploadedImage.url;
+        
+        await this.updateUser(userId, {profile_picture: url});
+
+        return uploadedImage
+
+    }
+
+    async deleteUserImage(userId: string){
+ 
+        const userDb = await this.getUserById(userId);
+        const url = userDb.profile_picture;
+
+        if(!url){
+            throw new BadRequestError("Imagem não encontrada");
+        }
+
+        const pathName = this.imageService.extractPath(url)
+
+        await this.imageService.deleteBlob(pathName);
+
     }
 }
