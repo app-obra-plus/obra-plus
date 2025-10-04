@@ -2,6 +2,7 @@ import { z } from "zod";
 import { UnitOfMeasure } from "../../../generated/prisma";
 
 export const unitOfMeasureSchema = z.nativeEnum(UnitOfMeasure)
+export type UnitOfMeasureType = z.infer<typeof unitOfMeasureSchema>;
 
 const BaseCreateAdvertisementSchema = z.object({
   title: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),
