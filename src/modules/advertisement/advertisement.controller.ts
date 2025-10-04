@@ -89,7 +89,7 @@ export async function uploadAdvertisementsImage(req: Request, res: Response) {
 
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
-      const image = await imageServer.upload(file);
+      const image = await imageServer.upload('images',file);
       return image;
     })
   );
