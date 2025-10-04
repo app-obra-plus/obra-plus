@@ -7,6 +7,8 @@ import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
 import { UserResponseDto } from '../../modules/users/dto/UserResponseDto';
 import { UpdateUserDto } from '../../modules/users/dto/UpdateUserDto';
 import * as AuthUtils from '../../modules/auth/utils/authUtils';
+import { PutBlobResult } from '@vercel/blob';
+import { BadRequestError } from '../../exception/BadRequestError';
 
 jest.mock('bcrypt');
 jest.mock('../../modules/users/dto/mapper/UserMapper');
@@ -234,5 +236,94 @@ describe('UserService.deleteUser', () => {
 
     expect(userService.getUserById).toHaveBeenCalledWith(userId);
     expect(prisma.user.delete).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('UserService.uploadUserImage', () => {
+  const userService = new UserService();
+
+  const mockUserResponse: UserResponseDto = {
+  id: 'user-id',
+  email: 'teste@email.com',
+  first_name: 'Teste',
+  last_name: 'Usuario',
+  phone_number: '11999999999',
+  profile_picture: 'https://blob.example.com/profile/avatar.png',
+};
+
+  const mockFile = {
+    buffer: Buffer.from('fake-image'),
+    originalname: 'avatar.png'
+  } as Express.Multer.File;
+
+  const mockBlob: PutBlobResult = {
+    url: 'https://blob.example.com/profile/avatar.png',
+    downloadUrl: 'https://blob.example.com/profile/avatar.png?download=true',
+    pathname: '/profile/avatar.png',
+    contentType: 'image/png',
+    contentDisposition: 'inline'
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(userService['imageService'], 'upload').mockResolvedValue(mockBlob);
+    jest.spyOn(userService, 'updateUser').mockResolvedValue(mockUserResponse);
+  });
+
+  it('deve fazer upload da imagem e atualizar o usuário com a URL', async () => {
+    const result = await userService.uploadUserImage('user-id', mockFile);
+
+    expect(userService['imageService'].upload).toHaveBeenCalledWith('profile', mockFile);
+    expect(userService.updateUser).toHaveBeenCalledWith('user-id', { profile_picture: mockBlob.url });
+    expect(result).toEqual(mockBlob);
+  });
+});
+;
+
+describe('UserService.deleteUserImage', () => {
+  const userService = new UserService();
+
+  const mockUser = {
+    id: 'user-id',
+    email: 'user@email.com',
+    first_name: 'João',
+    last_name: 'Silva',
+    phone_number: '11999999999',
+    profile_picture: 'https://blob.example.com/profile/avatar.png',
+    active: true
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    jest.spyOn(userService, 'getUserById').mockResolvedValue(mockUser);
+    jest.spyOn(userService['imageService'], 'extractPath').mockReturnValue('/profile/avatar.png');
+    jest.spyOn(userService['imageService'], 'deleteBlob').mockResolvedValue(undefined);
+  });
+
+  it('deve deletar a imagem do usuário quando URL estiver presente', async () => {
+    await userService.deleteUserImage('user-id');
+
+    expect(userService.getUserById).toHaveBeenCalledWith('user-id');
+    expect(userService['imageService'].extractPath).toHaveBeenCalledWith(mockUser.profile_picture);
+    expect(userService['imageService'].deleteBlob).toHaveBeenCalledWith('/profile/avatar.png');
+  });
+
+  it('deve lançar BadRequestError se não houver imagem', async () => {
+    jest.spyOn(userService, 'getUserById').mockResolvedValue({
+      ...mockUser,
+      profile_picture: null
+    });
+
+    await expect(userService.deleteUserImage('user-id')).rejects.toThrow(BadRequestError);
+    expect(userService['imageService'].deleteBlob).not.toHaveBeenCalled();
+  });
+
+  it('deve propagar erro se getUserById falhar', async () => {
+    const error = new EntityNotFoundError('Usuário', 'user-id');
+    jest.spyOn(userService, 'getUserById').mockRejectedValue(error);
+
+    await expect(userService.deleteUserImage('user-id')).rejects.toThrow(error);
+    expect(userService['imageService'].deleteBlob).not.toHaveBeenCalled();
   });
 });

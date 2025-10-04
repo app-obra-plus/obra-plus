@@ -7,7 +7,7 @@ export class ImageService {
 
     private readonly BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 
-    async upload (file: Express.Multer.File){
+    async upload (diretory: string, file: Express.Multer.File, customFilename?: string){
 
         if(!file){
             throw new BadRequestError('Nenhum arquivo foi enviado');
@@ -15,9 +15,11 @@ export class ImageService {
 
         const stream = Readable.from(file.buffer);
         const extension = file.originalname.split('.').pop();
-        const filename = `${uuidv4()}.${extension}`;
+        const filename = customFilename
+            ? `${customFilename}.${extension}` 
+            : `${uuidv4()}.${extension}`;
 
-        const blob = await put(`images/${filename}`, stream, {
+        const blob = await put(`${diretory}/${filename}`, stream, {
             access: 'public',
             token: this.BLOB_READ_WRITE_TOKEN
         });
@@ -29,5 +31,10 @@ export class ImageService {
         await del(pathname, {
             token: this.BLOB_READ_WRITE_TOKEN
         });
+    }
+
+    extractPath(url: string): string {
+        const parsed = new URL(url);
+        return parsed.pathname.slice(1);
     }
 }

@@ -1,12 +1,15 @@
-import { createUser, getUserById, updateUser, deleteUser } from '../../modules/users/user.controller';
+import { createUser, getUserById, updateUser, deleteUser, uploadUserImage, deleteUserImage} from '../../modules/users/user.controller';
 import { validateSchema, validateId } from '../../utils/validateRequest';
 import { UserService } from '../../modules/users/user.service';
 import { Request, Response } from 'express';
 import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
 import { ForbiddenAccessError } from '../../exception/ForbiddenAccessError';
+import { PutBlobResult } from '@vercel/blob';
 
 jest.mock('../../utils/validateRequest');
 jest.mock('../../modules/users/user.service');
+
+
 
 describe('createUser', () => {
   const mockReq = {
@@ -197,5 +200,81 @@ describe('deleteUser controller', () => {
 
     await expect(deleteUser(mockReq, mockRes as Response)).rejects.toBeInstanceOf(ForbiddenAccessError);
     expect(UserService.prototype.deleteUser).not.toHaveBeenCalled();
+  });
+});
+
+
+describe('uploadUserImage controller', () => {
+  const mockReq = {
+    params: { id: 'abc123' },
+    file: {
+      buffer: Buffer.from('fake-image'),
+      originalname: 'avatar.png',
+    },
+    auth: { userId: 'abc123' }
+  } as unknown as Request;
+
+  const mockRes = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn()
+  } as Partial<Response>;
+
+  const mockBlob: PutBlobResult = {
+  url: 'https://blob.example.com/user123/avatar.png',
+  downloadUrl: 'https://blob.example.com/user123/avatar.png?download=true',
+  pathname: '/user123/avatar.png',
+  contentType: 'image/png',
+  contentDisposition: 'inline'
+};
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (validateId as jest.Mock).mockReturnValue('abc123');
+    (UserService.prototype.uploadUserImage as jest.Mock).mockResolvedValue(mockBlob);
+  });
+
+  it('deve validar o id, fazer upload da imagem e retornar a URL com status 200', async () => {
+    await uploadUserImage(mockReq, mockRes as Response);
+
+    expect(validateId).toHaveBeenCalledWith(mockReq);
+    expect(UserService.prototype.uploadUserImage).toHaveBeenCalledWith('abc123', mockReq.file);
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({ url: mockBlob.url });
+  });
+});
+
+
+describe('deleteUserImage controller', () => {
+  const mockReq = {
+    params: { id: 'abc123' },
+    auth: { userId: 'abc123' }
+  } as unknown as Request;
+
+  const mockRes = {
+    status: jest.fn().mockReturnThis(),
+    send: jest.fn()
+  } as Partial<Response>;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (validateId as jest.Mock).mockReturnValue('abc123');
+    (UserService.prototype.deleteUserImage as jest.Mock).mockResolvedValue(undefined);
+  });
+
+  it('deve validar o id, deletar a imagem e retornar status 204', async () => {
+    await deleteUserImage(mockReq, mockRes as Response);
+
+    expect(validateId).toHaveBeenCalledWith(mockReq);
+    expect(UserService.prototype.deleteUserImage).toHaveBeenCalledWith('abc123');
+    expect(mockRes.status).toHaveBeenCalledWith(204);
+    expect(mockRes.send).toHaveBeenCalled();
+  });
+
+  it('deve lançar ForbiddenAccessError se id for inválido', async () => {
+    (validateId as jest.Mock).mockImplementation(() => {
+      throw new ForbiddenAccessError();
+    });
+
+    await expect(deleteUserImage(mockReq, mockRes as Response)).rejects.toBeInstanceOf(ForbiddenAccessError);
+    expect(UserService.prototype.deleteUserImage).not.toHaveBeenCalled();
   });
 });

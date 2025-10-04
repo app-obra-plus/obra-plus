@@ -1,6 +1,7 @@
 import {Router, Request, Response} from 'express';
-import { createUser, deleteUser, getUserById, updateUser} from './user.controller';
+import { createUser, deleteUser, getUserById, updateUser, uploadUserImage, deleteUserImage} from './user.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
+import {upload} from  '../../config/multerConfig'
 
 
 const router = Router();
@@ -188,4 +189,100 @@ router.put('/:id',authMiddleware, async (req: Request, res: Response) => {
 router.delete('/:id',authMiddleware, async (req: Request, res: Response) => {
     await deleteUser(req, res);
 })
+
+/**
+ * @openapi
+ * /users/{id}/images:
+ *   post:
+ *     summary: Faz upload de imagem de perfil de usuário
+ *     tags:
+ *       - Usuários
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   format: binary
+ *     responses:
+ *       200:
+ *         description: Imagem enviada com sucesso
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.post('/:id/images',upload.single('image'), authMiddleware,  async (req: Request, res: Response) => {
+    await uploadUserImage(req, res);
+})
+
+/**
+ * @openapi
+ * /users/{id}/images:
+ *   delete:
+ *     summary: Remove imagem de perfil do usuário
+ *     tags:
+ *       - Usuários
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Imagem removida com sucesso
+ * 
+ *       400:
+ *          description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      $ref: '#/components/schemas/ErrorResponse'
+ *       401:
+ *         description: Não autorizado - token inválido ou expirado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       403:
+ *         description: Sem permissão para acessar esse recurso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.delete('/:id/images', authMiddleware,  async (req: Request, res: Response) => {
+    await deleteUserImage(req, res);
+})
+
 export default router; 

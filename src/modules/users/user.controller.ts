@@ -3,8 +3,11 @@ import { UserService } from './user.service';
 import { CreateUserSchema} from "./dto/CreateUserDto";
 import { validateSchema, validateId } from "../../utils/validateRequest";
 import { UpdateUserSchema } from "./dto/UpdateUserDto";
+import { MulterRequest } from "../../types/multer.types";
 
-const userService = new UserService;
+
+const userService = new UserService();
+
 
 export async function createUser(req: Request, res: Response) {
 
@@ -31,5 +34,25 @@ export async function updateUser(req:Request, res: Response){
 export async function deleteUser(req: Request, res:Response){
     const id = validateId(req);
     await userService.deleteUser(id);
+    return res.status(204).send();
+}
+
+export async function uploadUserImage(req: Request, res: Response){
+
+    const id = validateId(req);
+    const file = (req as MulterRequest).file;
+
+    const uploadedImage = await userService.uploadUserImage(id, file);
+
+    return res.status(200).json({
+        url: uploadedImage.url
+    });
+}
+
+export async function deleteUserImage(req: Request, res: Response){
+
+    const id = validateId(req);
+    await userService.deleteUserImage(id);
+
     return res.status(204).send();
 }
