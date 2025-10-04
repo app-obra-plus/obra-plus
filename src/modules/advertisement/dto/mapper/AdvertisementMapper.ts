@@ -17,6 +17,8 @@ export class AdvertisementMapper {
       title: ad.title,
       description: ad.description,
       price: ad.price,
+      amount: ad.amount,
+      unitOfMeasure: ad.unitOfMeasure,
       status: ad.status,
       isDonation: ad.isDonation,
       user: userResponse,
