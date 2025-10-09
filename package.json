@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts --watch ../types",
-    "build": "prisma generate && tsc",
+    "build": "prisma generate && tsc && prisma migrate deploy",
     "start": "node dist/index.js",
     "postinstall": "prisma generate",
     "test": "jest"
