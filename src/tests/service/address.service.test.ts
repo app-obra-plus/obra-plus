@@ -4,7 +4,7 @@ import { AddressMapper } from '../../../src/modules/address/dto/mapper/AddressMa
 import { CreateAddressDto } from '../../../src/modules/address/dto/CreateAddressDto';
 import { AddressResponseDto } from '../../../src/modules/address/dto/AddressResponseDto';
 import { EntityNotFoundError } from '../../exception/EntityNotFoundError';
-import { PaginationParamsBase } from '../../utils/pagination/pagination.types';
+import { PaginationParamsBase} from '../../utils/pagination/pagination.types';
 
 jest.mock('../../../src/database/client', () => ({
   prisma: {
@@ -49,7 +49,7 @@ describe('AddressService', () => {
   const addressDbResult = { id: 'addr-001', user_id: 'user-123', ...baseAddress };
   const expectedResponse: AddressResponseDto = { id: 'addr-001', ...baseAddress };
 
-  const params: PaginationParamsBase = { page: 1, limit: 10, order: 'asc' };
+  const params: PaginationParamsBase = { page: 1, limit: 10, order: {field: 'created_at', direction: 'asc' } };
   const skip = (params.page - 1) * params.limit;
 
   const mockAddress = {
@@ -127,12 +127,41 @@ describe('AddressService', () => {
       where: { user_id: userId },
       skip: skip,
       take: params.limit,
-      orderBy: { createdAt: params.order },
+      orderBy: { createdAt: 'asc' },
     });
 
     expect(prisma.address.count).toHaveBeenCalledWith({ where: { user_id: userId } });
     expect(result).toEqual(mocksAddressPage);
   });
+
+  it('deve retornar endereços com ordenação padrão quando direction não é informado', async () => {
+  const userId = 'user-123';
+  const mockDbResults = [mockAddress];
+
+  const paramsSemDirection: PaginationParamsBase = {
+    page: 1,
+    limit: 10,
+    order: undefined
+  };
+
+  (prisma.address.findMany as jest.Mock).mockResolvedValue(mockDbResults);
+  (prisma.address.count as jest.Mock).mockResolvedValue(mockDbResults.length);
+  (AddressMapper.toResponseDto as jest.Mock).mockImplementation(addr => ({
+    ...addr,
+    complement: addr.complement ?? null,
+  }));
+
+  const result = await addressService.getAllAddresses(userId, paramsSemDirection);
+
+  expect(prisma.address.findMany).toHaveBeenCalledWith({
+    where: { user_id: userId },
+    skip: 0,
+    take: 10,
+    orderBy: { createdAt: 'asc' },
+  });
+
+  expect(result.pagination.total).toBe(1);
+});
 
   it('deve atualizar um endereço e retornar o DTO', async () => {
     const addressId = 'addr1';

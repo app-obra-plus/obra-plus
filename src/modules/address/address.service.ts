@@ -35,7 +35,6 @@ export class AddressService {
     params: PaginationParamsBase
   ): Promise<PaginatedResponse<AddressResponseDto>> {
     const { page, limit, order } = params;
-    console.log("params", params)
     const skip = (page - 1) * limit;
 
     const [addresses, total] = await Promise.all([
@@ -43,7 +42,7 @@ export class AddressService {
         where: { user_id: userId },
         skip,
         take: limit,
-        orderBy: { createdAt: order },
+        orderBy: {createdAt: order?.direction ?? 'asc'},
       }),
       prisma.address.count({
         where: { user_id: userId },

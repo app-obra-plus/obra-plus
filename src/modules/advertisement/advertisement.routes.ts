@@ -130,10 +130,15 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  *         schema:
  *           type: integer
  *       - in: query
- *         name: order
+ *         name: orderDirection
  *         schema:
  *           type: string
  *           enum: [asc, desc]
+ *       - in: query
+ *         name: orderField
+ *         schema:
+ *           type: string
+ *           enum: [created_at, price, distance]
  *       - in: query
  *         name: priceMax
  *         schema:
@@ -296,7 +301,7 @@ router.put('/:id', authMiddleware,  async (req: Request, res: Response) => {
  *         schema:
  *           type: integer
  *       - in: query
- *         name: order
+ *         name: orderDirection
  *         schema:
  *           type: string
  *           enum: [asc, desc]

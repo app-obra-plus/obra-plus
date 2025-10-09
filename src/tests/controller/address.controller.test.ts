@@ -10,7 +10,7 @@ import * as addressModule from '../../modules/address/address.service'
 import { validateSchema } from '../../../src/utils/validateRequest';
 import { Request, Response } from 'express';
 import { AddressResponseDto } from '../../modules/address/dto/AddressResponseDto';
-import { PaginatedResponse } from '../../utils/pagination/pagination.types';
+import { PaginatedResponse} from '../../utils/pagination/pagination.types';
 
 jest.mock('../../../src/modules/address/address.service');
 jest.mock('../../../src/utils/validateRequest');
@@ -112,9 +112,11 @@ describe('getAllAddress', () => {
     const reqGetAllAddress = {
       params: { userId: 'user-123' },
       query: {
-        page: '1',
-        limit: '10',
-        order: 'asc',
+          page: 1,
+          limit: 10,
+          orderField: 'created_at',
+          orderDirection: 'asc'
+
       },
     } as unknown as AuthRequest;
 
@@ -150,11 +152,14 @@ describe('getAllAddress', () => {
     .mockResolvedValue(mockResponse);
   await getAllAddress(reqGetAllAddress, res);
 
-  expect(getAllAddressesMock).toHaveBeenCalledWith('user-123', {
-    page: 1,
-    limit: 10,
-    order: 'asc',
-  });
+    expect(getAllAddressesMock).toHaveBeenCalledWith('user-123', {
+      page: 1,
+      limit: 10,
+      order: {
+        field: 'created_at',
+        direction: 'asc'
+      }
+    });
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockResponse);
 

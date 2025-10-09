@@ -5,13 +5,14 @@ import { Request, Response } from "express";
 import { UpdateAdvertisementSchema } from "./dto/UpdateAdvertisementDto";
 import { AdvertisementMapQuerySchema } from "./dto/AdvertisementMapQueryDto";
 import {
-  parseAdvertisementPaginationParams
+  parseAdvertisementPaginationParams,
+  parseUserAdvertisementParams
 } from "../../utils/pagination/pagination";
 import { ImageService } from "../../infra/blob/image.service";
 import { MulterRequest } from "../../types/multer.types";
 import { AdvertisementImageService } from "./service/advertisementImage.service";
 import { AdvertisementGridService } from "./service/advertisementGrid.service";
-import { AdvertisementPaginationQuerySchema } from '../../utils/pagination/pagination.schema';
+import { AdvertisementPaginationQuerySchema, UserAdvertisementQuerySchema } from '../../utils/pagination/pagination.schema';
 import { AdvertisementsBatchRequestSchema } from "./dto/AdvertisementsBatchRequestDto";
 
 const advertisementService = new AdvertisementService();
@@ -88,7 +89,7 @@ export async function uploadAdvertisementsImage(req: Request, res: Response) {
 
   const uploadedImages = await Promise.all(
     files.map(async (file) => {
-      const image = await imageServer.upload(file);
+      const image = await imageServer.upload('images',file);
       return image;
     })
   );
@@ -109,8 +110,8 @@ export async function deleteAdvertisementsImage(req: Request, res: Response) {
 export async function getUserAdvertisements(req: Request, res: Response){
 
   const { userId } = req.params;
-  const parsed = AdvertisementPaginationQuerySchema.parse(req.query);
-  const params = parseAdvertisementPaginationParams(parsed);
+  const parsed = UserAdvertisementQuerySchema.parse(req.query);
+  const params = parseUserAdvertisementParams(parsed);
   const advertisements = await advertisementService.getUserAdvertisements(userId,params);
 
   return res.status(200).json(advertisements);
