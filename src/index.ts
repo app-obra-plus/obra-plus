@@ -27,6 +27,8 @@ app.use('/addresses', addressRouter);
 app.use('/categories', categoryRouter);
 app.use('/advertisements', advertisementRouter);
 
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
+
 
 app.use(errorHandler);
 app.listen(3000, () =>{ 
