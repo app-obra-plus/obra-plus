@@ -4,6 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts --watch ../types",
+    "build": "prisma generate && tsc",
+    "start": "node dist/index.js",
+    "postinstall": "prisma generate",
     "test": "jest"
   },
   "keywords": [],
