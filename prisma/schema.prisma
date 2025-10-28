@@ -14,9 +14,9 @@ model User {
   password          String
   first_name        String
   last_name         String
-  phone_number       String
+  phone_number      String
   profile_picture   String?
-  isDeleted      Boolean @default(false) @map("is_deleted")
+  isDeleted                  Boolean @default(false) @map("is_deleted")
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
@@ -44,7 +44,7 @@ model Address {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   user_id      String  @db.Uuid  
-  isDeleted      Boolean @default(false) @map("is_deleted")
+  isDeleted    Boolean @default(false) @map("is_deleted")
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("tb_addresses")
@@ -162,7 +162,7 @@ model Message {
   chat        Chat     @relation(fields: [chatId], references: [id])
   senderId    String   @map("sender_id") @db.Uuid
   sender      User     @relation(fields: [senderId], references: [id])
-  content     String?
+  content     String
   createdAt   DateTime @default(now()) @map("created_at")
 
   @@map("tb_message")
