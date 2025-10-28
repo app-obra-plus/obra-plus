@@ -13,6 +13,7 @@ import { ForbiddenAccessError } from "../../../exception/ForbiddenAccessError";
 import { FullAdvertisement } from "../../../types/advertisement.types";
 import { GeoPoint } from "../../../types/geo.types";
 import { getDistance } from "geolib";
+import { buildPagination } from "../../../utils/pagination/pagination";
 
 
 const KM_PER_DEGREE = 111;
@@ -169,12 +170,7 @@ export class AdvertisementService {
 
     return {
       data: advertisementResponse,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: buildPagination({total, page, limit}),
     };
   }
 

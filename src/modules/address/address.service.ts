@@ -5,6 +5,7 @@ import { EntityNotFoundError } from "../../exception/EntityNotFoundError";
 import { AddressResponseDto } from "./dto/AddressResponseDto";
 import { AddressUpdateDto } from "./dto/AddressUpdateDto";
 import { PaginationParamsBase, PaginatedResponse } from '../../utils/pagination/pagination.types';
+import { buildPagination } from "../../utils/pagination/pagination";
 
 export class AddressService {
   async createAddress(address: CreateAddressDto, id: string) {
@@ -55,12 +56,7 @@ export class AddressService {
 
     return {
       data: addressesResponse,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      pagination: buildPagination({total, page, limit}),
     };
   }
 
