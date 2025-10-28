@@ -1,9 +1,9 @@
-import { PaginationQueryBase, PaginationParamsBase, AdvertisementPaginationParams, UserAdvertisementParams, OrderDirection, OrderField } from './pagination.types';
+import { PaginationQueryBase, PaginationParamsBase, AdvertisementPaginationParams, UserAdvertisementParams, OrderDirection, OrderField, PaginationMeta } from './pagination.types';
 import { AdvertisementPaginationQuery, UserAdvertisementQuery } from './pagination.schema';
 
 export function getPaginationParams(query: PaginationQueryBase): PaginationParamsBase {
-  const page = parseInt(query.page ?? "1"); 
-  const limit = parseInt(query.limit ?? "10");
+  const page = Number.parseInt(query.page ?? "1"); 
+  const limit = Number.parseInt(query.limit ?? "10");
   const field: OrderField = (query.orderField as OrderField );
   const direction: OrderDirection = (query.orderDirection as OrderDirection );
   const order= {field: field, direction: direction }
@@ -14,12 +14,12 @@ export function getPaginationParams(query: PaginationQueryBase): PaginationParam
 export function parseAdvertisementPaginationParams(query: AdvertisementPaginationQuery): AdvertisementPaginationParams {
 
  const basePageParams = getPaginationParams(query);
- const priceMax = query.priceMax ? parseFloat(query.priceMax): undefined;
+ const priceMax = query.priceMax ? Number.parseFloat(query.priceMax): undefined;
  const categoryId = query.categoryId;
  const text = query.text;
- const distanceMax = parseFloat(query.distanceMax)
- const userLatitude =  parseFloat(query.userLatitude);
- const userLongitude =  parseFloat(query.userLongitude);
+ const distanceMax = Number.parseFloat(query.distanceMax)
+ const userLatitude =  Number.parseFloat(query.userLatitude);
+ const userLongitude =  Number.parseFloat(query.userLongitude);
 
   return { 
     ...basePageParams, 
@@ -36,7 +36,7 @@ export function parseUserAdvertisementParams(
   query: UserAdvertisementQuery
 ): UserAdvertisementParams {
   const basePageParams = getPaginationParams(query);
-  const priceMax = query.priceMax ? parseFloat(query.priceMax) : undefined;
+  const priceMax = query.priceMax ? Number.parseFloat(query.priceMax) : undefined;
   const categoryId = query.categoryId;
   const text = query.text;
 
@@ -45,5 +45,17 @@ export function parseUserAdvertisementParams(
     priceMax,
     categoryId,
     text,
+  };
+}
+
+export function buildPagination(
+  params: { total: number; page: number; limit: number }
+): PaginationMeta {
+  const { total, page, limit } = params;
+  return {
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 }
