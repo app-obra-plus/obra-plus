@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 
  export function  generateLoginResponse(user: any): LoginResponseDto {
         const JWT_SECRET = process.env.JWT_SECRET;
-        const EXPIRE_TOKEN = '1d'; 
+        const EXPIRE_TOKEN = '30d'; 
         if (!JWT_SECRET) {
             throw new Error('JWT_SECRET não foi definida no .env');
         }
