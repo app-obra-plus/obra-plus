@@ -14,14 +14,16 @@ model User {
   password          String
   first_name        String
   last_name         String
-  phone_number       String
+  phone_number      String
   profile_picture   String?
-  isDeleted      Boolean @default(false) @map("is_deleted")
+  isDeleted                  Boolean @default(false) @map("is_deleted")
   created_at        DateTime @default(now())
   updated_at        DateTime @updatedAt
 
   addresses       Address[]
   advertisements    Advertisement[]
+  chatParticipants  ChatParticipant[]
+  messagesSent      Message[]
 
   @@map("tb_user")
 }
@@ -42,7 +44,7 @@ model Address {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
   user_id      String  @db.Uuid  
-  isDeleted      Boolean @default(false) @map("is_deleted")
+  isDeleted    Boolean @default(false) @map("is_deleted")
   user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@map("tb_addresses")
@@ -126,4 +128,52 @@ model Category{
 
   advertisements Advertisement[]
    @@map("tb_category")
+}
+
+model Chat {
+  id              String            @id @default(uuid()) @db.Uuid
+  type            ChatType          @default(PRIVATE)
+  name            String?         
+  participants    ChatParticipant[]
+  messages        Message[]
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt      @map("updated_at")
+  @@map("tb_chat")
+}
+
+model ChatParticipant {
+  id          String   @id @default(uuid()) @db.Uuid
+  chatId      String   @map("chat_id") @db.Uuid
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  userId      String    @map("user_id") @db.Uuid
+  user        User     @relation(fields: [userId], references: [id])
+  role        ChatRole @default(MEMBER)
+  joinedAt    DateTime @default(now())  @map("joined_at")
+  lastReadAt  DateTime?@map("lastRead_at")
+  isActive    Boolean  @default(true)   @map("is_active")
+
+  @@unique([chatId, userId])
+  @@map("tb_chat_participant")
+}
+
+model Message {
+  id          String   @id @default(uuid()) @db.Uuid
+  chatId      String   @map("chat_id") @db.Uuid
+  chat        Chat     @relation(fields: [chatId], references: [id])
+  senderId    String   @map("sender_id") @db.Uuid
+  sender      User     @relation(fields: [senderId], references: [id])
+  content     String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("tb_message")
+}
+
+enum ChatType {
+  PRIVATE 
+  GROUP 
+}
+
+enum ChatRole {
+  ADMIN
+  MEMBER
 }

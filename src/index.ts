@@ -3,6 +3,7 @@ import authRouter from './modules/auth/auth.routes'
 import addressRouter from './modules/address/address.routes'
 import categoryRouter from './modules/category/category.routes'
 import advertisementRouter  from './modules/advertisement/advertisement.routes'
+import chatRouter  from './modules/chat/chat.routes'
 import errorHandler from './middlewares/errorHandler';
 import corsOptions from './config/corsConfig'
 import cors from 'cors';
@@ -26,6 +27,7 @@ app.use('/auth', authRouter);
 app.use('/addresses', addressRouter);
 app.use('/categories', categoryRouter);
 app.use('/advertisements', advertisementRouter);
+app.use('/chats', chatRouter);
 
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 

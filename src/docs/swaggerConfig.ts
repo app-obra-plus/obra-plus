@@ -16,7 +16,11 @@ import { UpdateAdvertisementRequest } from './schemas/updateAdvertisementRequest
 import { PaginationMeta } from './schemas/PaginationMeta.schema';
 import { PaginatedAdvertisementResponse } from './schemas/paginatedAdvertisementResponse.schema';
 import { SubGridResponse, GridResponse } from './schemas/subGridResponse.schema';
-import { AdvertisementsBatchRequest } from './advertisementsBatchRequest.schema';
+import { AdvertisementsBatchRequest } from './schemas/advertisementsBatchRequest.schema';
+import { CreateChatRequest } from './schemas/createChat.schema';
+import { ChatResponse } from './schemas/chatResponse.schema';
+import { ChatSummary,PaginatedChatSummary } from './schemas/chatSummary.schema';
+import { CreateMessageSchema, Message, Messages, PaginatedMessage } from './schemas/message.schema';
 
 // Documentação disponível em http://localhost:3000/api-docs
 const options: swaggerJSDoc.Options = {
@@ -47,7 +51,17 @@ const options: swaggerJSDoc.Options = {
         PaginatedAdvertisementResponse,
         SubGridResponse,
         GridResponse,
-        AdvertisementsBatchRequest
+        AdvertisementsBatchRequest,
+        CreateChatRequest,
+        ChatResponse,
+        ChatSummary,
+        PaginatedChatSummary,
+        Messages,
+        PaginatedMessage,
+        Message,
+        CreateMessageSchema
+
+
       }
     },
     info: {
