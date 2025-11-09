@@ -65,7 +65,7 @@ describe('AuthService', () => {
     expect(jwt.sign).toHaveBeenCalledWith(
       { userId: validUser.id, email: validUser.email },
       'minha_chave_teste',
-      { expiresIn: '1d' }
+      { expiresIn: '30d' }
     );
     expect(result).toEqual({
     token: jwtToken,
