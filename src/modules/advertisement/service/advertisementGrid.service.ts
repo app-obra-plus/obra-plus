@@ -23,7 +23,6 @@ export class AdvertisementGridService {
           isDeleted: false,
         },
         isDeleted: false,
-        status: "ACTIVE",
         ...(dto.filter?.categoryId && { category_id: dto.filter.categoryId }),
         ...(dto.filter?.priceMax && { price: { lte: dto.filter.priceMax } }),
       },
