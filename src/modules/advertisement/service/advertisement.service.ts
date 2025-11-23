@@ -97,16 +97,15 @@ export class AdvertisementService {
     const {page, limit, order, priceMax, categoryId, distanceMax, userLatitude, userLongitude} =
       params;
 
-    const orderField = order?.field ?? 'distance';
+    const orderField = order?.field;
     const orderDirection = order?.direction ?? 'asc';
 
-    const range = this.getBoundingBoxFromRadius(
-      {
-        latitude: userLatitude,
-        longitude: userLongitude
-      },
-      distanceMax!
-    );
+    const range = distanceMax
+      ? this.getBoundingBoxFromRadius(
+          { latitude: userLatitude, longitude: userLongitude },
+          distanceMax
+        )
+      : undefined;
 
     const skip = (page - 1) * limit;
 
@@ -119,16 +118,12 @@ export class AdvertisementService {
 
     const whereClause = {
       isDeleted: false,
-      advertisementAddress: {
-        latitude: {
-          gte: range.minLat,
-          lte: range.maxLat
-        },
-        longitude: {
-          gte: range.minLng,
-          lte: range.maxLng
+      ...(range && {
+        advertisementAddress: {
+          latitude: {gte: range.minLat, lte: range.maxLat},
+          longitude: {gte: range.minLng, lte: range.maxLng}
         }
-      },
+      }),
       ...(priceMax !== undefined && {price: {lte: priceMax}}),
       ...(categoryId && {category_id: categoryId}),
       ...(params.text && {OR: orConditions})
@@ -140,7 +135,7 @@ export class AdvertisementService {
         include: this.advertisementInclude,
         skip,
         take: limit,
-        orderBy: orderField === 'distance' ? undefined : {[orderField]: orderDirection}
+        orderBy: orderField ? {[orderField]: orderDirection} : undefined
       }),
       prisma.advertisement.count({
         where: whereClause
@@ -148,14 +143,19 @@ export class AdvertisementService {
     ]);
 
     const userLocation = {lat: userLatitude, lng: userLongitude};
-    const adsInRaio = this.filtrarPorRaio(advertisements, userLocation, distanceMax!);
-    const sortedAds =
-      orderField === 'distance'
-        ? adsInRaio.toSorted((adA, adB) =>
-            orderDirection === 'asc' ? adA.distance - adB.distance : adB.distance - adA.distance
-          )
-        : adsInRaio;
-    const advertisementResponse = sortedAds.map(AdvertisementMapper.toResponseDto);
+    
+    const ads = orderField === "distance" && distanceMax !== undefined
+      ? this
+        .filtrarPorRaio(advertisements, userLocation, distanceMax)
+        .toSorted(
+          (a, b) =>
+            orderDirection === "asc"
+              ? a.distance - b.distance
+              : b.distance - a.distance
+        )
+      : advertisements;
+
+    const advertisementResponse = ads.map(AdvertisementMapper.toResponseDto);
 
     return {
       data: advertisementResponse,
