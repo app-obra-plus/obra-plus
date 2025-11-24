@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds, deleteAdvertisement} from './advertisement.controller';
+import { createAdvertisement, getAdvertisementById, updateAdvertisement, getAdvertisementGridFilter, getAdvertisementsPage, uploadAdvertisementsImage, deleteAdvertisementsImage, getUserAdvertisements, getAdvertisementsByIds, deleteAdvertisement, getStats} from './advertisement.controller';
 import authMiddleware from '../../middlewares/authMiddleware';
 import {upload} from  '../../config/multerConfig'
 
@@ -186,6 +186,46 @@ router.get('/grid', authMiddleware,  async (req: Request, res: Response) => {
  */
 router.get('/', authMiddleware,  async (req: Request, res: Response) => {
     await getAdvertisementsPage(req, res);
+})
+
+/**
+ * @openapi
+ * /advertisements/stats:
+ *   get:
+ *     summary: Retorna estatísticas dos anúncios
+ *     tags:
+ *       - Anúncios
+ *     parameters:
+ *       - in: query
+ *         name: lat
+ *         required: true
+ *         schema:
+ *           type: number
+ *           format: float
+ *         description: Latitude do usuário (-90 a 90)
+ *       - in: query
+ *         name: lng
+ *         required: true
+ *         schema:
+ *           type: number
+ *           format: float
+ *         description: Longitude do usuário (-180 a 180)
+ *     responses:
+ *       200:
+ *         description: Estatísticas retornadas com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/StatsResponse'
+ *       400:
+ *         description: Token mal formatado ou não fornecido ou Erro de validação dos dados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+router.get('/stats', authMiddleware,  async (req: Request, res: Response) => {
+    await getStats(req, res);
 })
 
 /**
@@ -561,6 +601,7 @@ router.delete('/images/:id', authMiddleware,  async (req: Request, res: Response
 router.delete('/:id', authMiddleware,  async (req: Request, res: Response) => {
     await deleteAdvertisement(req, res);
 })
+
 
 
 export default router; 

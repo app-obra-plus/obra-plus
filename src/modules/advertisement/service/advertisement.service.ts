@@ -212,6 +212,38 @@ export class AdvertisementService {
     };
   }
 
+  async getStats(location: GeoPoint,){
+    const result= await prisma.advertisement.aggregate({
+      _min: {
+        price: true,
+      },
+      _max: {
+        price: true,
+      }
+    })
+
+    const minPrice = result._min.price;
+    const maxPrice = result._max.price;
+    const advertisements = await prisma.advertisement.findMany({
+      include: { advertisementAddress: true }
+    });
+
+    const userLocation = { latitude: location.lat, longitude: location.lng };
+
+    const adsWithDistance = advertisements.map(ad => {
+      const distanceMeters = getDistance(userLocation, {
+        latitude: ad.advertisementAddress.latitude,
+        longitude: ad.advertisementAddress.longitude
+      });
+      const distanceKm = distanceMeters / 1000;
+      return { ...ad, distance: distanceKm };
+    });
+
+    const maxDistance = Math.max(...adsWithDistance.map(ad => ad.distance))
+
+    return {minPrice, maxPrice, maxDistance}
+  }
+
   async deleteAdvertisement(advertisementId: string, userId: string) {
     const result = await prisma.advertisement.updateMany({
       where: {
