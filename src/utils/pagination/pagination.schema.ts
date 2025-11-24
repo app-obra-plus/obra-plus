@@ -18,7 +18,7 @@ export type UserAdvertisementQuery = z.infer<typeof UserAdvertisementQuerySchema
 
 export const AdvertisementPaginationQuerySchema = UserAdvertisementQuerySchema.merge(
   z.object({
-    distanceMax: z.string().default("50"),
+    distanceMax: z.string().optional(),
     userLatitude: z.string(),
     userLongitude: z.string()
   })

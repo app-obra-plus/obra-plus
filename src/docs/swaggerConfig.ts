@@ -21,6 +21,7 @@ import { CreateChatRequest } from './schemas/createChat.schema';
 import { ChatResponse } from './schemas/chatResponse.schema';
 import { ChatSummary,PaginatedChatSummary } from './schemas/chatSummary.schema';
 import { CreateMessageSchema, Message, Messages, PaginatedMessage } from './schemas/message.schema';
+import { StatsResponse } from './schemas/statsResponse.schema';
 
 // Documentação disponível em http://localhost:3000/api-docs
 const options: swaggerJSDoc.Options = {
@@ -59,7 +60,8 @@ const options: swaggerJSDoc.Options = {
         Messages,
         PaginatedMessage,
         Message,
-        CreateMessageSchema
+        CreateMessageSchema,
+        StatsResponse 
 
 
       }
