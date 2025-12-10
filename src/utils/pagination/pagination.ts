@@ -17,7 +17,7 @@ export function parseAdvertisementPaginationParams(query: AdvertisementPaginatio
  const priceMax = query.priceMax ? Number.parseFloat(query.priceMax): undefined;
  const categoryId = query.categoryId;
  const text = query.text;
- const distanceMax = Number.parseFloat(query.distanceMax)
+ const distanceMax = Number.parseFloat(query.distanceMax as string)
  const userLatitude =  Number.parseFloat(query.userLatitude);
  const userLongitude =  Number.parseFloat(query.userLongitude);
 
