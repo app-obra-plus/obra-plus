@@ -9,7 +9,7 @@ export class UserMapper{
             first_name: user.first_name,
             last_name: user.last_name,
             phone_number: user.phone_number,
-            profile_picture: user.profile_picture ?? undefined,
+            profile_picture: user.profile_picture ?? null,
         }
 
         return(dto)
